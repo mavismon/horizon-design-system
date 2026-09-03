@@ -1,0 +1,233 @@
+{
+  "color-bg-primary": {
+    "$type": "color",
+    "$value": "{color-gray-900}"
+  },
+  "color-bg-surface": {
+    "$type": "color",
+    "$value": "{color-gray-800}"
+  },
+  "color-bg-elevated": {
+    "$type": "color",
+    "$value": "{color-gray-700}"
+  },
+  "color-bg-inverse": {
+    "$type": "color",
+    "$value": "{color-gray-50}"
+  },
+  "color-text-primary": {
+    "$type": "color",
+    "$value": "{color-gray-50}"
+  },
+  "color-text-secondary": {
+    "$type": "color",
+    "$value": "{color-gray-400}"
+  },
+  "color-text-disabled": {
+    "$type": "color",
+    "$value": "{color-gray-600}"
+  },
+  "color-text-inverse": {
+    "$type": "color",
+    "$value": "{color-gray-900}"
+  },
+  "color-text-link": {
+    "$type": "color",
+    "$value": "{color-blue-300}"
+  },
+  "color-border-default": {
+    "$type": "color",
+    "$value": "{color-gray-700}",
+    "$description": "Audit: #D7DEE7/#DDE5EC/#E3E8EE cluster, 880 raw uses — single largest border cluster, default card/input border. Re-aliased from color/gray/300 (placeholder) to new color/slate/300 primitive to match actual raw hue family."
+  },
+  "color-border-strong": {
+    "$type": "color",
+    "$value": "{color-gray-600}",
+    "$description": "Audit: #C8D2DD, 75 raw uses — higher-contrast borders (active/selected states, table dividers on dense Back Office views). Re-aliased from color/gray/500 to color/slate/500."
+  },
+  "color-border-focus": {
+    "$type": "color",
+    "$value": "{color-blue-400}",
+    "$description": "Audit: #1D4ED8, 112 raw uses (dominant blue border/outline color) — closely matches color/blue/700 (#1D44BA), not blue/500 as previously placeholder-aliased. Re-aliased."
+  },
+  "color-interactive-primary": {
+    "$type": "color",
+    "$value": "{color-blue-400}"
+  },
+  "color-interactive-primary-hover": {
+    "$type": "color",
+    "$value": "{color-blue-300}"
+  },
+  "color-interactive-on-primary": {
+    "$type": "color",
+    "$value": "{color-gray-50}"
+  },
+  "color-status-success": {
+    "$type": "color",
+    "$value": "{color-green-400}"
+  },
+  "color-status-success-bg": {
+    "$type": "color",
+    "$value": "{color-green-900}"
+  },
+  "color-status-warning": {
+    "$type": "color",
+    "$value": "{color-amber-400}"
+  },
+  "color-status-warning-bg": {
+    "$type": "color",
+    "$value": "{color-amber-900}"
+  },
+  "color-status-error": {
+    "$type": "color",
+    "$value": "{color-red-400}"
+  },
+  "color-status-error-bg": {
+    "$type": "color",
+    "$value": "{color-red-900}"
+  },
+  "color-primary-light": {
+    "$type": "color",
+    "$value": "{color-blue-900}",
+    "$description": "Brand actions — primary buttons, links, focus states. Use light for tinted backgrounds, default for solid fills/icons, foreground for text on light or transparent background."
+  },
+  "color-primary-default": {
+    "$type": "color",
+    "$value": "{color-blue-400}",
+    "$description": "Brand actions — primary buttons, links, focus states. Use light for tinted backgrounds, default for solid fills/icons, foreground for text on light or transparent background."
+  },
+  "color-primary-foreground": {
+    "$type": "color",
+    "$value": "{color-blue-50}",
+    "$description": "Brand actions — primary buttons, links, focus states. Use light for tinted backgrounds, default for solid fills/icons, foreground for text on light or transparent background."
+  },
+  "color-negative-light": {
+    "$type": "color",
+    "$value": "{color-red-900}",
+    "$description": "Errors, destructive actions, critical validation states."
+  },
+  "color-negative-default": {
+    "$type": "color",
+    "$value": "{color-red-400}",
+    "$description": "Errors, destructive actions, critical validation states."
+  },
+  "color-negative-foreground": {
+    "$type": "color",
+    "$value": "{color-red-50}",
+    "$description": "Errors, destructive actions, critical validation states."
+  },
+  "color-positive-light": {
+    "$type": "color",
+    "$value": "{color-green-900}",
+    "$description": "Success confirmations, completed states, positive metrics."
+  },
+  "color-positive-default": {
+    "$type": "color",
+    "$value": "{color-green-400}",
+    "$description": "Success confirmations, completed states, positive metrics."
+  },
+  "color-positive-foreground": {
+    "$type": "color",
+    "$value": "{color-green-50}",
+    "$description": "Success confirmations, completed states, positive metrics."
+  },
+  "color-warning-light": {
+    "$type": "color",
+    "$value": "{color-amber-900}",
+    "$description": "Caution states — pending review, approaching limits, non-blocking issues."
+  },
+  "color-warning-default": {
+    "$type": "color",
+    "$value": "{color-amber-400}",
+    "$description": "Caution states — pending review, approaching limits, non-blocking issues."
+  },
+  "color-warning-foreground": {
+    "$type": "color",
+    "$value": "{color-amber-50}",
+    "$description": "Caution states — pending review, approaching limits, non-blocking issues."
+  },
+  "color-neutral-light": {
+    "$type": "color",
+    "$value": "{color-gray-900}",
+    "$description": "Default UI chrome — secondary buttons, borders, disabled/inactive elements."
+  },
+  "color-neutral-default": {
+    "$type": "color",
+    "$value": "{color-gray-400}",
+    "$description": "Default UI chrome — secondary buttons, borders, disabled/inactive elements."
+  },
+  "color-neutral-foreground": {
+    "$type": "color",
+    "$value": "{color-gray-50}",
+    "$description": "Default UI chrome — secondary buttons, borders, disabled/inactive elements."
+  },
+  "color-text-inverse-secondary": {
+    "$type": "color",
+    "$value": "{color-gray-600}",
+    "$description": "Secondary text on dark/inverse surfaces."
+  },
+  "color-text-navi": {
+    "$type": "color",
+    "$value": "{color-blue-300}"
+  },
+  "color-bg-overlay": {
+    "$type": "color",
+    "$value": "{color-gray-800}",
+    "$description": "Scrim for modals/loading shimmer. Apply at 40% layer opacity — Figma variables don't carry alpha in fills, so set opacity on the node."
+  },
+  "color-state-disabled-bg": {
+    "$type": "color",
+    "$value": "{color-gray-700}",
+    "$description": "Background fill for any disabled interactive element."
+  },
+  "color-primary-hover": {
+    "$type": "color",
+    "$value": "{color-blue-300}",
+    "$description": "Hover state for primary interactive fills — one step darker than /default."
+  },
+  "color-negative-hover": {
+    "$type": "color",
+    "$value": "{color-red-300}",
+    "$description": "Hover state for negative interactive fills — one step darker than /default."
+  },
+  "color-positive-hover": {
+    "$type": "color",
+    "$value": "{color-green-300}",
+    "$description": "Hover state for positive interactive fills — one step darker than /default."
+  },
+  "color-warning-hover": {
+    "$type": "color",
+    "$value": "{color-amber-300}",
+    "$description": "Hover state for warning interactive fills — one step darker than /default."
+  },
+  "color-neutral-hover": {
+    "$type": "color",
+    "$value": "{color-gray-300}",
+    "$description": "Hover state for neutral interactive fills — one step darker than /default."
+  },
+  "color-shadow-base": {
+    "$type": "color",
+    "$value": "{color-gray-900}",
+    "$description": "Base color all elevation/shadow effect styles derive from, at reduced opacity per level."
+  },
+  "color-border-subtle": {
+    "$type": "color",
+    "$value": "{color-gray-800}",
+    "$description": "Audit: #EEF1F5/#EAEFF4/#E8ECF1/#E4E9EF cluster, 515 raw uses (Web+App+BackOffice) — lightest divider/separator borders."
+  },
+  "color-border-negative": {
+    "$type": "color",
+    "$value": "{color-red-600}",
+    "$description": "Audit: #F2C2BD light-red cluster, 32 raw uses (error banners/inputs) + #E02B2B/#C1362F strong-red, 6 raw uses. Aliased to red/300 as nearest primitive match."
+  },
+  "color-border-warning": {
+    "$type": "color",
+    "$value": "{color-amber-600}",
+    "$description": "Audit: #F0D9A8, 30 raw uses (warning banners/badges, mostly Back Office). Aliased to amber/300 as nearest primitive match."
+  },
+  "color-border-positive": {
+    "$type": "color",
+    "$value": "{color-green-600}",
+    "$description": "Audit: #BFE3CD, 7 raw uses (success banners) — thin evidence, included for parity with existing status-color set. Aliased to green/200 as nearest primitive match."
+  }
+}

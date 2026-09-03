@@ -1,0 +1,163 @@
+{
+  "typography-display": {
+    "$type": "typography",
+    "$description": "Reserved for future marketing/landing use. NOT backed by the Horizon typography audit — the audit found near-zero usage above 32px across Web, Mobile, and Admin.",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Bold",
+      "fontSize": {
+        "value": 48,
+        "unit": "px"
+      },
+      "lineHeight": 56,
+      "letterSpacing": {
+        "value": -0.5,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-heading-lg": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Semi Bold",
+      "fontSize": {
+        "value": 32,
+        "unit": "px"
+      },
+      "lineHeight": 40,
+      "letterSpacing": {
+        "value": -0.25,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-heading-md": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Semi Bold",
+      "fontSize": {
+        "value": 24,
+        "unit": "px"
+      },
+      "lineHeight": 32,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-heading-sm": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Semi Bold",
+      "fontSize": {
+        "value": 18,
+        "unit": "px"
+      },
+      "lineHeight": 26,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-body-large": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Regular",
+      "fontSize": {
+        "value": 14,
+        "unit": "px"
+      },
+      "lineHeight": 20,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-body-default": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Regular",
+      "fontSize": {
+        "value": 13,
+        "unit": "px"
+      },
+      "lineHeight": 20,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-body-small": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Regular",
+      "fontSize": {
+        "value": 12,
+        "unit": "px"
+      },
+      "lineHeight": 18,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-label": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Medium",
+      "fontSize": {
+        "value": 11,
+        "unit": "px"
+      },
+      "lineHeight": 16,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-caption": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Regular",
+      "fontSize": {
+        "value": 10,
+        "unit": "px"
+      },
+      "lineHeight": 16,
+      "letterSpacing": {
+        "value": 0,
+        "unit": "px"
+      }
+    }
+  },
+  "typography-button": {
+    "$type": "typography",
+    "$value": {
+      "fontFamily": "Inter",
+      "fontWeight": "Semi Bold",
+      "fontSize": {
+        "value": 14,
+        "unit": "px"
+      },
+      "lineHeight": 20,
+      "letterSpacing": {
+        "value": 0.10000000149011612,
+        "unit": "px"
+      }
+    }
+  }
+}
