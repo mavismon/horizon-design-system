@@ -7,7 +7,7 @@ const STYLES = [
   T + "effects.styles.tokens.json",
 ];
 
-// Figma writes font weight as a style NAME. CSS needs a number.
+// Figma writes font weight as a style NAME (sometimes spaced, e.g. "Semi Bold"). CSS needs a number.
 const WEIGHTS = {
   Thin: 100,
   ExtraLight: 200,
@@ -32,7 +32,9 @@ StyleDictionary.registerPreprocessor({
           const v = t.$value;
           t.$value = {
             ...v,
-            fontWeight: WEIGHTS[v.fontWeight] ?? v.fontWeight,
+            fontWeight:
+              WEIGHTS[typeof v.fontWeight === "string" ? v.fontWeight.replace(/\s+/g, "") : v.fontWeight] ??
+              v.fontWeight,
             lineHeight:
               typeof v.lineHeight === "number"
                 ? { value: v.lineHeight, unit: "px" }
@@ -99,32 +101,25 @@ const native = (sources) =>
     },
   });
 
-// :root — core, light colours, web space + type, styles
+// :root — core (colour + spacing), light colours, web type, styles
 await css(
   "tokens.css",
-  [
-    CORE,
-    T + "semantic-color.light.tokens.json",
-    T + "semantic-space.web.tokens.json",
-    T + "type.web.tokens.json",
-    ...STYLES,
-  ],
+  [CORE, T + "semantic.light.tokens.json", T + "typography.web.tokens.json", ...STYLES],
   ":root",
 ).buildAllPlatforms();
 
 // dark — only the colours that change
 await css(
   "tokens-dark.css",
-  [CORE, T + "semantic-color.dark.tokens.json"],
+  [CORE, T + "semantic.dark.tokens.json"],
   '[data-theme="dark"]',
-  (t) => t.filePath.includes("semantic-color.dark"),
+  (t) => t.filePath.includes("semantic.dark"),
 ).buildAllPlatforms();
 
 // iOS + Android — mobile mode
 await native([
   CORE,
-  T + "semantic-color.light.tokens.json",
-  T + "semantic-space.mobile.tokens.json",
-  T + "type.mobile.tokens.json",
+  T + "semantic.light.tokens.json",
+  T + "typography.mobile.tokens.json",
   ...STYLES,
 ]).buildAllPlatforms();
