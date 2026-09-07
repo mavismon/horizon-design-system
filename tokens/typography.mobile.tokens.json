@@ -7,14 +7,6 @@
     "$type": "fontFamily",
     "$value": "Inter"
   },
-  "fontfamily-label": {
-    "$type": "fontFamily",
-    "$value": "Inter"
-  },
-  "fontfamily-caption": {
-    "$type": "fontFamily",
-    "$value": "Inter"
-  },
   "fontsize-xs": {
     "$type": "dimension",
     "$value": {

@@ -3,12 +3,9 @@
     "$type": "typography",
     "$description": "Reserved for future marketing/landing use. NOT backed by the Horizon typography audit — the audit found near-zero usage above 32px across Web, Mobile, and Admin.",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-heading}",
       "fontWeight": "Bold",
-      "fontSize": {
-        "value": 48,
-        "unit": "px"
-      },
+      "fontSize": "{fontsize-4xl}",
       "lineHeight": 56,
       "letterSpacing": {
         "value": -0.5,
@@ -19,13 +16,10 @@
   "typography-heading-lg": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-heading}",
       "fontWeight": "Semi Bold",
-      "fontSize": {
-        "value": 32,
-        "unit": "px"
-      },
-      "lineHeight": 40,
+      "fontSize": "{fontsize-4xl}",
+      "lineHeight": "{lineheight-4xl}",
       "letterSpacing": {
         "value": -0.25,
         "unit": "px"
@@ -35,13 +29,10 @@
   "typography-heading-md": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-heading}",
       "fontWeight": "Semi Bold",
-      "fontSize": {
-        "value": 24,
-        "unit": "px"
-      },
-      "lineHeight": 32,
+      "fontSize": "{fontsize-3xl}",
+      "lineHeight": "{lineheight-3xl}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -51,13 +42,10 @@
   "typography-heading-sm": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-heading}",
       "fontWeight": "Semi Bold",
-      "fontSize": {
-        "value": 18,
-        "unit": "px"
-      },
-      "lineHeight": 26,
+      "fontSize": "{fontsize-2xl}",
+      "lineHeight": "{lineheight-2xl}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -67,13 +55,10 @@
   "typography-body-large": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-body}",
       "fontWeight": "Regular",
-      "fontSize": {
-        "value": 14,
-        "unit": "px"
-      },
-      "lineHeight": 20,
+      "fontSize": "{fontsize-xl}",
+      "lineHeight": "{lineheight-xl}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -83,13 +68,10 @@
   "typography-body-default": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-body}",
       "fontWeight": "Regular",
-      "fontSize": {
-        "value": 13,
-        "unit": "px"
-      },
-      "lineHeight": 20,
+      "fontSize": "{fontsize-lg}",
+      "lineHeight": "{lineheight-lg}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -99,13 +81,10 @@
   "typography-body-small": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-body}",
       "fontWeight": "Regular",
-      "fontSize": {
-        "value": 12,
-        "unit": "px"
-      },
-      "lineHeight": 18,
+      "fontSize": "{fontsize-md}",
+      "lineHeight": "{lineheight-md}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -115,13 +94,10 @@
   "typography-label": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-body}",
       "fontWeight": "Medium",
-      "fontSize": {
-        "value": 11,
-        "unit": "px"
-      },
-      "lineHeight": 16,
+      "fontSize": "{fontsize-sm}",
+      "lineHeight": "{lineheight-sm}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -131,13 +107,10 @@
   "typography-caption": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-body}",
       "fontWeight": "Regular",
-      "fontSize": {
-        "value": 10,
-        "unit": "px"
-      },
-      "lineHeight": 16,
+      "fontSize": "{fontsize-xs}",
+      "lineHeight": "{lineheight-xs}",
       "letterSpacing": {
         "value": 0,
         "unit": "px"
@@ -147,13 +120,10 @@
   "typography-button": {
     "$type": "typography",
     "$value": {
-      "fontFamily": "Inter",
+      "fontFamily": "{fontfamily-body}",
       "fontWeight": "Semi Bold",
-      "fontSize": {
-        "value": 14,
-        "unit": "px"
-      },
-      "lineHeight": 20,
+      "fontSize": "{fontsize-xl}",
+      "lineHeight": "{lineheight-xl}",
       "letterSpacing": {
         "value": 0.10000000149011612,
         "unit": "px"
