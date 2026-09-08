@@ -4,13 +4,28 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:tokens": "node build-tokens.js"
+    "build:tokens": "node build-tokens.js",
+    "prestorybook": "npm run build:tokens",
+    "storybook": "storybook dev -p 6006",
+    "prebuild-storybook": "npm run build:tokens",
+    "build-storybook": "storybook build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "style-dictionary": "^5.5.2"
+    "@storybook/react-vite": "^10.6.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "storybook": "^10.6.0",
+    "style-dictionary": "^5.5.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   }
 }

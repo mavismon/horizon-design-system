@@ -80,7 +80,8 @@
   },
   "color-status-error": {
     "$type": "color",
-    "$value": "{color-red-500}"
+    "$value": "{color-red-600}",
+    "$description": "WCAG AA fix: bumped red/500 → red/600 to match color-negative-default — text-inverse-on-fill was 3.84:1 (fail) at red/500, 5.02:1 (pass) at red/600."
   },
   "color-status-error-bg": {
     "$type": "color",
@@ -93,8 +94,8 @@
   },
   "color-primary-default": {
     "$type": "color",
-    "$value": "{color-blue-500}",
-    "$description": "Brand actions — primary buttons, links, focus states. Use light for tinted backgrounds, default for solid fills/icons, foreground for text on light or transparent background."
+    "$value": "{color-blue-600}",
+    "$description": "Brand actions — primary buttons, links, focus states. Use light for tinted backgrounds, default for solid fills/icons, foreground for text on light or transparent background. WCAG AA fix: bumped blue/500 → blue/600 — text-inverse-on-fill was 4.16:1 (fail) at blue/500, 5.68:1 (pass) at blue/600."
   },
   "color-primary-foreground": {
     "$type": "color",
@@ -108,8 +109,8 @@
   },
   "color-negative-default": {
     "$type": "color",
-    "$value": "{color-red-500}",
-    "$description": "Errors, destructive actions, critical validation states."
+    "$value": "{color-red-600}",
+    "$description": "Errors, destructive actions, critical validation states. WCAG AA fix: bumped red/500 → red/600 — as foreground-on-white was 4.01:1 (fail) at red/500, 5.25:1 (pass) at red/600."
   },
   "color-negative-foreground": {
     "$type": "color",
@@ -182,13 +183,13 @@
   },
   "color-primary-hover": {
     "$type": "color",
-    "$value": "{color-blue-600}",
-    "$description": "Hover state for primary interactive fills — one step darker than /default."
+    "$value": "{color-blue-700}",
+    "$description": "Hover state for primary interactive fills — one step darker than /default. Bumped blue/600 → blue/700 to stay one step darker after the AA fix moved /default from blue/500 to blue/600."
   },
   "color-negative-hover": {
     "$type": "color",
-    "$value": "{color-red-600}",
-    "$description": "Hover state for negative interactive fills — one step darker than /default."
+    "$value": "{color-red-700}",
+    "$description": "Hover state for negative interactive fills — one step darker than /default. Bumped red/600 → red/700 to stay one step darker after the AA fix moved /default from red/500 to red/600."
   },
   "color-positive-hover": {
     "$type": "color",
