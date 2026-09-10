@@ -3,14 +3,14 @@ import { cn } from "../../lib/utils";
 import starIcon from "../../assets/icons/star.svg";
 import styles from "./Button.module.css";
 
-export type ButtonState = "default" | "hover" | "error" | "outline" | "outline-error";
+export type ButtonState = "default" | "hover" | "error" | "outline" | "outline error";
 
 const STATE_CLASS: Record<ButtonState, string> = {
   default: styles.default,
   hover: styles.hover,
   error: styles.error,
   outline: styles.outline,
-  "outline-error": styles.outlineError,
+  "outline error": styles.outlineError,
 };
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
@@ -18,7 +18,7 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   state?: ButtonState;
   startIcon?: boolean;
   endIcon?: boolean;
-  icon?: ReactNode;
+  swapIcon?: ReactNode;
 }
 
 export function Button({
@@ -26,12 +26,12 @@ export function Button({
   state = "default",
   startIcon = true,
   endIcon = true,
-  icon,
+  swapIcon,
   className,
   ...rest
 }: ButtonProps) {
   const renderIcon = () =>
-    icon ?? <img src={starIcon} alt="" className={styles.icon} />;
+    swapIcon ?? <img src={starIcon} alt="" className={styles.icon} />;
 
   return (
     <button type="button" className={cn(styles.button, STATE_CLASS[state], className)} {...rest}>

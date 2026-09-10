@@ -1,3 +1,4 @@
+// Figma: https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=19-31&m=dev
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button } from "./Button";
 
@@ -12,7 +13,7 @@ const meta: Meta<typeof Button> = {
   argTypes: {
     state: {
       control: "select",
-      options: ["default", "hover", "error", "outline", "outline-error"],
+      options: ["default", "hover", "error", "outline", "outline error"],
     },
   },
 };
@@ -37,7 +38,7 @@ export const Outline: Story = {
 };
 
 export const OutlineError: Story = {
-  args: { state: "outline-error" },
+  args: { state: "outline error" },
 };
 
 export const AllStates: Story = {
@@ -47,7 +48,7 @@ export const AllStates: Story = {
       <Button {...args} state="hover" />
       <Button {...args} state="error" />
       <Button {...args} state="outline" />
-      <Button {...args} state="outline-error" />
+      <Button {...args} state="outline error" />
     </div>
   ),
 };
