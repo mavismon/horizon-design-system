@@ -90,7 +90,7 @@ Keep the section in place with a notice naming exactly what's missing, for examp
 
 ## Who does what
 
-`doc-generator` runs every step (see `doc-generator.md`). Fetching live pages is plain HTTP, so it does step 7 and writes `Astro Link` (step 8) itself. Opening pages in light and dark (step 5) needs a browser; when it can't, it says so and the orchestrating session opens them.
+`doc-generator` generates, builds, checks links and fetches the live pages (steps 1–4 and 7). `devops` pushes the `astro` branch (step 6); neither changes the other's part. The orchestrating session opens pages in light and dark (step 5), and, after opening each live component page and seeing it render, writes its `Astro Link` (step 8), which is devops's column.
 
 ## Known gaps today
 
