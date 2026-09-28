@@ -1,5 +1,5 @@
 // Tests the built package (dist/), which is what consumers install.
-// `npm test` runs build:lib first, so dist is always current.
+// `npm test` runs build:package first, so dist is complete and current.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -21,6 +21,14 @@ const STATES = {
   outline: "hz-button--outline",
   "outline error": "hz-button--outline-error",
 };
+
+test("dist ships both stylesheets, with component styles and tokens", () => {
+  const styles = readFileSync(new URL("../dist/styles.css", import.meta.url), "utf8");
+  const tokens = readFileSync(new URL("../dist/tokens.css", import.meta.url), "utf8");
+  assert.match(styles, /\.hz-button\s*\{/);
+  assert.match(tokens, /--color-primary-default:/);
+  assert.match(tokens, /\[data-theme="dark"\]/);
+});
 
 test("ESM and CommonJS builds both export Button", () => {
   assert.equal(typeof esm.Button, "function");
