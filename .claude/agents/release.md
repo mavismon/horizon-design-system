@@ -34,7 +34,7 @@ A release is **three things**, and it isn't done until all three are:
 
 ### Preflight
 
-Halt and report if any of these fails:
+Read `decisions.md` first. A check that fails passes only if a ruling there covers that exact finding; quote the ruling in the report, and never stretch it past its "Not ruled" line. Halt and report if any of these fails:
 
 - [ ] Airtable is connected, and the base name matches the one in `.claude/registry.local.json`.
 - [ ] The working tree is clean, on `main`, level with `origin/main`.
