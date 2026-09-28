@@ -28,7 +28,7 @@ Which tools each agent in the component-build crew can use, gathered in one plac
 | list_records_for_table | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
 | analyze_table |  |  |  |  |  | ✓ |  |
 | create_records_for_table | ✓ | ✓ |  |  |  |  |  |
-| update_records_for_table | ✓ |  | ✓ | ✓ | ✓ |  |  |
+| update_records_for_table | ✓ |  | ✓ |  | ✓ |  |  |
 | **Browser pane** | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 
 Full tool names: Figma tools are `mcp__figma__<name>`; Airtable tools are `mcp__8c46864c-e3e7-4f12-a12e-6574df27a9e5__<name>`.
@@ -48,16 +48,16 @@ Tests a built component against its Figma node; validates token changes.
 - No Edit/Write: read-only on code by design, so it hands fixes to engineer. It can create `Staging Testing` rows but has no update tool.
 
 ### devops
-Merges and deploys what qa passed to production Storybook. The docs site is doc-generator's.
+Merges and deploys what qa passed to production Storybook; pushes the docs site doc-generator staged. Owns `Astro Link`, which the orchestrating session writes after opening the live page.
 - **Tools:** Read, Bash, Grep, Glob · Airtable: list_tables_for_base, get_table_schema, list_records_for_table, update_records_for_table
 - **Skills it follows:** `registry`, `security-check`
 - No Edit/Write and no Figma: it builds, fixes and tests nothing.
 
 ### doc-generator
-Writes intent files (Job A); builds, deploys and verifies the docs site, then writes `Astro Link` (Job B).
-- **Tools:** Read, Write, Edit, Bash, Grep, Glob · Figma: get_design_context, get_metadata, get_screenshot, get_variable_defs · Airtable: list_tables_for_base, get_table_schema, list_records_for_table, update_records_for_table
+Writes intent files (Job A); builds, stages and verifies the docs site (Job B). devops pushes it.
+- **Tools:** Read, Write, Edit, Bash, Grep, Glob · Figma: get_design_context, get_metadata, get_screenshot, get_variable_defs · Airtable: list_tables_for_base, get_table_schema, list_records_for_table
 - **Skills it follows:** `component-intent`, `astro-page`, `registry`
-- Writes `Astro Link` and nothing else on the board.
+- Writes nothing on the board.
 
 ### release
 Reviews, packages and publishes a version; hands the docs go-live to doc-generator.
@@ -78,7 +78,7 @@ Runs `node build-tokens.js` and reports the raw output.
 
 ## Docs site (Astro Starlight)
 
-Where component releases publish their reference pages. doc-generator builds, deploys and verifies it; see `doc-generator.md`.
+Where component releases publish their reference pages. doc-generator builds and stages it, devops pushes it; see `doc-generator.md` and `devops.md`.
 
 | | |
 |---|---|
@@ -93,5 +93,5 @@ Where component releases publish their reference pages. doc-generator builds, de
 
 ## Limits that apply to everyone
 
-- **No browser.** Every agent runs as a spawned subagent, and the agent files record that Browser pane tools were tested and are unavailable to them. Anything that needs a page opened, such as writing a `Staging Storybook` or `Production Storybook`, belongs to the orchestrating session. `Astro Link` is the exception: doc-generator verifies it by fetching the live page, which needs no browser.
+- **No browser.** Every agent runs as a spawned subagent, and the agent files record that Browser pane tools were tested and are unavailable to them. Anything that needs a page opened, such as writing a `Staging Storybook` or `Production Storybook`, belongs to the orchestrating session. That includes `Astro Link`, devops's column.
 - **Bash is broad.** Every agent has Bash, which can do more than the other tools in its list suggest (including writing files). The limits on what each agent may do come from its agent file and the `registry` skill's owner table, not only from the tool list.
