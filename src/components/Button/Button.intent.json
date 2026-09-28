@@ -36,6 +36,8 @@
   "placement": [],
   "pairs_with": [],
   "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
     "--color-border-focus",
     "--color-interactive-on-primary",
     "--color-negative-default",
