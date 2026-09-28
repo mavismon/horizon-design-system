@@ -1,0 +1,96 @@
+{
+  "readAt": "2026-09-28",
+  "source": "Figma MCP reads (get_metadata, get_design_context, get_variable_defs, get_screenshot) of the Core Component file.",
+  "file": {
+    "key": "dIHHqSq8c75n4olME0s9JS",
+    "name": "Core-Component",
+    "url": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component"
+  },
+  "components": {
+    "Button": {
+      "page": { "id": "6:5", "name": "Button" },
+      "node": { "id": "19:31", "name": "button" },
+      "matrixFrame": { "id": "49:47", "name": "❖ button" },
+      "figlog": {
+        "node": "58:1672",
+        "status": "BETA",
+        "entries": [
+          { "date": "2026-09-18", "author": "Hsu Yee Mon", "change": "Documented existing button components" }
+        ]
+      },
+      "usage": {
+        "node": "51:1158",
+        "use_when_heading": "Use a Button",
+        "use_when": [
+          "To trigger a primary action, such as submitting a form or confirming a choice.",
+          "When the action is a single, clear next step the user should take.",
+          "For calls-to-action that need visual emphasis — use the filled/primary style.",
+          "For secondary or less prominent actions — use the outline style instead of a second filled button.",
+          "To open a modal, drawer, or another view, when the action is not a navigation link.",
+          "For destructive actions (e.g. delete, remove), paired with the error/danger state.",
+          "Inside forms, toolbars, cards, and dialogs — wherever a discrete, tappable action is needed."
+        ],
+        "dont_use_when_heading": "Do not use a button",
+        "dont_use_when": [
+          "For navigation between pages or views — use a Link component instead.",
+          "When more than one primary action competes for attention on the same screen — keep only one primary button per view.",
+          "As a label or static status indicator — use a Badge/Lozenge component instead.",
+          "For a toggleable on/off state — use a Toggle or Checkbox component instead."
+        ],
+        "best_practice": [
+          "Use clear, action-oriented labels (e.g. \"Save changes\", not \"OK\").",
+          "Keep a single primary (filled) button per screen or section; make all other actions secondary/outline.",
+          "Always design a hover and error/disabled state so users get feedback on interaction.",
+          "Don't stack more than two buttons side by side without a clear visual hierarchy.",
+          "Keep button labels to 1–3 words; avoid full sentences.",
+          "Reserve the error/outline-error state for destructive or blocking actions only.",
+          "Keep a minimum 40px tap target height for touch interfaces."
+        ]
+      },
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "state",
+            "values": [
+              { "value": "default", "node": "19:30" },
+              { "value": "hover", "node": "19:32" },
+              { "value": "error", "node": "19:38" },
+              { "value": "outline", "node": "19:43" },
+              { "value": "outline error", "node": "20:2" }
+            ]
+          },
+          { "name": "startIcon", "values": [{ "value": "true" }, { "value": "false" }] },
+          { "name": "endIcon", "values": [{ "value": "true" }, { "value": "false" }] }
+        ],
+        "cells": 20,
+        "note": "The documentation frame lays out state (rows) against StartIcon: True / False (columns), once with EndIcon: True and once with EndIcon: False."
+      },
+      "themes": {
+        "shown": ["light"],
+        "note": "The Button page renders every cell in one theme. There is no dark-mode frame on the page."
+      },
+      "boundVariables": {
+        "--color-text-inverse": "#f9fafb",
+        "--fontSize-xs": "10",
+        "--fontWeight-regular": "Regular",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-xs": "16",
+        "--radius-sm": "6",
+        "--color-primary-default": "#3b71f2",
+        "--color-interactive-on-primary": "#f9fafb",
+        "--color-primary-hover": "#2b5ad6",
+        "--color-status-error": "#ea3d3d",
+        "--color-text-primary": "#161925",
+        "--color-neutral-default": "#8a909c",
+        "--color-negative-default": "#ea3d3d"
+      },
+      "unboundValues": [
+        { "layer": "button (every state)", "property": "gap", "value": "10px", "css": { "selector": ".hz-button", "property": "gap" } },
+        { "layer": "button (every state)", "property": "padding", "value": "10px", "css": { "selector": ".hz-button", "property": "padding" } },
+        { "layer": "button (every state)", "property": "width", "value": "80px", "css": { "selector": ".hz-button", "property": "width" } },
+        { "layer": "icon/star (23:7)", "property": "width and height", "value": "12px", "css": { "selector": ".hz-button__icon", "property": "width" } },
+        { "layer": "state=outline, state=outline error", "property": "border width", "value": "1px", "css": { "selector": ".hz-button--outline", "property": "border" } }
+      ]
+    }
+  }
+}

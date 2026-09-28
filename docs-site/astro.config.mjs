@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightLinksValidator from 'starlight-links-validator';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,17 +10,65 @@ export default defineConfig({
 		starlight({
 			title: 'Horizon Design System',
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/mavismon/horizon-design-system' }],
+			customCss: ['@fontsource-variable/inter', './src/styles/horizon-tokens.css', './src/styles/theme.css'],
+			// Fails `astro build` on any broken internal link.
+			plugins: [starlightLinksValidator({ errorOnLocalLinks: true, errorOnInvalidHashes: true })],
+			// Every entry is a slug, never autogenerate, so a missing page fails the build.
 			sidebar: [
 				{
-					label: 'Guides',
+					label: 'Get Started',
 					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
+						{ label: 'Changelog', slug: 'get-started/changelog' },
+						{ label: 'Roadmap', slug: 'get-started/roadmap' },
+						{ label: 'News', slug: 'get-started/news' },
+						{ label: 'Versioning', slug: 'get-started/versioning' },
+						{ label: 'Upgrading', slug: 'get-started/upgrading' },
 					],
 				},
 				{
-					label: 'Reference',
-					items: [{ autogenerate: { directory: 'reference' } }],
+					label: 'Designing',
+					items: [{ label: 'Introduction', slug: 'designing/introduction' }],
+				},
+				{
+					label: 'Developing',
+					items: [
+						{ label: 'Introduction', slug: 'developing/introduction' },
+						{ label: 'React', slug: 'developing/react' },
+						{ label: 'React Router', slug: 'developing/react-router' },
+					],
+				},
+				{
+					label: 'Skills',
+					items: [{ label: 'Knowledge skill', slug: 'skills/knowledge-skill' }],
+				},
+				{
+					label: 'Core',
+					items: [
+						{
+							label: 'Components',
+							items: [
+								{ label: 'All components', slug: 'core/components/overview' },
+								// <generated:components>
+								{ label: 'Button', slug: 'core/components/button' },
+								// </generated:components>
+							],
+						},
+						{ label: 'Tokens', slug: 'core/tokens' },
+					],
+				},
+				{
+					label: 'Styling',
+					items: [{ label: 'Theming', slug: 'styling/theming' }],
+				},
+				{
+					label: 'Help',
+					items: [
+						{ label: 'FAQ', slug: 'help/faq' },
+						{ label: 'Report a bug', slug: 'help/bug-report' },
+						{ label: 'Request a feature', slug: 'help/feature-request' },
+						{ label: 'Contributing', slug: 'help/contributing' },
+						{ label: 'Embedding', slug: 'help/embedding' },
+					],
 				},
 			],
 		}),

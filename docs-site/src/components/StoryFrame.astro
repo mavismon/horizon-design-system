@@ -1,0 +1,16 @@
+---
+// Embeds one story from the production Storybook, with a link beneath it so a
+// blank frame costs a click rather than the content.
+interface Props {
+	src: string;
+	href: string;
+	title: string;
+	height?: number;
+}
+const { src, href, title, height = 320 } = Astro.props;
+---
+
+<figure class="hz-frame not-content">
+	<iframe src={src} title={title} loading="lazy" height={height}></iframe>
+	<figcaption class="hz-frame__link"><a href={href}>Open “{title}” in Storybook</a></figcaption>
+</figure>

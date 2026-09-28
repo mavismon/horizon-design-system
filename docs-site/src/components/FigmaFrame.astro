@@ -1,0 +1,15 @@
+---
+// Embeds a Figma node through embed.figma.com, with a link to the node beneath it.
+interface Props {
+	src: string;
+	href: string;
+	title: string;
+	height?: number;
+}
+const { src, href, title, height = 480 } = Astro.props;
+---
+
+<figure class="hz-frame not-content">
+	<iframe src={src} title={title} loading="lazy" height={height} allowfullscreen></iframe>
+	<figcaption class="hz-frame__link"><a href={href}>Open the node in Figma</a></figcaption>
+</figure>

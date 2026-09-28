@@ -1,0 +1,259 @@
+{
+  "readAt": "2026-09-28",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out.",
+  "components": [
+    {
+      "name": "Avatar",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Breadcrumbs",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Button",
+      "category": "ATOMS",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=19-31&m=dev",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/f569313d69d444f2733df0f7464243798abdf806/reports/Button/release-review.md",
+      "astroLink": ""
+    },
+    {
+      "name": "ButtonGroup",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Calendar",
+      "category": "ORGANISMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Card",
+      "category": "ORGANISMS",
+      "design": "Done",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Checkbox",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Chip",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "DropDown",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "File",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Form",
+      "category": "ORGANISMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Header",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Image",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Link",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Logo",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Modal",
+      "category": "ORGANISMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "ProgressBar",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "RadioCard",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "SearchBar",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "SideBar",
+      "category": "ORGANISMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Stepper",
+      "category": "MOLECULES",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Table",
+      "category": "ORGANISMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    },
+    {
+      "name": "Toggle",
+      "category": "ATOMS",
+      "design": "",
+      "development": "To-do",
+      "figma": "",
+      "productionStorybook": "",
+      "releaseVerdict": "",
+      "releaseReview": "",
+      "astroLink": ""
+    }
+  ]
+}

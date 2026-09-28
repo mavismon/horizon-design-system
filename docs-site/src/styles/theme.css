@@ -1,0 +1,93 @@
+/*
+ * The docs site wears Horizon's own tokens. Every Starlight colour and font
+ * variable used here maps onto a Horizon semantic token from horizon-tokens.css.
+ * Those tokens already switch under [data-theme="dark"], which Starlight sets on
+ * <html>, so one mapping serves both themes. No hex values live in this file.
+ */
+:root,
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+	--sl-font: 'Inter Variable', var(--fontfamily-body), sans-serif;
+
+	--sl-color-white: var(--color-text-primary);
+	--sl-color-gray-1: var(--color-text-primary);
+	--sl-color-gray-2: var(--color-text-secondary);
+	--sl-color-gray-3: var(--color-neutral-default);
+	--sl-color-gray-4: var(--color-neutral-hover);
+	--sl-color-gray-5: var(--color-border-default);
+	--sl-color-gray-6: var(--color-bg-surface);
+	--sl-color-gray-7: var(--color-neutral-light);
+	--sl-color-black: var(--color-neutral-light);
+
+	--sl-color-accent-low: var(--color-primary-light);
+	--sl-color-accent: var(--color-primary-default);
+	--sl-color-accent-high: var(--color-text-link);
+
+	--sl-color-text: var(--color-text-secondary);
+	--sl-color-text-accent: var(--color-text-link);
+	--sl-color-text-invert: var(--color-text-inverse);
+	--sl-color-bg: var(--color-neutral-light);
+	--sl-color-bg-nav: var(--color-bg-surface);
+	--sl-color-bg-sidebar: var(--color-bg-surface);
+	--sl-color-bg-inline-code: var(--color-bg-surface);
+	--sl-color-bg-accent: var(--color-primary-default);
+	--sl-color-hairline-light: var(--color-border-default);
+	--sl-color-hairline: var(--color-border-subtle);
+	--sl-color-hairline-shade: var(--color-border-strong);
+	--sl-color-backdrop-overlay: var(--color-bg-overlay);
+
+	--sl-color-orange-low: var(--color-warning-light);
+	--sl-color-orange: var(--color-warning-default);
+	--sl-color-orange-high: var(--color-warning-foreground);
+	--sl-color-green-low: var(--color-positive-light);
+	--sl-color-green: var(--color-positive-default);
+	--sl-color-green-high: var(--color-positive-foreground);
+	--sl-color-blue-low: var(--color-primary-light);
+	--sl-color-blue: var(--color-primary-default);
+	--sl-color-blue-high: var(--color-primary-foreground);
+	--sl-color-red-low: var(--color-negative-light);
+	--sl-color-red: var(--color-negative-default);
+	--sl-color-red-high: var(--color-negative-foreground);
+}
+
+/* Component page header strip. */
+.hz-page-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--spacing-sm) var(--spacing-lg);
+	padding: var(--spacing-md) var(--spacing-lg);
+	border: var(--border-width-sm) solid var(--color-border-default);
+	border-radius: var(--radius-md);
+	background: var(--color-bg-surface);
+}
+.hz-page-header__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--spacing-lg);
+	margin-inline-start: auto;
+}
+
+/* A section kept in place whose source is missing. */
+.sl-markdown-content .hz-missing {
+	padding: var(--spacing-sm) var(--spacing-md);
+	border-inline-start: var(--border-width-md) solid var(--color-warning-default);
+	background: var(--color-warning-light);
+	color: var(--color-warning-foreground);
+	border-radius: var(--radius-sm);
+}
+
+/* Storybook and Figma frames. */
+.hz-frame {
+	margin-block: var(--spacing-lg);
+}
+.hz-frame iframe {
+	display: block;
+	width: 100%;
+	border: var(--border-width-sm) solid var(--color-border-default);
+	border-radius: var(--radius-md);
+	background: var(--color-neutral-light);
+}
+.hz-frame__link {
+	font-size: var(--fontsize-xl);
+}
