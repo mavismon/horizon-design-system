@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 
 // https://astro.build/config
 export default defineConfig({
+	site: 'https://horizon-docs-zeta.vercel.app',
 	integrations: [
 		starlight({
 			title: 'Horizon Design System',
