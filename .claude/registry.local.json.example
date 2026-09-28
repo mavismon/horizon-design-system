@@ -1,0 +1,18 @@
+{
+  "airtable": {
+    "baseId": "appXXXXXXXXXXXXXX",
+    "baseUrl": "https://airtable.com/appXXXXXXXXXXXXXX",
+    "tables": {
+      "components": { "id": "tblXXXXXXXXXXXXXX", "name": "Components" },
+      "stagingTesting": { "id": "tblXXXXXXXXXXXXXX", "name": "Staging Testing" },
+      "githubCommits": { "id": "tblXXXXXXXXXXXXXX", "name": "GitHub Commits" },
+      "dsFeedback": { "id": "tblXXXXXXXXXXXXXX", "name": "DS Feedback" },
+      "oneOffComponents": { "id": "tblXXXXXXXXXXXXXX", "name": "One-Off Components" }
+    },
+    "fields": {
+      "components": { "...": "see list_tables_for_base / get_table_schema for real field IDs" },
+      "stagingTesting": { "...": "see list_tables_for_base / get_table_schema for real field IDs" },
+      "githubCommits": { "...": "see list_tables_for_base / get_table_schema for real field IDs" }
+    }
+  }
+}

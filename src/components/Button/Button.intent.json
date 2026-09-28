@@ -1,0 +1,75 @@
+{
+  "use_when": [
+    "To trigger a primary action, such as submitting a form or confirming a choice.",
+    "When the action is a single, clear next step the user should take.",
+    "For calls-to-action that need visual emphasis — use the filled/primary style.",
+    "For secondary or less prominent actions — use the outline style instead of a second filled button.",
+    "To open a modal, drawer, or another view, when the action is not a navigation link.",
+    "For destructive actions (e.g. delete, remove), paired with the error/danger state.",
+    "Inside forms, toolbars, cards, and dialogs — wherever a discrete, tappable action is needed."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For navigation between pages or views — use a Link component instead.",
+      "instead": "Link"
+    },
+    {
+      "when": "When more than one primary action competes for attention on the same screen — keep only one primary button per view.",
+      "instead": ""
+    },
+    {
+      "when": "As a label or static status indicator — use a Badge/Lozenge component instead.",
+      "instead": "Badge/Lozenge"
+    },
+    {
+      "when": "For a toggleable on/off state — use a Toggle or Checkbox component instead.",
+      "instead": "Toggle or Checkbox"
+    }
+  ],
+  "variant_intent": {
+    "default": "",
+    "hover": "",
+    "error": "For destructive actions (e.g. delete, remove), paired with the error/danger state. Reserve the error/outline-error state for destructive or blocking actions only.",
+    "outline": "For secondary or less prominent actions — use the outline style instead of a second filled button.",
+    "outline error": "Reserve the error/outline-error state for destructive or blocking actions only."
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--color-border-focus",
+    "--color-interactive-on-primary",
+    "--color-negative-default",
+    "--color-neutral-default",
+    "--color-primary-default",
+    "--color-primary-hover",
+    "--color-status-error",
+    "--color-text-inverse",
+    "--color-text-primary",
+    "--fontfamily-body",
+    "--fontsize-xs",
+    "--lineheight-xs",
+    "--radius-sm"
+  ],
+  "a11y": [
+    {
+      "fact": "Renders a native <button> element with type=\"button\".",
+      "source": "src/components/Button/Button.tsx:36"
+    },
+    {
+      "fact": "Accepts native button attributes (including aria-* and disabled) and spreads them onto the <button>.",
+      "source": "src/components/Button/Button.tsx:36"
+    },
+    {
+      "fact": "The default icon is decorative: rendered as <img> with alt=\"\".",
+      "source": "src/components/Button/Button.tsx:33"
+    },
+    {
+      "fact": "The visible label is rendered as text content inside the button, giving it its accessible name.",
+      "source": "src/components/Button/Button.tsx:38"
+    },
+    {
+      "fact": "Keyboard focus shows a 2px solid outline with a 2px offset on :focus-visible.",
+      "source": "src/components/Button/Button.css:17"
+    }
+  ]
+}

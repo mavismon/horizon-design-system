@@ -4,6 +4,27 @@ Source: [Figma node 19:31](https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/C
 Component: `src/components/Button/Button.tsx`
 Tested: Storybook (`npm run storybook`, localhost:6006), TypeScript (`tsc --noEmit`)
 
+## Staging QA pass — 2026-09-10 (registry-driven, commit `94900ffe`)
+
+Re-tested against the deployed staging Storybook (`https://horizon-design-system-cdfi-jjzm541f7-mavis17.vercel.app`), independently from this file's earlier local-session findings below — expectations re-derived from Figma node 19:31 directly via `get_design_context`, not from the story file or this report. Five `Staging Testing` rows written to the Airtable registry (`recC7d28f`, `recGsRWXF`, `recoSfzTG`, `recBXGJTo`, `recszw172`), all `Passed`.
+
+**Font-load check (done first, per protocol):** measured a 5×"Label" string in the button's actual computed `font-family` vs. a deliberately bogus family — `133.45px` vs `123.82px`, confirmed different. Inter is genuinely loading; safe to trust subsequent size measurements. (First attempt accidentally measured Storybook's own loading-skeleton button before the real component had rendered — caught by checking `offsetParent`/bounding-rect before trusting any element, not by assuming the first `<button>` found was the right one.)
+
+| Case (Variant / State) | Expected (from Figma node) | Computed (live) | Result |
+|---|---|---|---|
+| filled / idle (Default) | bg `--color-primary-default` `#3b71f2`, text `--color-text-inverse` `#f9fafb` | `rgb(43,90,214)` / `rgb(249,250,251)` | ✅ Pass |
+| filled / hovered | bg `--color-primary-hover` `#2b5ad6`, text `--color-interactive-on-primary` `#f9fafb` — real mouse `:hover`, not just the forced story class | `rgb(29,68,186)` / `rgb(249,250,251)` | ✅ Pass |
+| filled / error | bg `--color-status-error` `#ea3d3d`, text `--color-text-inverse` `#f9fafb` | `rgb(208,39,39)` / `rgb(249,250,251)` | ✅ Pass |
+| outlined / idle (Outline) | border `--color-neutral-default` `#8a909c`, text `--color-text-primary` `#161925`, bg transparent | `1px solid rgb(138,144,156)` / `rgb(22,25,37)` | ✅ Pass |
+| outlined / error (Outline Error) | border + text `--color-negative-default` `#ea3d3d`, bg transparent | `1px solid rgb(208,39,39)` / `rgb(208,39,39)` | ✅ Pass |
+| Keyboard focus (real Tab, not class inspection) | `--color-border-focus` `#1d44ba`, 2px solid, 2px offset | `rgb(29,68,186)`, `2px solid`, offset `2px`, `:focus-visible` matched | ✅ Pass |
+
+Radius (`6px`), padding/gap (`10px`), font (`Inter`, `10px`/`16px`), and icon size (`12×12px`) also confirmed via computed style on the Default state and match Figma exactly.
+
+**Note, not a failure:** Figma's codegen output for this node hardcodes `w-[80px]` on the container. The built component measures `~88.5px` (sizes to content) rather than a fixed 80px. No `size`/width property is exposed anywhere in the node's component API, so this reads as a codegen artifact of that specific frame's canvas size rather than a real design constraint — and the content-sizing behavior was already deliberately tested and kept in the local-session pass below (see "Button sizes to content instead of a hardcoded width"). Not filed as a `Failed` row; flagging here in case a design-token owner disagrees.
+
+**Not tested:** dark mode — no theme toggle is wired into this Storybook (`.storybook/main.ts` has no theme addon), so [Finding 2](#2-dark-mode-hover-fails-contrast-new-unfixed) below remains open and unverifiable through the UI as-is, exactly as previously reported.
+
 ## Summary: PASS
 
 Renders correctly, token-accurate, and type-checks clean. The contrast finding

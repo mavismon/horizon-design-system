@@ -1,4 +1,6 @@
 node_modules/
-build/
+/build/
 storybook-static/
 .DS_Store
+.claude/registry.local.json
+/dist/
