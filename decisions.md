@@ -12,6 +12,22 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 
 **Not ruled.** Any other token id. More than one token in the list. This token after 2026-12-26. Whether the token's permissions are enough for a given publish. Each of those needs the user to check again.
 
+## 2026-09-28 · Button values with no token
+
+**Finding.** Release review gate 2 (Tokens) failed Button for literal px values. After removing every `var()` fallback and moving borders and the focus outline width to `--border-width-*`, four Figma values remain that no token matches: the spacing scale has 8px and 12px but no 10px, there are no size tokens, and no spacing token is 2px.
+
+**Ruling.** These literals in `src/components/Button/Button.css` are accepted, because they're what the Figma node specifies (node 19:31), until the designer adds matching tokens:
+
+| Value | Property | Lines |
+|---|---|---|
+| `10px` | `gap`, `padding` on `.hz-button` | 5, 6 |
+| `12px` | `width`, `height` on `.hz-button__icon` | 25, 26 |
+| `2px` | `outline-offset` on `.hz-button:focus-visible` | 19 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Button.css`. Quote this ruling in the report. When a token with the same value appears (for example a 10px spacing token), the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token.
+
 ## 2026-09-28 · Publishing keeps 2FA
 
 **Finding.** The Horizon token has "Bypass two-factor authentication" turned off, and the account has 2FA enabled, so `npm publish` asks for a one-time code. An agent can't type one.

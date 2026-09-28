@@ -5,17 +5,17 @@
   gap: 10px;
   padding: 10px;
   border: none;
-  border-radius: var(--radius-sm, 6px);
-  font-family: var(--fontfamily-body, "Inter"), sans-serif;
-  font-size: var(--fontsize-xs, 10px);
-  line-height: var(--lineheight-xs, 16px);
+  border-radius: var(--radius-sm);
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-xs);
+  line-height: var(--lineheight-xs);
   font-weight: 400;
   white-space: nowrap;
   cursor: pointer;
 }
 
 .hz-button:focus-visible {
-  outline: 2px solid var(--color-border-focus, #1d44ba);
+  outline: var(--border-width-md) solid var(--color-border-focus);
   outline-offset: 2px;
 }
 
@@ -27,29 +27,29 @@
 }
 
 .hz-button--default {
-  background: var(--color-primary-default, #3b71f2);
-  color: var(--color-text-inverse, #f9fafb);
+  background: var(--color-primary-default);
+  color: var(--color-text-inverse);
 }
 
 .hz-button--default:hover,
 .hz-button--hover {
-  background: var(--color-primary-hover, #2b5ad6);
-  color: var(--color-interactive-on-primary, #f9fafb);
+  background: var(--color-primary-hover);
+  color: var(--color-interactive-on-primary);
 }
 
 .hz-button--error {
-  background: var(--color-status-error, #ea3d3d);
-  color: var(--color-text-inverse, #f9fafb);
+  background: var(--color-status-error);
+  color: var(--color-text-inverse);
 }
 
 .hz-button--outline {
   background: transparent;
-  border: 1px solid var(--color-neutral-default, #8a909c);
-  color: var(--color-text-primary, #161925);
+  border: var(--border-width-sm) solid var(--color-neutral-default);
+  color: var(--color-text-primary);
 }
 
 .hz-button--outline-error {
   background: transparent;
-  border: 1px solid var(--color-negative-default, #ea3d3d);
-  color: var(--color-negative-default, #ea3d3d);
+  border: var(--border-width-sm) solid var(--color-negative-default);
+  color: var(--color-negative-default);
 }
