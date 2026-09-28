@@ -1,4 +1,4 @@
-.button {
+.hz-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -14,41 +14,41 @@
   cursor: pointer;
 }
 
-.button:focus-visible {
+.hz-button:focus-visible {
   outline: 2px solid var(--color-border-focus, #1d44ba);
   outline-offset: 2px;
 }
 
-.icon {
+.hz-button__icon {
   display: block;
   flex-shrink: 0;
   width: 12px;
   height: 12px;
 }
 
-.default {
+.hz-button--default {
   background: var(--color-primary-default, #3b71f2);
   color: var(--color-text-inverse, #f9fafb);
 }
 
-.default:hover,
-.hover {
+.hz-button--default:hover,
+.hz-button--hover {
   background: var(--color-primary-hover, #2b5ad6);
   color: var(--color-interactive-on-primary, #f9fafb);
 }
 
-.error {
+.hz-button--error {
   background: var(--color-status-error, #ea3d3d);
   color: var(--color-text-inverse, #f9fafb);
 }
 
-.outline {
+.hz-button--outline {
   background: transparent;
   border: 1px solid var(--color-neutral-default, #8a909c);
   color: var(--color-text-primary, #161925);
 }
 
-.outlineError {
+.hz-button--outline-error {
   background: transparent;
   border: 1px solid var(--color-negative-default, #ea3d3d);
   color: var(--color-negative-default, #ea3d3d);

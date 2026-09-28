@@ -1,31 +1,62 @@
 {
-  "name": "horizon-design-system",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@layerbasesystemic/horizon-design-system",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./styles.css": "./dist/styles.css",
+    "./tokens.css": "./dist/tokens.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:tokens": "node build-tokens.js",
     "prestorybook": "npm run build:tokens",
     "storybook": "storybook dev -p 6006",
     "prebuild-storybook": "npm run build:tokens",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build:lib": "tsup",
+    "build:css": "node scripts/build-css.mjs",
+    "build:package": "npm run build:tokens && npm run build:lib && npm run build:css",
+    "prepublishOnly": "npm run build:package && npm test",
+    "release:publish": "node scripts/release-publish.mjs"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "peerDependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
   "devDependencies": {
     "@storybook/react-vite": "^10.6.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "storybook": "^10.6.0",
     "style-dictionary": "^5.5.2",
-    "typescript": "^7.0.2",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
     "vite": "^8.2.2"
-  },
-  "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
   }
 }

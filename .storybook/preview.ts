@@ -1,6 +1,7 @@
 import type { Preview } from "@storybook/react-vite";
 import "../build/css/tokens.css";
 import "../build/css/tokens-dark.css";
+import "../src/styles.css";
 
 const preview: Preview = {
   parameters: {

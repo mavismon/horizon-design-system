@@ -1,16 +1,15 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cn } from "../../lib/utils";
 import starIcon from "../../assets/icons/star.svg";
-import styles from "./Button.module.css";
 
 export type ButtonState = "default" | "hover" | "error" | "outline" | "outline error";
 
 const STATE_CLASS: Record<ButtonState, string> = {
-  default: styles.default,
-  hover: styles.hover,
-  error: styles.error,
-  outline: styles.outline,
-  "outline error": styles.outlineError,
+  default: "hz-button--default",
+  hover: "hz-button--hover",
+  error: "hz-button--error",
+  outline: "hz-button--outline",
+  "outline error": "hz-button--outline-error",
 };
 
 export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
@@ -31,10 +30,10 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const renderIcon = () =>
-    swapIcon ?? <img src={starIcon} alt="" className={styles.icon} />;
+    swapIcon ?? <img src={starIcon} alt="" className="hz-button__icon" />;
 
   return (
-    <button type="button" className={cn(styles.button, STATE_CLASS[state], className)} {...rest}>
+    <button type="button" className={cn("hz-button", STATE_CLASS[state], className)} {...rest}>
       {startIcon && renderIcon()}
       <span>{text}</span>
       {endIcon && renderIcon()}
