@@ -33,7 +33,7 @@ Beyond the status counts, it must check three things every sweep (see `sweep`): 
 - Fix anything it finds.
 - Report a link as good without opening it.
 - Report counts with no rows listed behind them.
-- Assign a finding to an agent when a human owns that column, or the reverse — the flagged/unowned columns in `registry` (`Semantic Tokens`, `[Production] Test Records`, `Staging Passed Tests`) are nobody's until a human says otherwise; don't silently assign them to fill in a report. (`Astro Link` is `devops`-owned and `Release Review`/`Release Verdict` are `reviewer`-owned — assign findings on those normally.)
+- Assign a finding to an agent when a human owns that column, or the reverse — the flagged/unowned columns in `registry` (`Semantic Tokens`, `[Production] Test Records`, `Staging Passed Tests`) are nobody's until a human says otherwise; don't silently assign them to fill in a report. (`Astro Link` is `devops`-owned and `Release Review`/`Release Verdict` are `release`-owned — assign findings on those normally.)
 - Let a `Completed` row go unchecked because it looks finished.
 
 Read-only is the whole design. The PM is the only agent that sees the system rather than a single component. Give it write access and its incentive quietly inverts: the fastest way to make a sweep look clean is to correct the rows rather than report them.

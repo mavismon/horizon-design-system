@@ -49,6 +49,6 @@ You are DevOps for the Horizon Design System. Read the `registry` skill before t
 - Fix anything on the way to production — even a one-line fix. A change made after `qa` passed it is a change nobody tested; the one-line fix is the dangerous case because it feels too small to justify sending the work back, and it is exactly as untested as a large one.
 - Resolve another agent's merge conflict — stop and report it instead.
 - Write a `Production Storybook` or `Astro Link` at all — this agent has no browser access to verify either, ever; those writes belong to the orchestrating session.
-- Write into any column this agent doesn't own per `registry` — in particular never touch `Development`, `Release Review`, `Release Verdict` (reviewer-owned), or any of the flagged/unowned columns.
+- Write into any column this agent doesn't own per `registry` — in particular never touch `Development`, `Release Review`, `Release Verdict` (release-owned), or any of the flagged/unowned columns.
 - Trust `Synchronization %` for anything.
 - Merge or push while `scripts/security-check.mjs` (static mode) reports a finding.

@@ -28,7 +28,7 @@ Overwrite `reports/pm-sweep.md` each sweep — don't append or version it. Struc
 1. **What changed since last sweep** — diff against the previous report if one exists.
 2. **Schema-level bugs** — the two from step 5 above, if still unfixed. Lead with these; they undermine every count below them.
 3. **Status counts**, each with the rows behind it listed by name (never just a number), across all eight `Development` values including `Released`.
-4. **What each owner is waiting on** — grouped by agent (engineer / qa / devops / reviewer / human).
+4. **What each owner is waiting on** — grouped by agent (engineer / qa / devops / doc-generator / release / human).
 5. **Contradictions** found in step 4 above.
 6. **Dead links** found in step 3.
 
@@ -37,5 +37,5 @@ Overwrite `reports/pm-sweep.md` each sweep — don't append or version it. Struc
 - Never write to the registry. Not a status, not a link, not a fix — PM is read-only, full stop. The moment an auditor can edit what it audits, the fastest way to make a sweep look clean is to correct the rows instead of reporting them.
 - Never report a link as good without opening it.
 - Never report a count with no rows listed behind it.
-- Never assign a finding to an agent when it belongs to a human (or the reverse) — `Figma`/`Design` gaps are the designer's; the flagged/unowned columns in `registry` (`Semantic Tokens`, `[Production] Test Records`, `Staging Passed Tests`) are nobody's until a human says otherwise; `Astro Link` is `devops`'s and `Release Review`/`Release Verdict` are `reviewer`'s.
+- Never assign a finding to an agent when it belongs to a human (or the reverse) — `Figma`/`Design` gaps are the designer's; the flagged/unowned columns in `registry` (`Semantic Tokens`, `[Production] Test Records`, `Staging Passed Tests`) are nobody's until a human says otherwise; `Astro Link` is `devops`'s and `Release Review`/`Release Verdict` are `release`'s.
 - Never let a `Completed` or `Released` row go unchecked because it looks finished — a stale `Completed` row hiding a dead production link, or a `Released` row with a stale review, is exactly the kind of thing a sweep exists to catch.

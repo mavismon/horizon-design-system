@@ -1,6 +1,6 @@
 ---
 name: registry
-description: The contract every crew agent (engineer, qa, devops, reviewer, pm) reads before it touches the Airtable registry. Defines every table, every column, its owner, the real Development formula (pulled from the live base, not inferred), and what nobody may write. Read this before any registry read or write.
+description: The contract every crew agent (engineer, qa, devops, doc-generator, release, pm) reads before it touches the Airtable registry. Defines every table, every column, its owner, the real Development formula (pulled from the live base, not inferred), and what nobody may write. Read this before any registry read or write.
 ---
 
 # Registry contract
@@ -13,7 +13,7 @@ Agents hand work to each other **through this registry, never through conversati
 
 ## The crew has five roles, not four
 
-The Notion "Build an Agent Crew" doc and the FigJam board describe four agents: engineer, qa, devops, pm. The live base's field descriptions name a fifth: **reviewer**, who owns `Release Review` and `Release Verdict` and gates a `Released` status beyond `Completed`. See "Table: Components" below for what it owns, and `.claude/agents/reviewer.md` for the agent file.
+The Notion "Build an Agent Crew" doc and the FigJam board describe four agents: engineer, qa, devops, pm. The live base's field descriptions name a fifth role, a reviewer who owns `Release Review` and `Release Verdict` and gates a `Released` status beyond `Completed`. That role belongs to the **release** agent (`.claude/agents/release.md`), which runs the `release-review` skill; there is no separate reviewer agent. See "Table: Components" below for what it owns.
 
 ## Table: Components (`tblej9RmBwH3kCR5N`)
 
@@ -41,8 +41,8 @@ One row per design-system component. The `Development` column is what tells each
 | [Production] Test Records | `fldH8S2iqZ9ip8XDi` | *(unowned — see Flagged)* | Plain single-line text field, not a link. Empty on every sampled row. |
 | Staging Passed Tests | `fldlUuOcmKdDULk5q` | *(unowned — see Flagged)* | Rollup on `[Staging] Test Records`, `referencedFieldIds` empty — it is not wired into `Synchronization %` despite its own description claiming it is. |
 | Semantic Tokens | `fldfd3WTLL293Q8aY` | *(unowned — see Flagged)* | Plain single-line text field. Empty on every sampled row. |
-| Release Review | `fldH6pgPqvGWVE4pU` | **reviewer** | URL of the committed release-review report, at the commit it reviewed — never a branch URL. Written together with `Release Verdict`, or not at all. Gates `Released`, not part of the staging→production ladder. |
-| Release Verdict | `fld2T74aO1z1bZJIJ` | **reviewer** | Single select: `Cleared`, `Blocked`. Empty means not reviewed. `Cleared` is not permission to publish — a human still bumps the version and tags the release. |
+| Release Review | `fldH6pgPqvGWVE4pU` | **release** | URL of the committed release-review report, at the commit it reviewed — never a branch URL. Written together with `Release Verdict`, or not at all. Gates `Released`, not part of the staging→production ladder. |
+| Release Verdict | `fld2T74aO1z1bZJIJ` | **release** | Single select: `Cleared`, `Blocked`. Empty means not reviewed. `Cleared` is not permission to publish — a human still bumps the version and tags the release. |
 | Last Modified | `fldS8MyhhJZW8RnKk` | *(Airtable system field)* | Not written by any agent. |
 
 ### Flagged — do not write to these until resolved
@@ -102,7 +102,7 @@ Fixing             → some row reads Failed AND some row reads "Fixed (To re-te
 ### Consequences worth knowing before they surprise you
 
 1. **A failure outranks everything below it, including `Released`.** A released component whose re-test fails reads `To be fixed`, not `Released`. That's correct — it's broken, and the fact that it's also published is what makes it urgent.
-2. **`Released` needs all three cells, not just the Astro link.** `Astro Link` says it's documented; `Release Review` + `Release Verdict = Cleared` say a reviewer actually checked it. Any one alone is not a release.
+2. **`Released` needs all three cells, not just the Astro link.** `Astro Link` says it's documented; `Release Review` + `Release Verdict = Cleared` say the release review actually checked it. Any one alone is not a release.
 3. **`Design` is entirely a human's column.** A blank `Development` means the design isn't signed off yet, and no agent nudges it along — there is no "Design in progress" status any agent reacts to.
 4. **`To be deployed` does not mean 100% synchronized** — see the bugs above. It means "no row currently reads Failed or pending re-test," which is what actually matters, but don't cross-check it against `Synchronization %` expecting agreement.
 
@@ -160,5 +160,5 @@ Owned by **engineer**.
 - Never write a link (`Staging Storybook`, `Production Storybook`, `Astro Link`, `Commit`, `Release Review`) before opening it and confirming it renders/resolves.
 - Never write `Fixed (To re-test)` on a `Staging Testing` row you did not just repair — that value is a specific claim, not a default.
 - Never invent a column, a status, or a mechanism that isn't in this document — if the work seems to need one, stop and say so instead of adding it to Airtable.
-- Never write into a column this document assigns to a different agent — including `Release Review`/`Release Verdict` (reviewer-only) and `Astro Link` (devops-only).
+- Never write into a column this document assigns to a different agent — including `Release Review`/`Release Verdict` (release-only) and `Astro Link` (devops-only).
 - Never treat `Synchronization %` as evidence of anything beyond "at least one test row exists" — see "Two real bugs."

@@ -6,28 +6,30 @@ Which tools each agent in the component-build crew can use, gathered in one plac
 
 ## At a glance
 
-| Tool | engineer | qa | devops | reviewer | pm | token-runner |
-|---|:-:|:-:|:-:|:-:|:-:|:-:|
-| **Files** | | | | | | |
-| Read | ✓ | ✓ | ✓ | ✓ | ✓ | |
-| Grep | ✓ | ✓ | ✓ | ✓ | ✓ | |
-| Glob | ✓ | ✓ | ✓ | ✓ | ✓ | |
-| Edit | ✓ | | | | | |
-| Write | ✓ | | | | ✓ | |
-| Bash | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Figma** (read only) | | | | | | |
-| get_design_context | ✓ | ✓ | | ✓ | | |
-| get_screenshot | ✓ | ✓ | | ✓ | | |
-| get_metadata | ✓ | ✓ | | ✓ | | |
-| get_variable_defs | ✓ | | | | | |
-| **Airtable registry** | | | | | | |
-| list_tables_for_base | ✓ | ✓ | ✓ | ✓ | ✓ | |
-| get_table_schema | ✓ | ✓ | ✓ | ✓ | ✓ | |
-| list_records_for_table | ✓ | ✓ | ✓ | ✓ | ✓ | |
-| analyze_table | | | | | ✓ | |
-| create_records_for_table | ✓ | ✓ | | | | |
-| update_records_for_table | ✓ | | ✓ | ✓ | | |
-| **Browser pane** | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| Tool | engineer | qa | devops | doc-generator | release | pm | token-runner |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **Files** | | | | | | | |
+| Read | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| Grep | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| Glob | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| Edit | ✓ |  |  | ✓ |  |  |  |
+| Write | ✓ |  |  | ✓ | ✓ | ✓ |  |
+| Bash | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Delegation** | | | | | | | |
+| Agent |  |  |  |  | ✓ |  |  |
+| **Figma** (read only) | | | | | | | |
+| get_design_context | ✓ | ✓ |  | ✓ | ✓ |  |  |
+| get_screenshot | ✓ | ✓ |  | ✓ | ✓ |  |  |
+| get_metadata | ✓ | ✓ |  | ✓ | ✓ |  |  |
+| get_variable_defs | ✓ |  |  | ✓ |  |  |  |
+| **Airtable registry** | | | | | | | |
+| list_tables_for_base | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| get_table_schema | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| list_records_for_table | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |  |
+| analyze_table |  |  |  |  |  | ✓ |  |
+| create_records_for_table | ✓ | ✓ |  |  |  |  |  |
+| update_records_for_table | ✓ |  | ✓ | ✓ | ✓ |  |  |
+| **Browser pane** | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
 
 Full tool names: Figma tools are `mcp__figma__<name>`; Airtable tools are `mcp__8c46864c-e3e7-4f12-a12e-6574df27a9e5__<name>`.
 
@@ -51,11 +53,17 @@ Merges and deploys what qa passed; publishes to the Astro reference site.
 - **Skills it follows:** `registry`, `security-check`
 - No Edit/Write and no Figma: it builds, fixes and tests nothing.
 
-### reviewer
-Gates a Completed component into Released.
-- **Tools:** Read, Bash, Grep, Glob · Figma: get_design_context, get_screenshot, get_metadata · Airtable: list_tables_for_base, get_table_schema, list_records_for_table, update_records_for_table
+### doc-generator
+Writes intent files (Job A); builds, deploys and verifies the docs site, then writes `Astro Link` (Job B).
+- **Tools:** Read, Write, Edit, Bash, Grep, Glob · Figma: get_design_context, get_metadata, get_screenshot, get_variable_defs · Airtable: list_tables_for_base, get_table_schema, list_records_for_table, update_records_for_table
+- **Skills it follows:** `component-intent`, `astro-page`, `registry`
+- Writes `Astro Link` and nothing else on the board.
+
+### release
+Reviews, packages and publishes a version; hands the docs go-live to doc-generator.
+- **Tools:** Read, Write, Bash, Grep, Glob, Agent · Figma: get_design_context, get_metadata, get_screenshot · Airtable: list_tables_for_base, get_table_schema, list_records_for_table, update_records_for_table
 - **Skills it follows:** `release-review`, `registry`
-- Its agent file says it writes a committed review report, but it has no Write or Edit tool, so any file it writes has to go through Bash.
+- The only agent with `Agent`, which it uses to delegate to doc-generator. Its agent file forbids writing to `src/`. Writes `Release Review` and `Release Verdict`, always together. Replaces the retired reviewer agent.
 
 ### pm
 Audits the whole registry and reports discrepancies.
