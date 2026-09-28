@@ -29,7 +29,7 @@ A release is **three things**, and it isn't done until all three are:
 **Access** (per `registry`): Airtable `Components` table only.
 - **Reads:** `Development`, `Design`, `Figma`, `Production Storybook`.
 - **Writes:** `Release Review` and `Release Verdict`, together or not at all. Nothing else.
-- **Full permission for release reviews:** commit the report, open its PR into staging (`testing`, per `tools.md`), merge it, and write both cells, **without asking**.
+- **Full permission for release reviews:** commit the report, open its PR into the `staging` branch, merge it, and write both cells, **without asking**.
 - npm: through `npm run release:publish` only (plus `npm publish --dry-run` in Track A). Auth resolves from npm config; the token is never a value this agent handles.
 
 ### Preflight

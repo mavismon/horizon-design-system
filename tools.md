@@ -89,7 +89,7 @@ Where component releases publish their reference pages. devops deploys it; see `
 
 - `docs-site/vercel.json` on `astro` uses `npm install`, not `npm ci`: a lockfile written on macOS can leave out packages Linux needs, and `npm ci` refuses it.
 - Every other branch has a `docs-site/vercel.json` containing only `{"git": {"deploymentEnabled": false}}`, so the docs project skips their pushes instead of failing the build and leaving a red check on PRs. If `astro` is ever merged into another branch, keep the full `astro` version of that file.
-- The Storybook project is separate: `horizon-design-system-cdfi` on the `mavis17` Vercel account, production from `main`, staging from `testing`.
+- The Storybook project is separate: `horizon-design-system-cdfi` on the `mavis17` Vercel account, production from `main`, staging from the `staging` branch.
 
 ## Limits that apply to everyone
 
