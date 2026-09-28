@@ -48,7 +48,7 @@ Tests a built component against its Figma node; validates token changes.
 - No Edit/Write: read-only on code by design, so it hands fixes to engineer. It can create `Staging Testing` rows but has no update tool.
 
 ### devops
-Merges and deploys what qa passed; publishes to the Astro reference site.
+Merges and deploys what qa passed to production Storybook. The docs site is doc-generator's.
 - **Tools:** Read, Bash, Grep, Glob · Airtable: list_tables_for_base, get_table_schema, list_records_for_table, update_records_for_table
 - **Skills it follows:** `registry`, `security-check`
 - No Edit/Write and no Figma: it builds, fixes and tests nothing.
@@ -78,7 +78,7 @@ Runs `node build-tokens.js` and reports the raw output.
 
 ## Docs site (Astro Starlight)
 
-Where component releases publish their reference pages. devops deploys it; see `devops.md`.
+Where component releases publish their reference pages. doc-generator builds, deploys and verifies it; see `doc-generator.md`.
 
 | | |
 |---|---|
@@ -93,5 +93,5 @@ Where component releases publish their reference pages. devops deploys it; see `
 
 ## Limits that apply to everyone
 
-- **No browser.** Every agent runs as a spawned subagent, and the agent files record that Browser pane tools were tested and are unavailable to them. Anything that needs a page opened, such as writing a `Staging Storybook`, `Production Storybook` or `Astro Link`, belongs to the orchestrating session.
+- **No browser.** Every agent runs as a spawned subagent, and the agent files record that Browser pane tools were tested and are unavailable to them. Anything that needs a page opened, such as writing a `Staging Storybook` or `Production Storybook`, belongs to the orchestrating session. `Astro Link` is the exception: doc-generator verifies it by fetching the live page, which needs no browser.
 - **Bash is broad.** Every agent has Bash, which can do more than the other tools in its list suggest (including writing files). The limits on what each agent may do come from its agent file and the `registry` skill's owner table, not only from the tool list.

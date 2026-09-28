@@ -11,15 +11,27 @@ The output is two `Components` fields, written together or not at all: `Release 
 
 ## The seven gates
 
-Every gate must pass for `Cleared`. Any failure is `Blocked`.
+Every gate must pass for `Cleared`. Any failure is `Blocked`, unless `decisions.md` has a ruling that covers exactly that finding (see "Rulings" below).
 
-1. **Intent written.** `src/components/[Name]/[Name].intent.json` exists at the reviewed commit.
-2. **Status Completed.** The component's `Components` row reads `Completed` in `Development`.
-3. **Tokens clean.** Every colour, size, spacing, radius and type value in the component's stylesheet is read through a `var(--…)` token. A literal value is allowed only as the fallback inside `var()`.
-4. **Public surface decided.** The component and its props type are exported from `src/index.ts`. A component that isn't exported there hasn't had its public surface decided.
-5. **Names final.** The component name, every prop name and every variant value match the Figma node exactly, including spelling, case and spaces.
-6. **States complete.** Every variant and state the Figma node publishes exists in the code and is rendered by at least one story.
-7. **Version meaning known.** `VERSIONING.md` exists and says what a change to a component means for the package version. It doesn't exist yet, so every review blocks here until someone writes it.
+| # | Gate | The question |
+| --- | --- | --- |
+| 1 | Done | Is it actually `Completed` on the board, deployed to production? |
+| 2 | Tokens | Does every value reference a token? Any raw hex or px? |
+| 3 | Surface | Is it exported from `src/index.ts`? Did you mean to? |
+| 4 | Names | Folder, symbol, CSS prefix, intent, board row: all the same word? |
+| 5 | States | Every state the product uses, with a story each? |
+| 6 | Intent | Complete? A `dont_use_when` with no alternative is a warning, never a block. |
+| 7 | Version | Do you understand what `0.1.0` commits you to? |
+
+How to answer each:
+
+1. **Done.** The row reads `Completed` in `Development`, and `Production Storybook` opens the component's stories.
+2. **Tokens.** Read every declaration in the component's stylesheet. List every literal hex or px value, with its line, including fallbacks inside `var()`. Any literal not covered by a ruling fails.
+3. **Surface.** The component and its props type are exported from `src/index.ts`, and nothing says it was meant to stay internal. An export nobody decided on is a finding.
+4. **Names.** The folder (`src/components/[Name]/`), the exported symbol, the CSS class prefix, the intent file name and the board row's name are all the same word, allowing only for case and the `hz-` namespace on classes.
+5. **States.** Every variant and state the Figma node publishes exists in the code and is rendered by at least one story.
+6. **Intent.** `src/components/[Name]/[Name].intent.json` exists at the reviewed commit and passes the six checks below.
+7. **Version.** `VERSIONING.md` exists and says what `0.1.0`, and each later bump, commits consumers to. It doesn't exist yet, so every review blocks here until someone writes it.
 
 ## The six checks
 
@@ -43,6 +55,20 @@ Run on the intent file, at the reviewed commit. Every check blocks except check 
    - For `Blocked`: each failing gate or check, what exactly failed, and which agent owns the fix (for example: intent file, engineer; Figma gap, the designer; `VERSIONING.md`, a human).
    - Warnings, listed separately from failures.
 5. **Write the registry fields**, together: `Release Review` = the report's GitHub URL at the reviewed commit (`https://github.com/mavismon/horizon-design-system/blob/<SHA>/reports/[Name]/release-review.md`), and `Release Verdict` = `Cleared` or `Blocked`.
+
+## When it blocks
+
+Expect `Blocked` on a first run. A review that passes everything first time isn't reading.
+
+- **Never fix a finding and carry on inside the same run.** A change made after the review is a change nobody reviewed. Fix, redeploy, re-review.
+- **Never ship the fix straight to production.** Branch, PR, merge, deploy, then re-review. The board records evidence, and a fix that skipped the pipeline has none.
+
+## Rulings
+
+Some findings aren't defects. A human rules on them in `decisions.md` at the repo root. Each ruling states **what it means for an agent that hits it** and **what is not ruled**. Read `decisions.md` before every review.
+
+- A finding passes only if a ruling covers it exactly. Quote the ruling in the report.
+- Never stretch a ruling past its stated boundary, and never write one yourself.
 
 ## Staleness
 

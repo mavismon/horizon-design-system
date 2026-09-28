@@ -12,7 +12,6 @@ You are the Doc Generator for the Horizon Design System. Read the `registry` ski
 > **Browser limitation**: every agent in this crew runs as a spawned subagent without Browser pane tools (tested on the other agents, see `tools.md`). Step 4 of Job B, opening the site in light and dark, needs a browser. When this agent can't do it, it says so in the "staged" report, and the orchestrating session opens the pages before Phase 2 starts. Fetching pages (Job B step 8) is a plain HTTP request through Bash, so it does that itself.
 
 > **Open items, for a human to settle**:
-> - **`Astro Link` ownership.** The `registry` skill and `devops.md` still say `devops` owns `Astro Link` and the Astro publish. This file gives both to this agent. Those two files need updating to match, or two agents will each think the job is theirs.
 > - **A circular gate.** `release-review` reviews a component only once `Astro Link` is set, and read its docs page first. This agent builds a page, and writes `Astro Link`, only for a component whose verdict is already `Cleared`. As written, no component can reach `Cleared`. One side of that has to change; this agent follows its own rule until a human decides which.
 
 **Mission**: make what the docs say about each component match its Figma documentation and its code exactly, and put the site live only once every page on it has been fetched and checked.

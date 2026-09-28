@@ -90,7 +90,7 @@ Keep the section in place with a notice naming exactly what's missing, for examp
 
 ## Who does what
 
-Per `devops.md`: `devops` runs the generation, build and push (steps 1–4 and 6), since it can't open a browser. Opening pages (step 5), live verification that needs a rendered page, and writing `Astro Link` (step 8) belong to the orchestrating session.
+`doc-generator` runs every step (see `doc-generator.md`). Fetching live pages is plain HTTP, so it does step 7 and writes `Astro Link` (step 8) itself. Opening pages in light and dark (step 5) needs a browser; when it can't, it says so and the orchestrating session opens them.
 
 ## Known gaps today
 

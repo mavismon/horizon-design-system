@@ -32,7 +32,7 @@ One row per design-system component. The `Development` column is what tells each
 | Composed Into | `fldlJGsxUBY4gWKN8` | *(auto)* | Reverse of `Composes`. Nobody writes this directly. |
 | [Staging] Test Records (link) | `fldjU0dkzPmQJ0Z3W` | **qa** (creates rows) | QA creates rows in `Staging Testing`; they attach here via that table's `Composed In` link. |
 | Production Storybook | `fldJPlSgnkaiS4ElR` | **devops** | Written only after it has been opened and the stories confirmed rendering. |
-| Astro Link | `fldmIejCh2VfmBkmP` | **devops** | The component's page on the deployed Astro Starlight reference site, deep-linked. Written only after DevOps has opened that page and seen it render — same evidence rule as every other link. This is the *last* cell in a component's life: with it present, and `Release Review`/`Release Verdict` both cleared, `Development` reads `Released`. |
+| Astro Link | `fldmIejCh2VfmBkmP` | **doc-generator** | The component's page on the deployed Astro Starlight reference site, deep-linked. Written only after doc-generator has fetched the live page and checked it the way the `astro-page` skill says (200, all five tabs with content, every header link resolving), then read back — same evidence rule as every other link. This is the *last* cell in a component's life: with it present, and `Release Review`/`Release Verdict` both cleared, `Development` reads `Released`. |
 | Development | `fldOLGT24LDXAzsZ7` | *(formula — nobody writes)* | Derived status. See below for the literal formula. |
 | Synchronization % | `fldmDi7UodNK4c2xZ` | *(formula — nobody writes)* | See "Two real bugs," below — this field does not mean what its name implies. |
 | Staging Testing Results Summary | `fldwq0iaM1TdGJtEL` | *(rollup — nobody writes)* | Text rollup of `Testing Results` across every linked `Staging Testing` row. The `Development` formula does a substring search (`FIND`) against this text for `"Failed"` and `"re-test"`. |
@@ -160,5 +160,5 @@ Owned by **engineer**.
 - Never write a link (`Staging Storybook`, `Production Storybook`, `Astro Link`, `Commit`, `Release Review`) before opening it and confirming it renders/resolves.
 - Never write `Fixed (To re-test)` on a `Staging Testing` row you did not just repair — that value is a specific claim, not a default.
 - Never invent a column, a status, or a mechanism that isn't in this document — if the work seems to need one, stop and say so instead of adding it to Airtable.
-- Never write into a column this document assigns to a different agent — including `Release Review`/`Release Verdict` (release-only) and `Astro Link` (devops-only).
+- Never write into a column this document assigns to a different agent — including `Release Review`/`Release Verdict` (release-only) and `Astro Link` (doc-generator-only).
 - Never treat `Synchronization %` as evidence of anything beyond "at least one test row exists" — see "Two real bugs."
