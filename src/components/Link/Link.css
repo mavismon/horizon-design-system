@@ -1,0 +1,22 @@
+.hz-link {
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 500;
+  color: var(--color-text-link);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hz-link--sm {
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+}
+
+.hz-link:hover,
+.hz-link--hover {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}

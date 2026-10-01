@@ -1,0 +1,34 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "md": "13px (default)",
+    "sm": "12px (dense rows, beside filters)",
+    "default": "",
+    "hover": "underlined"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--color-text-link",
+    "--fontfamily-body",
+    "--fontsize-lg",
+    "--fontsize-md",
+    "--lineheight-lg",
+    "--lineheight-md"
+  ],
+  "a11y": [
+    {
+      "fact": "The control is a native <a>, so keyboard focus, the focus ring, activation and :visited behaviour are the browser's own; no focus style is overridden.",
+      "source": "src/components/Link/Link.tsx:22"
+    },
+    {
+      "fact": "href, target, rel and every other anchor attribute pass through because the passthrough props are spread onto the element.",
+      "source": "src/components/Link/Link.tsx:29"
+    },
+    {
+      "fact": "The label is the anchor's text content, which gives it its accessible name.",
+      "source": "src/components/Link/Link.tsx:31"
+    }
+  ]
+}
