@@ -1,6 +1,24 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To let the user opt in to something, such as marketing emails or staying signed in.",
+    "To confirm the user has read and agreed to terms before they continue, such as the booking terms or cancellation policy.",
+    "To make the user acknowledge a destructive action before it runs, using the error state (for example, \"I understand this is permanent\").",
+    "For a list of options where the user can choose any number, such as search filters."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For a setting that takes effect immediately: use the Toggle component instead.",
+      "instead": "Toggle"
+    },
+    {
+      "when": "When the user must pick exactly one option from a list: use the Radiocard component instead.",
+      "instead": "Radiocard"
+    },
+    {
+      "when": "To trigger an action: use the Button component instead.",
+      "instead": "Button"
+    }
+  ],
   "variant_intent": {
     "unchecked": "default",
     "checked": "The tick shows the checked state, so it doesn't rely on colour alone."
