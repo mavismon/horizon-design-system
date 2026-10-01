@@ -1,0 +1,35 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "4:3": "default",
+    "1:1": "",
+    "3:2": "",
+    "16:9": "",
+    "2:1": "",
+    "none": "default; edge to edge inside a card",
+    "sm": "thumbnails",
+    "md": "standalone photos"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--radius-md",
+    "--radius-none",
+    "--radius-sm"
+  ],
+  "a11y": [
+    {
+      "fact": "The component renders a native <img>, so loading, decoding and alt behaviour are the browser's own and every <img> attribute (loading, srcSet, sizes) passes through.",
+      "source": "src/components/Image/Image.tsx:34"
+    },
+    {
+      "fact": "alt defaults to an empty string (decorative) and is overridden by the alt prop.",
+      "source": "src/components/Image/Image.tsx:29"
+    },
+    {
+      "fact": "The photo is cropped to the frame with object-fit: cover, so it is never stretched.",
+      "source": "src/components/Image/Image.css:5"
+    }
+  ]
+}

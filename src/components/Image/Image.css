@@ -1,0 +1,38 @@
+.hz-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  object-fit: cover;
+}
+
+.hz-image--ratio-4-3 {
+  aspect-ratio: 4 / 3;
+}
+
+.hz-image--ratio-1-1 {
+  aspect-ratio: 1 / 1;
+}
+
+.hz-image--ratio-3-2 {
+  aspect-ratio: 3 / 2;
+}
+
+.hz-image--ratio-16-9 {
+  aspect-ratio: 16 / 9;
+}
+
+.hz-image--ratio-2-1 {
+  aspect-ratio: 2 / 1;
+}
+
+.hz-image--radius-none {
+  border-radius: var(--radius-none);
+}
+
+.hz-image--radius-sm {
+  border-radius: var(--radius-sm);
+}
+
+.hz-image--radius-md {
+  border-radius: var(--radius-md);
+}
