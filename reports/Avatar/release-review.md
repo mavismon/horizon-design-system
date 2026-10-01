@@ -13,7 +13,7 @@
 | # | Gate / check | Result | Evidence |
 |---|---|---|---|
 | G1 | Done | Pass | `Development` = `Completed`. `Production Storybook` (https://horizon-design-system-cdfi.vercel.app/?path=/story/components-avatar--all-sizes) returns 200. `index.json` lists `components-avatar--sm`, `--md`, `--lg` and `--all-sizes`, and `iframe.html?id=components-avatar--all-sizes` returns 200. The deployed stylesheet has the same `.hz-avatar*` declarations as `Avatar.css` at the reviewed SHA. Note: Avatar reached production by a direct push to `main` before QA, and `Staging Storybook` is the production URL (the user's one-row decision). Both are process facts, not gate failures. |
-| G2 | Tokens | **Fail** | `src/components/Avatar/Avatar.css` has raw px literals: `width: 24px` (line 15), `height: 24px` (16), `width: 30px` (20), `height: 30px` (21), `width: 40px` (25), `height: 40px` (26). There are no hex values and no `var()` fallbacks. No ruling in `decisions.md` covers them. The user approved these values in conversation and the file carries a TODO comment (lines 1-2), but only a human writing in `decisions.md` is a ruling, and this review may not write one. |
+| G2 | Tokens | **Fail** | `src/components/Avatar/Avatar.css` has raw px literals: `width: 24px` (line 13), `height: 24px` (14), `width: 30px` (18), `height: 30px` (19), `width: 40px` (23), `height: 40px` (24). There are no hex values and no `var()` fallbacks. No ruling in `decisions.md` covers them. The user approved these values in conversation and the file carries a TODO comment (lines 1-2), but only a human writing in `decisions.md` is a ruling, and this review may not write one. |
 | G3 | Surface | Pass | `src/index.ts:3` exports `Avatar`, and `src/index.ts:4` exports `AvatarProps` and `AvatarSize`. Nothing marks it internal. See "Other findings" for the `VERSIONING.md` inconsistency. |
 | G4 | Names | Pass | Folder `src/components/Avatar/`, symbol `Avatar` (`Avatar.tsx:18`), CSS prefix `hz-avatar` (`Avatar.css:3`), intent `Avatar.intent.json`, board row `Avatar`. |
 | G5 | States | Pass | Figma node `113:2` publishes `size=sm` (112:7, 24x24), `size=md` (112:6, 30x30) and `size=lg` (112:8, 40x40), and no other variant or state. `AvatarSize` (`Avatar.tsx:4`) has the same three values. Stories `Sm`, `Md`, `Lg` and `AllSizes` (`Avatar.stories.tsx:24-36`) render each. |
@@ -28,7 +28,7 @@
 
 ## Failures
 
-- **G2 Tokens.** The six px literals in `Avatar.css` (lines 15, 16, 20, 21, 25, 26: 24, 30 and 40px diameters) have no token and no ruling. Cause: the design binds no avatar size tokens, so none exist in `tokens/`. **Owner:** a human, who either rules on these literals in `decisions.md` (as was done for Button, naming exact values, properties and lines), or the designer, who adds avatar size tokens, after which the engineer switches to them and the component goes through branch, PR, merge, deploy, re-review.
+- **G2 Tokens.** The six px literals in `Avatar.css` (lines 13, 14, 18, 19, 23, 24: 24, 30 and 40px diameters) have no token and no ruling. Cause: the design binds no avatar size tokens, so none exist in `tokens/`. **Owner:** a human, who either rules on these literals in `decisions.md` (as was done for Button, naming exact values, properties and lines), or the designer, who adds avatar size tokens, after which the engineer switches to them and the component goes through branch, PR, merge, deploy, re-review.
 
 ## Warnings (not blocking)
 
