@@ -1,6 +1,24 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To show a photo of a listing, room or place, such as the photo at the top of a property card or the photos in a listing gallery.",
+    "Use radius none for a photo that runs edge to edge inside a card; the card rounds the corners.",
+    "Use radius md (12px) for standalone photos such as the gallery and marketing tiles, and radius sm (6px) for small thumbnails in lists.",
+    "Use 16:9 for wide gallery and hero photos, 3:2 for property cards, 4:3 or 1:1 for thumbnails, and 2:1 for banners and marketing tiles."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For a person's profile photo: use the Avatar component instead.",
+      "instead": "Avatar"
+    },
+    {
+      "when": "For the Horizon Stays brand mark: use the Logo component instead.",
+      "instead": "Logo"
+    },
+    {
+      "when": "For icons or small symbols: use an icon from the Icon Library instead.",
+      "instead": "Icon Library"
+    }
+  ],
   "variant_intent": {
     "4:3": "default",
     "1:1": "",
