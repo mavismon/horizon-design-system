@@ -53,3 +53,18 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Avatar.css`. Quote this ruling in the report. When an avatar size token appears, the ruling no longer covers that value: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The missing photo fallback and the empty `use_when` / `dont_use_when` in `Avatar.intent.json`: those are Figma gaps for the designer.
+
+## 2026-10-01 · Checkbox values with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Checkbox for literal px values. Two Figma values (node 117:12 `state=unchecked`, node 117:15 `state=checked`, component set 117:23) have no matching token: the spacing scale has 4, 8, 12, 16, 20 and 24px but no 10px, and there are no size tokens. `--spacing-lg` is 16px, but it is a spacing token and Figma binds nothing to it, so it is not used for the box size.
+
+**Ruling.** These literals in `src/components/Checkbox/Checkbox.css` are accepted, because they're what the Figma node specifies, until the designer adds matching tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `10px` | `gap` between the box and the label | `.hz-checkbox` | 4 |
+| `16px` | `width`, `height` on the box | `.hz-checkbox__box` | 11, 12 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Checkbox.css`. Quote this ruling in the report. When a 10px spacing token or a checkbox size token appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The Button ruling of 2026-09-28 is separate and still covers only `Button.css`. The `error` state and any states Figma does not draw (disabled, hover, focus, indeterminate): those need the designer.

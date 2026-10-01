@@ -1,0 +1,39 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "unselected": "default",
+    "selected": "blue, a filter that's on",
+    "selected-strong": "navy, the active category in a category row"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-bg-inverse",
+    "--color-border-default",
+    "--color-primary-default",
+    "--color-text-inverse",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-md",
+    "--lineheight-md",
+    "--radius-full",
+    "--spacing-lg"
+  ],
+  "a11y": [
+    {
+      "fact": "The control is a native <button type=\"button\">, so keyboard activation, focus ring and disabled behaviour are the browser's own.",
+      "source": "src/components/Chip/Chip.tsx:19"
+    },
+    {
+      "fact": "The selected state is exposed to assistive technology through aria-pressed (true for selected and selected-strong, false for unselected), and a caller-supplied aria-pressed overrides it because the passthrough props are spread after it.",
+      "source": "src/components/Chip/Chip.tsx:21"
+    },
+    {
+      "fact": "The label is the button's text content, which gives it its accessible name.",
+      "source": "src/components/Chip/Chip.tsx:25"
+    }
+  ]
+}
