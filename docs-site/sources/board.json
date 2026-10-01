@@ -71,12 +71,12 @@
     {
       "name": "Checkbox",
       "category": "ATOMS",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1632&t=WByFKcVxB5jPIcTp-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-checkbox--all-states",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/21cf340fe8d6f569c06ee0570a746d810e0aa4e6/reports/Checkbox/release-review.md",
       "astroLink": ""
     },
     {

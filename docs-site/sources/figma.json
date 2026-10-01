@@ -287,6 +287,126 @@
           ]
         }
       }
+    },
+    "Checkbox": {
+      "page": {
+        "id": "57:1632",
+        "name": "Checkbox"
+      },
+      "node": {
+        "id": "118:2",
+        "name": "❖ checkbox"
+      },
+      "component": {
+        "id": "117:23",
+        "name": "checkbox"
+      },
+      "description": "Lets the user turn one option on or off, or confirm something before continuing. state: unchecked (default), checked, error (acknowledging a destructive action). Properties: Label (text), ShowLabel (show or hide). The tick shows the checked state, so it doesn't rely on colour alone.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "unchecked",
+                "node": "117:12"
+              },
+              {
+                "value": "checked",
+                "node": "117:15"
+              }
+            ]
+          },
+          {
+            "name": "ShowLabel",
+            "values": [
+              {
+                "value": "True"
+              },
+              {
+                "value": "False"
+              }
+            ]
+          }
+        ],
+        "cells": 4,
+        "note": "The documentation frame (109:485) lays out state (rows: unchecked, checked) against ShowLabel (columns: True, False). The component set (117:23) publishes two variants, state=unchecked (117:12) and state=checked (117:15). Label (text, default \"Label\") and ShowLabel are component properties. The error state is named in the component description but is not drawn."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The Checkbox frame renders every cell in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-strong": "#c8d2dd",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-lg": "20",
+        "--color-text-inverse": "#f9fafb",
+        "--color-primary-default": "#3b71f2"
+      },
+      "unboundValues": [
+        {
+          "layer": "checkbox, state=unchecked (117:12) and state=checked (117:15)",
+          "property": "gap between the box and the label",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-checkbox",
+            "property": "gap"
+          }
+        },
+        {
+          "layer": "box (117:13 unchecked, 117:16 checked)",
+          "property": "width and height",
+          "value": "16px",
+          "css": {
+            "selector": ".hz-checkbox__box",
+            "property": "width"
+          }
+        }
+      ],
+      "usage": {
+        "node": "118:10",
+        "use_when_heading": "Use a Checkbox",
+        "use_when": [
+          "To let the user opt in to something, such as marketing emails or staying signed in.",
+          "To confirm the user has read and agreed to terms before they continue, such as the booking terms or cancellation policy.",
+          "To make the user acknowledge a destructive action before it runs, using the error state (for example, \"I understand this is permanent\").",
+          "For a list of options where the user can choose any number, such as search filters."
+        ],
+        "dont_use_when_heading": "Do not use a checkbox",
+        "dont_use_when": [
+          "For a setting that takes effect immediately: use the Toggle component instead.",
+          "When the user must pick exactly one option from a list: use the Radiocard component instead.",
+          "To trigger an action: use the Button component instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Always give the checkbox a visible label that says what ticking it does.",
+          "Write labels as positive statements (\"Email me deals\"), not negatives (\"Don't email me\").",
+          "Leave opt-in checkboxes unticked by default.",
+          "Make the whole label clickable, not just the 16px box.",
+          "Use the error state only for acknowledging destructive or irreversible actions.",
+          "Put extra detail in helper text below the label, not in the label itself."
+        ],
+        "best_practice_nodes": {
+          "group": "118:28",
+          "items": [
+            "118:160",
+            "118:166",
+            "118:172",
+            "118:178",
+            "118:184",
+            "118:190"
+          ]
+        }
+      }
     }
   }
 }

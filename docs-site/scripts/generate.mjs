@@ -315,7 +315,7 @@ function parseComponent(row) {
 		const line = stories.slice(0, m.index).split('\n').length;
 		const argVal = unionProp ? body.match(new RegExp(`${unionProp.name}:\\s*"([^"]+)"`)) : null;
 		const isRow = !/render\s*:/.test(body) && !!argVal;
-		storyDefs.push({ exportName: m[1], line, isRow, value: argVal?.[1] ?? null });
+		storyDefs.push({ exportName: m[1], line, isRow, value: argVal?.[1] ?? null, body });
 	});
 	const sbFor = sbEntries.filter((e) => e.importPath?.includes(`/${name}/${name}.stories`));
 	for (const s of storyDefs) s.sb = sbFor.find((e) => e.exportName === s.exportName && e.type === 'story') ?? null;
@@ -367,11 +367,14 @@ function rulingsFor(name) {
 		const body = mdSection(decisions, `## ${m[1]}`);
 		const rulingPara = body.match(/\*\*Ruling\.\*\*\s*([\s\S]*?)(?=\n\*\*[A-Z][^*]*\.\*\*|$)/)?.[1] ?? '';
 		const sentence = rulingPara.split('\n')[0].trim().replace(/:$/, '.');
-		const values = rulingPara
+		const tableRows = rulingPara
 			.split('\n')
 			.filter((l) => /^\|/.test(l) && !/^\|\s*-/.test(l))
-			.slice(1)
 			.map((l) => l.split('|').slice(1, -1).map((x) => x.trim()));
+		// Columns are found by their header, so a table with or without a Selector column reads right.
+		const head = (tableRows[0] ?? []).map((h) => h.toLowerCase());
+		const col = (n) => head.indexOf(n);
+		const values = tableRows.slice(1).map((r) => ({ cells: r, value: r[col('value')] ?? r[0], property: r[col('property')] ?? r[1], selector: col('selector') >= 0 ? r[col('selector')] : null, lines: r[col('lines')] ?? r[2] }));
 		out.push({ title: m[1], ruling: sentence || null, values, notRuled: body.match(/\*\*Not ruled\.\*\*\s*([^\n]+)/)?.[1] ?? null });
 	}
 	return out;
@@ -453,7 +456,7 @@ function componentPage(cp) {
 	usage.push('## What each variant is for');
 	if (!intent?.variant_intent) usage.push(notice(`No variant_intent in ${intentPath}.`));
 	else {
-		const prop = cp.unionProp?.name ?? 'variant';
+		const prop = cp.unionProp?.name ?? fig?.variantMatrix?.properties?.[0]?.name ?? 'variant';
 		usage.push(
 			'| Property | Value | What it is for |\n|---|---|---|\n' +
 				Object.entries(intent.variant_intent)
@@ -511,7 +514,8 @@ function componentPage(cp) {
 		);
 		examples.push(notice("The Storybook has no theme switch, so there's no dark rendering of this story to embed."));
 	}
-	examples.push(`The single-variant stories (${cp.storyDefs.filter((s) => s.isRow).map((s) => c(s.exportName)).join(', ')}) are rows of the variant matrix; the Design tab links each one.`);
+	if (cp.storyDefs.some((s) => s.isRow))
+		examples.push(`The single-variant stories (${cp.storyDefs.filter((s) => s.isRow).map((s) => c(s.exportName)).join(', ')}) are rows of the variant matrix; the Design tab links each one.`);
 
 	// ----- Code -----
 	const code = [];
@@ -558,7 +562,7 @@ function componentPage(cp) {
 	if (!fig) design.push(notice(`No Figma read for ${name} in sources/figma.json.`));
 	else {
 		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(row.figma)}" />`);
-		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), component set ${c(fig.node.name)} (${c(fig.node.id)})` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
+		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), component set ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
 	}
 
@@ -571,15 +575,21 @@ function componentPage(cp) {
 			`| ${c(main.name)} | Figma node | Story |\n|---|---|---|\n` +
 				main.values
 					.map((v) => {
-						const s = cp.storyDefs.find((x) => x.isRow && x.value === v.value);
+						// A component with no union type has no story arg to match on: match the story named after the value.
+						const s = cp.storyDefs.find((x) => x.isRow && x.value === v.value) ?? (cp.unionProp ? null : cp.storyDefs.find((x) => x.exportName.toLowerCase() === v.value.toLowerCase()));
 						return `| ${c(v.value)} | ${v.node ? c(v.node) : '—'} | ${s?.sb ? `[${t(s.sb.name)}](${storyBase + s.sb.id})` : '*no story*'} |`;
 					})
 					.join('\n'),
 		);
 		for (const p of props.filter((x) => x !== main)) {
-			const argsDefault = cp.props.find((x) => x.name === p.name)?.default;
+			const codeProp = cp.props.find((x) => x.name.toLowerCase() === p.name.toLowerCase());
+			const argsDefault = codeProp?.default;
+			// Stories whose args set this prop (matched to the code prop case-insensitively).
+			const setting = codeProp ? cp.storyDefs.filter((x) => x.sb && new RegExp(`\\b${codeProp.name}:`).test(x.body.slice(0, x.body.search(/render\s*:/) < 0 ? undefined : x.body.search(/render\s*:/)))) : [];
 			design.push(
-				`${c(p.name)}: ${p.values.map((v) => c(v.value)).join(', ')}. No story sets ${c(p.name)} on its own${argsDefault ? `; it defaults to ${c(argsDefault)} and can be switched with the Storybook controls` : ''}.`,
+				setting.length
+					? `${c(p.name)}: ${p.values.map((v) => c(v.value)).join(', ')}. Stories that set ${c(codeProp.name)}: ${setting.map((x) => `[${t(x.sb.name)}](${storyBase + x.sb.id})`).join(', ')}${argsDefault ? `; it defaults to ${c(argsDefault)}` : ''}.`
+					: `${c(p.name)}: ${p.values.map((v) => c(v.value)).join(', ')}. No story sets ${c(p.name)} on its own${argsDefault ? `; it defaults to ${c(argsDefault)} and can be switched with the Storybook controls` : ''}.`,
 			);
 		}
 	} else design.push(notice(`No variant matrix for ${name} in sources/figma.json.`));
@@ -618,7 +628,10 @@ function componentPage(cp) {
 		const diff = rows.filter((r) => r.built && !r.same && /^#/.test(r.figVal));
 		const missing = rows.filter((r) => !r.built);
 		if (missing.length) design.push(`${missing.map((r) => c(r.v)).join(', ')} ${missing.length > 1 ? 'are' : 'is'} bound in Figma but the token build has no token of that name.`);
-		if (diff.length) design.push(`${diff.length} colour variable${diff.length > 1 ? 's' : ''} in Figma still hold${diff.length > 1 ? '' : 's'} a different value from the token build, so the design file and the shipped component render ${diff.map((r) => c(r.v)).join(', ')} differently.`);
+		const diffRead = diff.filter((r) => cp.tokensRead.includes(r.codeName));
+		const diffUnread = diff.filter((r) => !cp.tokensRead.includes(r.codeName));
+		if (diffRead.length) design.push(`${diffRead.length} colour variable${diffRead.length > 1 ? 's' : ''} in Figma still hold${diffRead.length > 1 ? '' : 's'} a different value from the token build, so the design file and the shipped component render ${diffRead.map((r) => c(r.v)).join(', ')} differently.`);
+		if (diffUnread.length) design.push(`${diffUnread.map((r) => c(r.v)).join(', ')} ${diffUnread.length > 1 ? 'hold' : 'holds'} a different value in Figma from the token of the same name in the build, but ${c(`${name}.css`)} doesn't read ${diffUnread.length > 1 ? 'those tokens' : 'that token'}, so this doesn't change how the shipped component renders.`);
 	}
 
 	design.push('## Design gaps recorded against it');
@@ -626,7 +639,7 @@ function componentPage(cp) {
 	for (const r of rulingsFor(name))
 		gaps.push(
 			`- **${t(r.title)}** ([decisions.md](${blob('decisions.md')})). ${r.ruling ? t(plain(r.ruling)) : ''}` +
-				(r.values.length ? ` Accepted values: ${r.values.map((v) => `${c(plain(v[0]))} (${t(plain(v[1]))}, line${/,/.test(v[2]) ? 's' : ''} ${t(v[2])})`).join('; ')}.` : '') +
+				(r.values.length ? ` Accepted values: ${r.values.map((v) => `${c(plain(v.value))} (${t(plain(v.property))}${v.selector ? `, ${c(plain(v.selector))}` : ''}, line${/,/.test(v.lines) ? 's' : ''} ${t(v.lines)})`).join('; ')}.` : '') +
 				(r.notRuled ? ` *Not ruled:* ${t(plain(r.notRuled))}` : ''),
 		);
 	for (const w of review?.warnings ?? []) gaps.push(`- From the [release review](${review.url}): ${t(plain(w))}`);
@@ -797,7 +810,7 @@ for (const cp of comps) write(`core/components/${slugOf(cp.name)}.mdx`, componen
 		const fig = figma.components?.[cp.name];
 		if (fig?.boundVariables) {
 			const drift = Object.entries(fig.boundVariables).filter(([v, val]) => /^#/.test(val) && light.get(v.toLowerCase()) && light.get(v.toLowerCase()).toLowerCase() !== val.toLowerCase());
-			if (drift.length) items.push(`- ${drift.length} Figma colour variable${drift.length > 1 ? 's' : ''} on the node hold${drift.length > 1 ? '' : 's'} a different value from the token build (${drift.map(([v]) => c(v)).join(', ')}); see the [Design tab](/core/components/${slugOf(cp.name)}/).`);
+			if (drift.length) items.push(`- ${drift.length} Figma colour variable${drift.length > 1 ? 's' : ''} on the node hold${drift.length > 1 ? '' : 's'} a different value from the token build (${drift.map(([v]) => c(v)).join(', ')}${drift.every(([v]) => !cp.tokensRead.includes(v.toLowerCase())) ? `; ${c(`${cp.name}.css`)} doesn't read ${drift.length > 1 ? 'them' : 'it'}` : ''}); see the [Design tab](/core/components/${slugOf(cp.name)}/).`);
 		}
 		if (items.length) {
 			any = true;
