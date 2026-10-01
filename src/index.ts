@@ -4,3 +4,5 @@ export { Avatar } from "./components/Avatar/Avatar";
 export type { AvatarProps, AvatarSize } from "./components/Avatar/Avatar";
 export { Checkbox } from "./components/Checkbox/Checkbox";
 export type { CheckboxProps } from "./components/Checkbox/Checkbox";
+export { Chip } from "./components/Chip/Chip";
+export type { ChipProps, ChipState } from "./components/Chip/Chip";
