@@ -479,7 +479,9 @@ function componentPage(cp) {
 	const use = readmeSection('Use');
 	if (use) {
 		const code = use.match(/```(\w+)?\n([\s\S]*?)```/);
-		examples.push(code ? '```' + (code[1] ?? '') + ' title="README.md"\n' + code[2] + '```' : notice('The README has a Use section but no code block.'));
+		if (!code) examples.push(notice('The README has a Use section but no code block.'));
+		else if (!new RegExp(`<${name}[\\s/>]`).test(code[2])) examples.push(notice(`The README's usage example doesn't use ${name}, so there's no README example for it.`));
+		else examples.push('```' + (code[1] ?? '') + ' title="README.md"\n' + code[2] + '```');
 	} else examples.push(notice('The README has no usage example.'));
 
 	examples.push('## Stories');
@@ -543,7 +545,7 @@ function componentPage(cp) {
 	if (!fig) design.push(notice(`No Figma read for ${name} in sources/figma.json.`));
 	else {
 		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(row.figma)}" />`);
-		design.push(`Page ${c(fig.page.name)} (${c(fig.page.id)}), component set ${c(fig.node.name)} (${c(fig.node.id)}). The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
+		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), component set ${c(fig.node.name)} (${c(fig.node.id)})` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
 	}
 

@@ -1,5 +1,5 @@
 {
-  "readAt": "2026-09-28",
+  "readAt": "2026-10-01",
   "source": "Figma MCP reads (get_metadata, get_design_context, get_variable_defs, get_screenshot) of the Core Component file.",
   "file": {
     "key": "dIHHqSq8c75n4olME0s9JS",
@@ -8,14 +8,27 @@
   },
   "components": {
     "Button": {
-      "page": { "id": "6:5", "name": "Button" },
-      "node": { "id": "19:31", "name": "button" },
-      "matrixFrame": { "id": "49:47", "name": "❖ button" },
+      "page": {
+        "id": "6:5",
+        "name": "Button"
+      },
+      "node": {
+        "id": "19:31",
+        "name": "button"
+      },
+      "matrixFrame": {
+        "id": "49:47",
+        "name": "❖ button"
+      },
       "figlog": {
         "node": "58:1672",
         "status": "BETA",
         "entries": [
-          { "date": "2026-09-18", "author": "Hsu Yee Mon", "change": "Documented existing button components" }
+          {
+            "date": "2026-09-18",
+            "author": "Hsu Yee Mon",
+            "change": "Documented existing button components"
+          }
         ]
       },
       "usage": {
@@ -52,21 +65,58 @@
           {
             "name": "state",
             "values": [
-              { "value": "default", "node": "19:30" },
-              { "value": "hover", "node": "19:32" },
-              { "value": "error", "node": "19:38" },
-              { "value": "outline", "node": "19:43" },
-              { "value": "outline error", "node": "20:2" }
+              {
+                "value": "default",
+                "node": "19:30"
+              },
+              {
+                "value": "hover",
+                "node": "19:32"
+              },
+              {
+                "value": "error",
+                "node": "19:38"
+              },
+              {
+                "value": "outline",
+                "node": "19:43"
+              },
+              {
+                "value": "outline error",
+                "node": "20:2"
+              }
             ]
           },
-          { "name": "startIcon", "values": [{ "value": "true" }, { "value": "false" }] },
-          { "name": "endIcon", "values": [{ "value": "true" }, { "value": "false" }] }
+          {
+            "name": "startIcon",
+            "values": [
+              {
+                "value": "true"
+              },
+              {
+                "value": "false"
+              }
+            ]
+          },
+          {
+            "name": "endIcon",
+            "values": [
+              {
+                "value": "true"
+              },
+              {
+                "value": "false"
+              }
+            ]
+          }
         ],
         "cells": 20,
         "note": "The documentation frame lays out state (rows) against StartIcon: True / False (columns), once with EndIcon: True and once with EndIcon: False."
       },
       "themes": {
-        "shown": ["light"],
+        "shown": [
+          "light"
+        ],
         "note": "The Button page renders every cell in one theme. There is no dark-mode frame on the page."
       },
       "boundVariables": {
@@ -85,11 +135,124 @@
         "--color-negative-default": "#ea3d3d"
       },
       "unboundValues": [
-        { "layer": "button (every state)", "property": "gap", "value": "10px", "css": { "selector": ".hz-button", "property": "gap" } },
-        { "layer": "button (every state)", "property": "padding", "value": "10px", "css": { "selector": ".hz-button", "property": "padding" } },
-        { "layer": "button (every state)", "property": "width", "value": "80px", "css": { "selector": ".hz-button", "property": "width" } },
-        { "layer": "icon/star (23:7)", "property": "width and height", "value": "12px", "css": { "selector": ".hz-button__icon", "property": "width" } },
-        { "layer": "state=outline, state=outline error", "property": "border width", "value": "1px", "css": { "selector": ".hz-button--outline", "property": "border" } }
+        {
+          "layer": "button (every state)",
+          "property": "gap",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-button",
+            "property": "gap"
+          }
+        },
+        {
+          "layer": "button (every state)",
+          "property": "padding",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-button",
+            "property": "padding"
+          }
+        },
+        {
+          "layer": "button (every state)",
+          "property": "width",
+          "value": "80px",
+          "css": {
+            "selector": ".hz-button",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "icon/star (23:7)",
+          "property": "width and height",
+          "value": "12px",
+          "css": {
+            "selector": ".hz-button__icon",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "state=outline, state=outline error",
+          "property": "border width",
+          "value": "1px",
+          "css": {
+            "selector": ".hz-button--outline",
+            "property": "border"
+          }
+        }
+      ]
+    },
+    "Avatar": {
+      "page": null,
+      "node": {
+        "id": "113:2",
+        "name": "❖ avatar"
+      },
+      "component": {
+        "id": "112:9",
+        "name": "avatar"
+      },
+      "description": "Shows a person's profile photo in a circle. size: sm 24px (default; dense lists, inline with text), md 30px (the header avatar), lg 40px (profiles, message threads). Drop the photo onto the photo layer; it fills and crops to the circle.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "size",
+            "values": [
+              {
+                "value": "sm",
+                "node": "112:7"
+              },
+              {
+                "value": "md",
+                "node": "112:6"
+              },
+              {
+                "value": "lg",
+                "node": "112:8"
+              }
+            ]
+          }
+        ],
+        "cells": 3,
+        "note": "The documentation frame lays the three sizes out in one row, sm 24x24, md 30x30 and lg 40x40, each labelled."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The Avatar frame renders every size once, on the dark overlay background (--color-bg-overlay). It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--radius-full": "999"
+      },
+      "unboundValues": [
+        {
+          "layer": "size=sm (112:7)",
+          "property": "width and height",
+          "value": "24px",
+          "css": {
+            "selector": ".hz-avatar--sm",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "size=md (112:6)",
+          "property": "width and height",
+          "value": "30px",
+          "css": {
+            "selector": ".hz-avatar--md",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "size=lg (112:8)",
+          "property": "width and height",
+          "value": "40px",
+          "css": {
+            "selector": ".hz-avatar--lg",
+            "property": "width"
+          }
+        }
       ]
     }
   }

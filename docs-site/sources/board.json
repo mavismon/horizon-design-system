@@ -1,16 +1,16 @@
 {
-  "readAt": "2026-09-28",
+  "readAt": "2026-10-01",
   "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out.",
   "components": [
     {
       "name": "Avatar",
       "category": "ATOMS",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=113-2&t=WByFKcVxB5jPIcTp-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-avatar--all-sizes",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/2cf672bafef6595978a2f5ebf4f2c12b41391f0f/reports/Avatar/release-review.md",
       "astroLink": ""
     },
     {
@@ -28,12 +28,12 @@
       "name": "Button",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=19-31&m=dev",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/f569313d69d444f2733df0f7464243798abdf806/reports/Button/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/button/"
     },
     {
       "name": "ButtonGroup",

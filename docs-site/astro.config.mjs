@@ -49,6 +49,7 @@ export default defineConfig({
 							items: [
 								{ label: 'All components', slug: 'core/components/overview' },
 								// <generated:components>
+								{ label: 'Avatar', slug: 'core/components/avatar' },
 								{ label: 'Button', slug: 'core/components/button' },
 								// </generated:components>
 							],
