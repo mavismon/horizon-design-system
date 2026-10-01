@@ -29,10 +29,6 @@ import FigmaFrame from '../../../../components/FigmaFrame.astro';
 - To make the user acknowledge a destructive action before it runs, using the error state (for example, "I understand this is permanent").
 - For a list of options where the user can choose any number, such as search filters.
 
-## Where it goes
-
-<p class="hz-missing"><strong>Missing source.</strong> The stories show Checkbox on its own, so there's no placement to show (placement is empty in src/components/Checkbox/Checkbox.intent.json).</p>
-
 ## When not to use it
 
 - For a setting that takes effect immediately: use the Toggle component instead.<br/>**Instead:** Toggle
@@ -62,10 +58,6 @@ From the Figma documentation page (usage node `118:10`), as written. These items
 - The control is a native &lt;input type="checkbox"&gt;, so keyboard, focus and disabled behaviour are the browser's own. [`src/components/Checkbox/Checkbox.tsx:19`](https://github.com/mavismon/horizon-design-system/blob/e437e0315c966a22c03445eb0b8b78c7ecda37f3/src/components/Checkbox/Checkbox.tsx#L19)
 - The input and label text sit inside one &lt;label&gt;, so clicking the label text toggles the checkbox and gives it its accessible name. [`src/components/Checkbox/Checkbox.tsx:17`](https://github.com/mavismon/horizon-design-system/blob/e437e0315c966a22c03445eb0b8b78c7ecda37f3/src/components/Checkbox/Checkbox.tsx#L17)
 - The tick is a decorative SVG hidden from assistive technology (aria-hidden); the checked state is carried by the native input. [`src/components/Checkbox/Checkbox.tsx:24`](https://github.com/mavismon/horizon-design-system/blob/e437e0315c966a22c03445eb0b8b78c7ecda37f3/src/components/Checkbox/Checkbox.tsx#L24)
-
-## Composition
-
-<p class="hz-missing"><strong>Missing source.</strong> The stories compose Checkbox with no other Horizon component (pairs_with is empty in src/components/Checkbox/Checkbox.intent.json).</p>
 
 ## What this version promises
 

@@ -391,6 +391,7 @@ const plain = (s) => s.replace(/`/g, '').replace(/\*\*/g, '');
 const OMIT_USAGE_SECTIONS = {
 	Avatar: ['Where it goes', 'Composition'],
 	Button: ['Where it goes', 'Composition'],
+	Checkbox: ['Where it goes', 'Composition'],
 };
 
 function componentPage(cp) {
