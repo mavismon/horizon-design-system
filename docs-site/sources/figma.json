@@ -514,6 +514,181 @@
           ]
         }
       }
+    },
+    "Image": {
+      "page": {
+        "id": "57:1634",
+        "name": "Image"
+      },
+      "node": {
+        "id": "124:2",
+        "name": "❖ image"
+      },
+      "component": {
+        "id": "123:22",
+        "name": "image"
+      },
+      "description": "A photo in a fixed aspect ratio. ratio: 4:3 (default), 1:1, 3:2, 16:9, 2:1. radius: none (default; edge to edge inside a card), sm 6px (thumbnails), md 12px (standalone photos). The ratio is locked, so resize by width. Drop the photo onto the photo layer; it fills and crops to the frame.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "ratio",
+            "values": [
+              {
+                "value": "4:3"
+              },
+              {
+                "value": "1:1"
+              },
+              {
+                "value": "3:2"
+              },
+              {
+                "value": "16:9"
+              },
+              {
+                "value": "2:1"
+              }
+            ]
+          },
+          {
+            "name": "radius",
+            "values": [
+              {
+                "value": "none"
+              },
+              {
+                "value": "sm"
+              },
+              {
+                "value": "md"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "ratio=4:3, radius=none": "123:8",
+          "ratio=4:3, radius=sm": "123:7",
+          "ratio=4:3, radius=md": "123:9",
+          "ratio=1:1, radius=none": "123:11",
+          "ratio=1:1, radius=sm": "123:10",
+          "ratio=1:1, radius=md": "123:12",
+          "ratio=3:2, radius=none": "123:14",
+          "ratio=3:2, radius=sm": "123:13",
+          "ratio=3:2, radius=md": "123:15",
+          "ratio=16:9, radius=none": "123:17",
+          "ratio=16:9, radius=sm": "123:16",
+          "ratio=16:9, radius=md": "123:18",
+          "ratio=2:1, radius=none": "123:20",
+          "ratio=2:1, radius=sm": "123:19",
+          "ratio=2:1, radius=md": "123:21"
+        },
+        "cells": 15,
+        "note": "The documentation frame (124:2) lays out ratio (rows: 4:3, 1:1, 3:2, 16:9, 2:1) against radius (columns: none, sm, md). The component set (123:22) publishes all 15 variants, named ratio=4:3, radius=none through ratio=2:1, radius=md. Figma draws no states."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The Image frame renders every cell in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--radius-none": "0",
+        "--radius-sm": "6",
+        "--radius-md": "12"
+      },
+      "unboundValues": [
+        {
+          "layer": "image, all 15 variants (123:7 to 123:21)",
+          "property": "width",
+          "value": "240px",
+          "css": {
+            "selector": ".hz-image",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "image, ratio=4:3 (123:8, 123:7, 123:9)",
+          "property": "height",
+          "value": "180px",
+          "css": {
+            "selector": ".hz-image--ratio-4-3",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "image, ratio=1:1 (123:11, 123:10, 123:12)",
+          "property": "height",
+          "value": "240px",
+          "css": {
+            "selector": ".hz-image--ratio-1-1",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "image, ratio=3:2 (123:14, 123:13, 123:15)",
+          "property": "height",
+          "value": "160px",
+          "css": {
+            "selector": ".hz-image--ratio-3-2",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "image, ratio=16:9 (123:17, 123:16, 123:18)",
+          "property": "height",
+          "value": "135px",
+          "css": {
+            "selector": ".hz-image--ratio-16-9",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "image, ratio=2:1 (123:20, 123:19, 123:21)",
+          "property": "height",
+          "value": "120px",
+          "css": {
+            "selector": ".hz-image--ratio-2-1",
+            "property": "aspect-ratio"
+          }
+        }
+      ],
+      "usage": {
+        "node": "125:2",
+        "use_when_heading": "Use an Image",
+        "use_when_node": "125:5",
+        "use_when": [
+          "To show a photo of a listing, room or place, such as the photo at the top of a property card or the photos in a listing gallery.",
+          "Use radius none for a photo that runs edge to edge inside a card; the card rounds the corners.",
+          "Use radius md (12px) for standalone photos such as the gallery and marketing tiles, and radius sm (6px) for small thumbnails in lists.",
+          "Use 16:9 for wide gallery and hero photos, 3:2 for property cards, 4:3 or 1:1 for thumbnails, and 2:1 for banners and marketing tiles."
+        ],
+        "dont_use_when_heading": "Do not use an image",
+        "dont_use_when_node": "125:14",
+        "dont_use_when": [
+          "For a person's profile photo: use the Avatar component instead.",
+          "For the Horizon Stays brand mark: use the Logo component instead.",
+          "For icons or small symbols: use an icon from the Icon Library instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Choose the ratio first, then resize by width; the ratio is locked, so photos never stretch.",
+          "Crop the photo to fill the frame; don't letterbox or distort it.",
+          "Keep one ratio and radius across a group, such as every card in a results list.",
+          "Give every meaningful image alt text that describes it; leave alt text empty for purely decorative images.",
+          "Show the placeholder while a photo loads, in the same ratio, so the layout doesn't jump."
+        ],
+        "best_practice_nodes": {
+          "group": "125:20",
+          "items": [
+            "125:152",
+            "125:158",
+            "125:164",
+            "125:170",
+            "125:176"
+          ]
+        }
+      }
     }
   }
 }

@@ -315,7 +315,14 @@ function parseComponent(row) {
 		const line = stories.slice(0, m.index).split('\n').length;
 		const argVal = unionProp ? body.match(new RegExp(`${unionProp.name}:\\s*"([^"]+)"`)) : null;
 		const isRow = !/render\s*:/.test(body) && !!argVal;
-		storyDefs.push({ exportName: m[1], line, isRow, value: argVal?.[1] ?? null, body });
+		// The value each union-typed prop is set to in this story's args (a two-property matrix needs both).
+		const argValues = {};
+		for (const p of props) {
+			if (!unions.some((u) => u.name === p.type)) continue;
+			const v = body.match(new RegExp(`\\b${p.name}:\\s*"([^"]+)"`));
+			if (v) argValues[p.name] = v[1];
+		}
+		storyDefs.push({ exportName: m[1], line, isRow, value: argVal?.[1] ?? null, argValues, body });
 	});
 	const sbFor = sbEntries.filter((e) => e.importPath?.includes(`/${name}/${name}.stories`));
 	for (const s of storyDefs) s.sb = sbFor.find((e) => e.exportName === s.exportName && e.type === 'story') ?? null;
@@ -393,6 +400,7 @@ const OMIT_USAGE_SECTIONS = {
 	Button: ['Where it goes', 'Composition'],
 	Checkbox: ['Where it goes', 'Composition'],
 	Chip: ['Where it goes', 'Composition'],
+	Image: ['Where it goes', 'Composition'],
 };
 
 function componentPage(cp) {
@@ -400,6 +408,19 @@ function componentPage(cp) {
 	const fig = figma.components?.[name] ?? null;
 	const review = reviewFacts(row.releaseReview);
 	const status = row.development;
+	// A full two-property grid: both Figma matrix properties are union types in the code and the cells are
+	// the product of their values (Image: ratio x radius). Anything else keeps the one-property layout.
+	const grid = (() => {
+		const vm = fig?.variantMatrix;
+		if (!vm || vm.properties.length !== 2) return null;
+		const gp = vm.properties.map((p) => {
+			const codeProp = cp.props.find((x) => x.name.toLowerCase() === p.name.toLowerCase());
+			const union = codeProp && cp.unions.find((u) => u.name === codeProp.type);
+			return union ? { name: p.name, code: codeProp.name, values: p.values.map((v) => v.value), union } : null;
+		});
+		if (gp.some((x) => !x) || gp[0].values.length * gp[1].values.length !== vm.cells) return null;
+		return { props: gp, nodes: vm.cellNodes ?? {} };
+	})();
 	const storyBase = `${cfg.storybookUrl}/?path=/story/`;
 	const firstStory = cp.storyDefs.find((s) => s.sb)?.sb;
 	const figmaEmbed = fig ? `https://embed.figma.com/design/${figma.file.key}/${figma.file.name}?node-id=${fig.node.id.replace(':', '-')}&embed-host=horizon-docs` : null;
@@ -459,10 +480,12 @@ function componentPage(cp) {
 	if (!intent?.variant_intent) usage.push(notice(`No variant_intent in ${intentPath}.`));
 	else {
 		const prop = cp.unionProp?.name ?? fig?.variantMatrix?.properties?.[0]?.name ?? 'variant';
+		// A two-property matrix: name the property each value belongs to, from the union types in the code.
+		const propOf = (k) => (grid ? (grid.props.find((g) => g.union.values.includes(k))?.name ?? prop) : prop);
 		usage.push(
 			'| Property | Value | What it is for |\n|---|---|---|\n' +
 				Object.entries(intent.variant_intent)
-					.map(([k, v]) => `| ${c(prop)} | ${c(k)} | ${v ? t(v) : '*Figma doesn\'t say.*'} |`)
+					.map(([k, v]) => `| ${c(propOf(k))} | ${c(k)} | ${v ? t(v) : '*Figma doesn\'t say.*'} |`)
 					.join('\n'),
 		);
 	}
@@ -573,6 +596,23 @@ function componentPage(cp) {
 		const props = fig.variantMatrix.properties;
 		design.push(`${props.map((p) => `${c(p.name)} (${p.values.length})`).join(' × ')} = ${fig.variantMatrix.cells} cells. ${t(fig.variantMatrix.note)}`);
 		const main = props.find((p) => p.name === cp.unionProp?.name) ?? props[0];
+		if (grid) {
+			const [rowP, colP] = grid.props;
+			design.push(
+				`| ${c(rowP.name)} | ${colP.values.map((v) => c(`${colP.name}=${v}`)).join(' | ')} |\n|---|${colP.values.map(() => '---').join('|')}|\n` +
+					rowP.values
+						.map((rv) => {
+							const cells = colP.values.map((cv) => {
+								const s = cp.storyDefs.find((x) => x.isRow && x.argValues[rowP.code] === rv && x.argValues[colP.code] === cv);
+								const node = grid.nodes[`${rowP.name}=${rv}, ${colP.name}=${cv}`];
+								return `${s?.sb ? `[${t(s.exportName)}](${storyBase + s.sb.id})` : '*no story*'}<br/>${node ? c(node) : '—'}`;
+							});
+							return `| ${c(rv)} | ${cells.join(' | ')} |`;
+						})
+						.join('\n'),
+			);
+			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${rowP.union.name} and ${colP.union.name} are the union types listed on the Code tab.${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
+		} else {
 		design.push(
 			`| ${c(main.name)} | Figma node | Story |\n|---|---|---|\n` +
 				main.values
@@ -593,6 +633,7 @@ function componentPage(cp) {
 					? `${c(p.name)}: ${p.values.map((v) => c(v.value)).join(', ')}. Stories that set ${c(codeProp.name)}: ${setting.map((x) => `[${t(x.sb.name)}](${storyBase + x.sb.id})`).join(', ')}${argsDefault ? `; it defaults to ${c(argsDefault)}` : ''}.`
 					: `${c(p.name)}: ${p.values.map((v) => c(v.value)).join(', ')}. No story sets ${c(p.name)} on its own${argsDefault ? `; it defaults to ${c(argsDefault)} and can be switched with the Storybook controls` : ''}.`,
 			);
+		}
 		}
 	} else design.push(notice(`No variant matrix for ${name} in sources/figma.json.`));
 
