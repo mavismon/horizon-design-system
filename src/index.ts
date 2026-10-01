@@ -8,3 +8,5 @@ export { Chip } from "./components/Chip/Chip";
 export type { ChipProps, ChipState } from "./components/Chip/Chip";
 export { Image } from "./components/Image/Image";
 export type { ImageProps, ImageRatio, ImageRadius } from "./components/Image/Image";
+export { Link } from "./components/Link/Link";
+export type { LinkProps, LinkSize, LinkState } from "./components/Link/Link";
