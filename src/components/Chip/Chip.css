@@ -1,0 +1,32 @@
+.hz-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 32px;
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--spacing-lg);
+  border: var(--border-width-sm) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hz-chip--selected {
+  border-color: var(--color-primary-default);
+  background: var(--color-primary-default);
+  color: var(--color-text-inverse);
+}
+
+.hz-chip--selected-strong {
+  border-color: var(--color-bg-inverse);
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
