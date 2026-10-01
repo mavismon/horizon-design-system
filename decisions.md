@@ -37,3 +37,19 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** At step 9, the release agent runs `npm run release:publish -- <version> --dry-run`, reads the file list, then **stops**. It hands the user the exact command, `npm run release:publish -- <version>`, to run in their own terminal. After the user says it's published, the agent carries on from step 9's registry check (wait for npm, smoke-test the registry copy) and step 10.
 
 **Not ruled.** Turning on Bypass 2FA, or creating a token that does. Running the real publish from an agent in any other way. Whether the version is approved: that's still step 8.
+
+## 2026-10-01 · Avatar diameters with no token
+
+**Finding.** Release review gate 2 (Tokens) failed Avatar for literal px values. The three diameters in Figma node 113:2 (sm 24px, md 30px, lg 40px) are not bound to any variable, and no avatar size token exists. The nearest values are `--spacing-2xl` (24px), a spacing token, and `--lineheight-4xl` (40px), a line-height token. Neither is a size, and nothing matches 30px.
+
+**Ruling.** These literals in `src/components/Avatar/Avatar.css` are accepted, because they're what the Figma node specifies (node 113:2, component 112:9), until the designer adds avatar size tokens:
+
+| Value | Property | Lines |
+|---|---|---|
+| `24px` | `width`, `height` on `.hz-avatar--sm` | 13, 14 |
+| `30px` | `width`, `height` on `.hz-avatar--md` | 18, 19 |
+| `40px` | `width`, `height` on `.hz-avatar--lg` | 23, 24 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Avatar.css`. Quote this ruling in the report. When an avatar size token appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The missing photo fallback and the empty `use_when` / `dont_use_when` in `Avatar.intent.json`: those are Figma gaps for the designer.
