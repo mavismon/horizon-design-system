@@ -1,6 +1,28 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To filter a list of results, such as search filters (\"Pool\", \"Pet friendly\", \"Free cancellation\").",
+    "To switch between categories of the same content, such as \"All\", \"Bedrooms\" or \"Kitchen\" in a photo gallery.",
+    "Use the selected state (blue) for filters the user has turned on, and selected-strong (navy) for the active category in a category row.",
+    "To show how many items an option holds, as part of the label (for example, \"Kitchen 6\")."
+  ],
+  "dont_use_when": [
+    {
+      "when": "To show a status such as \"Confirmed\" or \"Pending\": use a Badge component instead.",
+      "instead": "Badge"
+    },
+    {
+      "when": "To trigger an action, such as booking or submitting: use the Button component instead.",
+      "instead": "Button"
+    },
+    {
+      "when": "For a yes or no choice inside a form: use the Checkbox component instead.",
+      "instead": "Checkbox"
+    },
+    {
+      "when": "To go to another page: use the Link component instead.",
+      "instead": "Link"
+    }
+  ],
   "variant_intent": {
     "unselected": "default",
     "selected": "blue, a filter that's on",
