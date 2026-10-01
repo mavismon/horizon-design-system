@@ -1,0 +1,37 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "unchecked": "default",
+    "checked": "The tick shows the checked state, so it doesn't rely on colour alone."
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-border-strong",
+    "--color-interactive-primary",
+    "--color-text-inverse",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-lg",
+    "--lineheight-lg",
+    "--radius-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The control is a native <input type=\"checkbox\">, so keyboard, focus and disabled behaviour are the browser's own.",
+      "source": "src/components/Checkbox/Checkbox.tsx:19"
+    },
+    {
+      "fact": "The input and label text sit inside one <label>, so clicking the label text toggles the checkbox and gives it its accessible name.",
+      "source": "src/components/Checkbox/Checkbox.tsx:17"
+    },
+    {
+      "fact": "The tick is a decorative SVG hidden from assistive technology (aria-hidden); the checked state is carried by the native input.",
+      "source": "src/components/Checkbox/Checkbox.tsx:24"
+    }
+  ]
+}

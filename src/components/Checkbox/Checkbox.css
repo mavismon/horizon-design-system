@@ -1,0 +1,59 @@
+.hz-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.hz-checkbox__box {
+  position: relative;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.hz-checkbox__input {
+  appearance: none;
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: var(--border-width-sm) solid var(--color-border-strong);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  cursor: inherit;
+}
+
+.hz-checkbox__input:checked {
+  border-color: var(--color-interactive-primary);
+  background: var(--color-interactive-primary);
+}
+
+.hz-checkbox__tick {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+  color: var(--color-text-inverse);
+}
+
+.hz-checkbox__tick path {
+  stroke: currentColor;
+  stroke-width: var(--border-width-md);
+}
+
+.hz-checkbox__input:checked + .hz-checkbox__tick {
+  display: block;
+}
+
+.hz-checkbox__label {
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
