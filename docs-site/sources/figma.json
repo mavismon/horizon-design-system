@@ -689,6 +689,109 @@
           ]
         }
       }
+    },
+    "Link": {
+      "page": {
+        "id": "57:1635",
+        "name": "Link"
+      },
+      "node": {
+        "id": "134:2",
+        "name": "❖ link"
+      },
+      "component": {
+        "id": "133:12",
+        "name": "link"
+      },
+      "description": "Text that takes the user to another page or runs a secondary action. size: md 13px (default), sm 12px (dense rows, beside filters). state: default, hover (underlined). Property: Label. Medium weight in color/text/link.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "default"
+              },
+              {
+                "value": "hover"
+              }
+            ]
+          },
+          {
+            "name": "size",
+            "values": [
+              {
+                "value": "md"
+              },
+              {
+                "value": "sm"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "state=default, size=md": "133:4",
+          "state=default, size=sm": "133:8",
+          "state=hover, size=md": "133:6",
+          "state=hover, size=sm": "133:10"
+        },
+        "cells": 4,
+        "note": "The documentation frame (134:2) lays out state (rows: default, hover) against size (columns: md, sm). The component set (133:12) publishes all 4 variants, named size=md, state=default (133:4), size=md, state=hover (133:6), size=sm, state=default (133:8) and size=sm, state=hover (133:10). Label (text, default \"Link\") is a component property, not a matrix axis. Figma draws no focus, visited or disabled variants."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The Link frame renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-link": "#1d44ba",
+        "--fontFamily-body": "Inter",
+        "--fontSize-lg": "13",
+        "--fontSize-md": "12",
+        "--lineHeight-lg": "20",
+        "--lineHeight-md": "18",
+        "--fontWeight-medium": "Medium"
+      },
+      "unboundValues": [],
+      "usage": {
+        "node": "134:446",
+        "use_when_heading": "Use a Link",
+        "use_when_node": "134:447",
+        "use_when": [
+          "To take the user to another page or view, such as \"Show all 24 amenities\" or \"Forgot your password?\".",
+          "For a secondary action next to a form, such as \"Resend code\" or \"Use a different email address\".",
+          "To edit or manage an item in a list, such as \"Edit\" or \"Manage\" in account settings.",
+          "Use size md (13px) next to body text and on its own, and size sm (12px) in dense rows, such as \"Clear\" beside filters."
+        ],
+        "dont_use_when_heading": "Do not use a link",
+        "dont_use_when_node": "134:456",
+        "dont_use_when": [
+          "For the main action on a page, such as submitting a form or booking: use the Button component instead.",
+          "To filter results or switch categories: use the Chip component instead.",
+          "To open a list of options to choose from: use the Dropdown component instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Write link text that says where it goes or what it does (\"Show all 24 amenities\"), never \"click here\".",
+          "Keep links short, usually one to five words.",
+          "Underline a link that sits inside a sentence of body text, so it doesn't rely on colour alone; standalone links can use the default style.",
+          "Use the same link text for the same destination everywhere.",
+          "Leave space or a separator between two links next to each other.",
+          "Make sure every link shows a visible keyboard focus style."
+        ],
+        "best_practice_nodes": {
+          "group": "134:462",
+          "items": [
+            "134:586",
+            "134:592",
+            "134:598",
+            "134:604",
+            "134:610",
+            "134:616"
+          ]
+        }
+      }
     }
   }
 }

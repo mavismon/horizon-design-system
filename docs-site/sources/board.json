@@ -138,22 +138,22 @@
       "name": "Image",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1634&t=WByFKcVxB5jPIcTp-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-image--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/90d220240341bd7e05fd8b24708cd79fac20fa69/reports/Image/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/image/"
     },
     {
       "name": "Link",
       "category": "ATOMS",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1635&t=WByFKcVxB5jPIcTp-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-link--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/22a90aef153b6661a76003dc289f23f2fdfd59b2/reports/Link/release-review.md",
       "astroLink": ""
     },
     {

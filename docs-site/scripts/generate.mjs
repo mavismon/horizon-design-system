@@ -401,6 +401,7 @@ const OMIT_USAGE_SECTIONS = {
 	Checkbox: ['Where it goes', 'Composition'],
 	Chip: ['Where it goes', 'Composition'],
 	Image: ['Where it goes', 'Composition'],
+	Link: ['Where it goes', 'Composition'],
 };
 
 function componentPage(cp) {
@@ -540,7 +541,7 @@ function componentPage(cp) {
 		examples.push(notice("The Storybook has no theme switch, so there's no dark rendering of this story to embed."));
 	}
 	if (cp.storyDefs.some((s) => s.isRow))
-		examples.push(`The single-variant stories (${cp.storyDefs.filter((s) => s.isRow).map((s) => c(s.exportName)).join(', ')}) are rows of the variant matrix; the Design tab links each one.`);
+		examples.push(`The single-variant stories (${cp.storyDefs.filter((s) => s.isRow).map((s) => c(s.exportName)).join(', ')}) are ${grid ? 'cells' : 'rows'} of the variant matrix; the Design tab links each one.`);
 
 	// ----- Code -----
 	const code = [];
@@ -654,7 +655,8 @@ function componentPage(cp) {
 					})
 					.join('\n'),
 		);
-	} else design.push(notice(`No unbound-value read for ${name} in sources/figma.json.`));
+	} else if (Array.isArray(fig?.unboundValues)) design.push(`The Figma read of ${name} found no values on the node that aren't bound to a variable.`);
+	else design.push(notice(`No unbound-value read for ${name} in sources/figma.json.`));
 
 	design.push('## Figma variables against the token build');
 	if (fig?.boundVariables) {

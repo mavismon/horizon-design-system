@@ -54,6 +54,7 @@ export default defineConfig({
 								{ label: 'Checkbox', slug: 'core/components/checkbox' },
 								{ label: 'Chip', slug: 'core/components/chip' },
 								{ label: 'Image', slug: 'core/components/image' },
+								{ label: 'Link', slug: 'core/components/link' },
 								// </generated:components>
 							],
 						},
