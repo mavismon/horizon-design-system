@@ -68,3 +68,17 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Checkbox.css`. Quote this ruling in the report. When a 10px spacing token or a checkbox size token appears, the ruling no longer covers that value: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The Button ruling of 2026-09-28 is separate and still covers only `Button.css`. The `error` state and any states Figma does not draw (disabled, hover, focus, indeterminate): those need the designer.
+
+## 2026-10-01 · Chip height with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Chip for a literal px value. Figma (node 121:8, 121:11, 121:13; component set 121:15) draws every Chip 32px high, and the spacing scale (4, 8, 12, 16, 20, 24px) and the token set have nothing that matches 32px: there are no size tokens. Figma gets to 32px with 7px of vertical padding around an 18px line and places the 1px stroke inside the frame. In CSS that would give 34px, so the height is set directly instead of with a 7px padding.
+
+**Ruling.** This literal in `src/components/Chip/Chip.css` is accepted, because it is what the Figma node specifies, until the designer adds a matching size token:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `32px` | `height` (with `box-sizing: border-box`) | `.hz-chip` | 6 |
+
+**For an agent that hits it.** Gate 2 passes for exactly this value on exactly this property in `Chip.css`. Quote this ruling in the report. When a size token for 32px appears, the ruling no longer covers it: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback and any 7px padding. This value in any other component. A change to this value: a different number needs a new ruling or a token. The selected fill, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is the user's choice to use the bound token, not a gate finding. Any state Figma does not draw (hover, focus, disabled, pressed).
