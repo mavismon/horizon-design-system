@@ -1,0 +1,20 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "sm": "dense lists, inline with text",
+    "md": "the header avatar",
+    "lg": "profiles, message threads"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--radius-full"
+  ],
+  "a11y": [
+    {
+      "fact": "The photo is a native <img> whose alt text comes from the alt prop, defaulting to an empty string (decorative).",
+      "source": "src/components/Avatar/Avatar.tsx:21"
+    }
+  ]
+}
