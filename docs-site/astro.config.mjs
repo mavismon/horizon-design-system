@@ -52,6 +52,7 @@ export default defineConfig({
 								{ label: 'Avatar', slug: 'core/components/avatar' },
 								{ label: 'Button', slug: 'core/components/button' },
 								{ label: 'Checkbox', slug: 'core/components/checkbox' },
+								{ label: 'Chip', slug: 'core/components/chip' },
 								// </generated:components>
 							],
 						},
