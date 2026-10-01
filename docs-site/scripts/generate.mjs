@@ -437,7 +437,7 @@ function componentPage(cp) {
 			`From the Figma documentation page (usage node ${c(fig.usage.node)}), as written. These items aren't carried into ${c(`${name}.intent.json`)}, which has no field for them.\n\n` +
 				fig.usage.best_practice.map((x) => `- ${t(x)}`).join('\n'),
 		);
-	else usage.push(notice(`No best-practice items in Figma for ${name}.`));
+	else usage.push(notice(`No best-practice items for ${name} in sources/figma.json (no usage region was read), and ${name}.intent.json has no field for them.`));
 
 	usage.push('## What each variant is for');
 	if (!intent?.variant_intent) usage.push(notice(`No variant_intent in ${intentPath}.`));

@@ -6,12 +6,12 @@
       "name": "Avatar",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=113-2&t=WByFKcVxB5jPIcTp-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-avatar--all-sizes",
       "releaseVerdict": "Cleared",
-      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/2cf672bafef6595978a2f5ebf4f2c12b41391f0f/reports/Avatar/release-review.md",
-      "astroLink": ""
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/9326ae954ef8214a33022d68be61ebc58af00f86/reports/Avatar/release-review.md",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/avatar/"
     },
     {
       "name": "Breadcrumbs",
