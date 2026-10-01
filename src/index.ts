@@ -6,3 +6,5 @@ export { Checkbox } from "./components/Checkbox/Checkbox";
 export type { CheckboxProps } from "./components/Checkbox/Checkbox";
 export { Chip } from "./components/Chip/Chip";
 export type { ChipProps, ChipState } from "./components/Chip/Chip";
+export { Image } from "./components/Image/Image";
+export type { ImageProps, ImageRatio, ImageRadius } from "./components/Image/Image";
