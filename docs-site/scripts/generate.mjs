@@ -382,6 +382,14 @@ const plain = (s) => s.replace(/`/g, '').replace(/\*\*/g, '');
 
 // ---------- component page ----------
 
+// Presentation-only, explicit per-component omissions of Usage-tab sections, at the
+// user's request. Nothing else is affected: any component not listed keeps every section,
+// and sources of truth (intent files, figma.json) are not touched.
+const OMIT_USAGE_SECTIONS = {
+	Avatar: ['Where it goes', 'Composition'],
+	Button: ['Composition'],
+};
+
 function componentPage(cp) {
 	const { name, row, intent, intentPath } = cp;
 	const fig = figma.components?.[name] ?? null;
@@ -413,14 +421,17 @@ function componentPage(cp) {
 
 	// ----- Usage -----
 	const usage = [];
+	const omit = new Set(OMIT_USAGE_SECTIONS[name] ?? []);
 	usage.push('## When to use it');
 	if (!intent) usage.push(notice(`No ${intentPath} at ${SHORT}.`));
 	else if (!intent.use_when?.length) usage.push(notice(`No usage region in Figma for ${name} (use_when is empty in ${intentPath}).`));
 	else usage.push(intent.use_when.map((x) => `- ${t(x)}`).join('\n'));
 
-	usage.push('## Where it goes');
-	if (intent?.placement?.length) usage.push(intent.placement.map((x) => `- ${t(x)}`).join('\n'));
-	else usage.push(notice(`The stories show ${name} on its own, so there's no placement to show (placement is empty in ${intentPath}).`));
+	if (!omit.has('Where it goes')) {
+		usage.push('## Where it goes');
+		if (intent?.placement?.length) usage.push(intent.placement.map((x) => `- ${t(x)}`).join('\n'));
+		else usage.push(notice(`The stories show ${name} on its own, so there's no placement to show (placement is empty in ${intentPath}).`));
+	}
 
 	usage.push('## When not to use it');
 	if (!intent?.dont_use_when?.length) usage.push(notice(`No "when not to use" items for ${name} (dont_use_when is empty in ${intentPath}).`));
@@ -463,9 +474,11 @@ function componentPage(cp) {
 				.join('\n'),
 		);
 
-	usage.push('## Composition');
-	if (intent?.pairs_with?.length) usage.push(`The stories compose ${name} with: ${intent.pairs_with.map((x) => t(x)).join(', ')}.`);
-	else usage.push(notice(`The stories compose ${name} with no other Horizon component (pairs_with is empty in ${intentPath}).`));
+	if (!omit.has('Composition')) {
+		usage.push('## Composition');
+		if (intent?.pairs_with?.length) usage.push(`The stories compose ${name} with: ${intent.pairs_with.map((x) => t(x)).join(', ')}.`);
+		else usage.push(notice(`The stories compose ${name} with no other Horizon component (pairs_with is empty in ${intentPath}).`));
+	}
 
 	usage.push('## What this version promises');
 	const promiseHeading = `## What ${pkg.version} commits you to`;
