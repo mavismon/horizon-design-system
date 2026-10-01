@@ -1,6 +1,23 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To show the signed-in user's profile photo, such as in the header.",
+    "To represent a person (a host, guest or reviewer) next to their name or content.",
+    "Use md (30px) in the header, sm (24px) in dense lists or inline with text, and lg (40px) where the person is the focus, such as a profile or message thread."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For brand or company logos: use the Logo component instead.",
+      "instead": "Logo"
+    },
+    {
+      "when": "For listing or content photos: use the Image component instead.",
+      "instead": "Image"
+    },
+    {
+      "when": "As a clickable control on its own: place it inside a Button or Link so it has an accessible name.",
+      "instead": "Button or Link"
+    }
+  ],
   "variant_intent": {
     "sm": "dense lists, inline with text",
     "md": "the header avatar",
