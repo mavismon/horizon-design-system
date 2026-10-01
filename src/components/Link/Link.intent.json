@@ -1,6 +1,24 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To take the user to another page or view, such as \"Show all 24 amenities\" or \"Forgot your password?\".",
+    "For a secondary action next to a form, such as \"Resend code\" or \"Use a different email address\".",
+    "To edit or manage an item in a list, such as \"Edit\" or \"Manage\" in account settings.",
+    "Use size md (13px) next to body text and on its own, and size sm (12px) in dense rows, such as \"Clear\" beside filters."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For the main action on a page, such as submitting a form or booking: use the Button component instead.",
+      "instead": "Button"
+    },
+    {
+      "when": "To filter results or switch categories: use the Chip component instead.",
+      "instead": "Chip"
+    },
+    {
+      "when": "To open a list of options to choose from: use the Dropdown component instead.",
+      "instead": "Dropdown"
+    }
+  ],
   "variant_intent": {
     "md": "13px (default)",
     "sm": "12px (dense rows, beside filters)",
