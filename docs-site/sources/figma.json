@@ -253,7 +253,40 @@
             "property": "width"
           }
         }
-      ]
+      ],
+      "usage": {
+        "node": "113:7",
+        "use_when_heading": "Use an Avatar",
+        "use_when": [
+          "To show the signed-in user's profile photo, such as in the header.",
+          "To represent a person (a host, guest or reviewer) next to their name or content.",
+          "Use md (30px) in the header, sm (24px) in dense lists or inline with text, and lg (40px) where the person is the focus, such as a profile or message thread."
+        ],
+        "dont_use_when_heading": "Do not use an avatar",
+        "dont_use_when": [
+          "For brand or company logos: use the Logo component instead.",
+          "For listing or content photos: use the Image component instead.",
+          "As a clickable control on its own: place it inside a Button or Link so it has an accessible name."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Crop photos square with the face centred; the circle clips the corners.",
+          "Keep one avatar size within the same list or row.",
+          "Give the image alt text with the person's name, or leave it empty when the name is shown right beside it.",
+          "Use only the sm, md and lg sizes; don't scale an avatar to other sizes.",
+          "Always supply a photo. There's no fallback for a missing photo yet."
+        ],
+        "best_practice_nodes": {
+          "group": "113:25",
+          "items": [
+            "115:47",
+            "115:53",
+            "115:59",
+            "115:65",
+            "115:71"
+          ]
+        }
+      }
     }
   }
 }
