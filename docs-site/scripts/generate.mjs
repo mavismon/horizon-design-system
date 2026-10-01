@@ -387,7 +387,7 @@ const plain = (s) => s.replace(/`/g, '').replace(/\*\*/g, '');
 // and sources of truth (intent files, figma.json) are not touched.
 const OMIT_USAGE_SECTIONS = {
 	Avatar: ['Where it goes', 'Composition'],
-	Button: ['Composition'],
+	Button: ['Where it goes', 'Composition'],
 };
 
 function componentPage(cp) {
