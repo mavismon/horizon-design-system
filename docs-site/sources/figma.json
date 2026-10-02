@@ -1,5 +1,5 @@
 {
-  "readAt": "2026-10-01",
+  "readAt": "2026-10-02",
   "source": "Figma MCP reads (get_metadata, get_design_context, get_variable_defs, get_screenshot) of the Core Component file.",
   "file": {
     "key": "dIHHqSq8c75n4olME0s9JS",
@@ -1242,6 +1242,115 @@
             "145:872",
             "145:878",
             "145:884"
+          ]
+        }
+      }
+    },
+    "Breadcrumbs": {
+      "page": {
+        "id": "57:1639",
+        "name": "Breadcrumbs"
+      },
+      "node": {
+        "id": "163:13",
+        "name": "❖ breadcrumbs"
+      },
+      "component": {
+        "id": "163:2",
+        "name": "breadcrumbs",
+        "kind": "component"
+      },
+      "description": "Shows where the current page sits in the site's hierarchy, above the page title. Ancestors are links in color/text/secondary that underline on hover; the current page is color/text/primary and not a link. Properties: Item 1, Item 2, Item 3, Current, ShowItem2 and ShowItem3 (2 to 4 levels). 12px.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "ShowItem2",
+            "values": [
+              {
+                "value": "true"
+              },
+              {
+                "value": "false"
+              }
+            ]
+          },
+          {
+            "name": "ShowItem3",
+            "values": [
+              {
+                "value": "true"
+              },
+              {
+                "value": "false"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "ShowItem2=true, ShowItem3=true": "164:1504",
+          "ShowItem2=false, ShowItem3=true": "164:1516",
+          "ShowItem2=true, ShowItem3=false": "164:1529",
+          "ShowItem2=false, ShowItem3=false": "164:1542"
+        },
+        "cells": 4,
+        "note": "Breadcrumbs (163:2) is a single component with two boolean properties, ShowItem2 and ShowItem3, not a variant set. The documentation frame (163:13) draws the four combinations as 164:1504 (ShowItem2 true, ShowItem3 true), 164:1516 (ShowItem2 false, ShowItem3 true), 164:1529 (ShowItem2 true, ShowItem3 false) and 164:1542 (both false), and repeats two of them as the 3 levels row (163:16) and the 2 levels row (163:29). Item 1, Item 2, Item 3 and Current are text properties, not matrix axes. Figma draws no hover, focus or visited variants."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The Breadcrumbs frame renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--spacing-sm": "8",
+        "--fontFamily-body": "Inter",
+        "--fontSize-md": "12",
+        "--lineHeight-md": "18",
+        "--fontWeight-regular": "Regular",
+        "--color-text-secondary": "#4d5361",
+        "--color-text-primary": "#161925"
+      },
+      "unboundValues": [],
+      "usage": {
+        "node": "163:42",
+        "use_when_heading": "Use Breadcrumbs",
+        "use_when_node": "163:45",
+        "use_when": [
+          "Above the page title on pages that sit inside a hierarchy, such as a listing (\"Stays / Portugal / Lisbon / Alfama\") or a back office settings page (\"Team and roles / Roles / Permissions\").",
+          "To let the user go back up to any parent page in one click.",
+          "Show 2 to 4 levels; hide unused levels with ShowItem2 and ShowItem3."
+        ],
+        "use_when_nodes": {
+          "group": "163:45",
+          "items": [
+            "163:145",
+            "163:152",
+            "163:158"
+          ]
+        },
+        "dont_use_when_heading": "Do not use breadcrumbs",
+        "dont_use_when_node": "163:54",
+        "dont_use_when": [
+          "On top-level pages that have no parent: there's nothing to show.",
+          "To show the steps of a flow, such as checkout: use the Stepper component instead.",
+          "As the main navigation between sections: use the Sidebar or Header component instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Make every item except the current page a link to that page.",
+          "Use the same page names as the page titles and navigation, so the trail is easy to recognise.",
+          "Keep the current page as the last item, styled darker and not as a link.",
+          "Don't wrap breadcrumbs onto two lines; shorten long names instead.",
+          "Mark the trail up as navigation for assistive technology (a nav landmark with aria-label=\"Breadcrumb\", and aria-current=\"page\" on the last item)."
+        ],
+        "best_practice_nodes": {
+          "group": "163:60",
+          "items": [
+            "163:186",
+            "163:192",
+            "163:198",
+            "163:204",
+            "163:210"
           ]
         }
       }

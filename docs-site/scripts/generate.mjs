@@ -225,6 +225,12 @@ const NATIVE_STATE = {
 	},
 };
 
+// A component whose Figma matrix is two boolean properties on one component (not a variant set, and no union type in
+// the code). The listed code props are the booleans; a single-cell story is one that sets all of them in its args.
+const BOOLEAN_MATRIX = {
+	Breadcrumbs: ['showItem2', 'showItem3'],
+};
+
 // ---------- components that get a page ----------
 
 const paged = board.components.filter(
@@ -326,13 +332,19 @@ function parseComponent(row) {
 		const body = stories.slice(m.index, starts[i + 1]?.index ?? stories.length);
 		const line = stories.slice(0, m.index).split('\n').length;
 		const argVal = unionProp ? body.match(new RegExp(`${unionProp.name}:\\s*"([^"]+)"`)) : null;
-		const isRow = !/render\s*:/.test(body) && !!argVal;
+		const boolProps = BOOLEAN_MATRIX[name] ?? [];
+		const boolSet = boolProps.every((bp) => new RegExp(`\\b${bp}:\\s*(?:true|false)`).test(body));
+		const isRow = !/render\s*:/.test(body) && (!!argVal || (boolProps.length > 0 && boolSet));
 		// The value each union-typed prop is set to in this story's args (a two-property matrix needs both).
 		const argValues = {};
 		for (const p of props) {
 			if (!unions.some((u) => u.name === p.type)) continue;
 			const v = body.match(new RegExp(`\\b${p.name}:\\s*"([^"]+)"`));
 			if (v) argValues[p.name] = v[1];
+		}
+		for (const bp of boolProps) {
+			const v = body.match(new RegExp(`\\b${bp}:\\s*(true|false)`));
+			if (v) argValues[bp] = v[1];
 		}
 		storyDefs.push({ exportName: m[1], line, isRow, value: argVal?.[1] ?? null, argValues, body });
 	});
@@ -424,6 +436,7 @@ const plain = (s) => s.replace(/`/g, '').replace(/\*\*/g, '');
 // and sources of truth (intent files, figma.json) are not touched.
 const OMIT_USAGE_SECTIONS = {
 	Avatar: ['Where it goes', 'Composition'],
+	Breadcrumbs: ['Where it goes', 'Composition'],
 	Button: ['Where it goes', 'Composition'],
 	Checkbox: ['Where it goes', 'Composition'],
 	Chip: ['Where it goes', 'Composition'],
@@ -464,6 +477,13 @@ const STORY_CAVEATS = {
 // Says which of a grid's properties are union types in the code, and, for a property that is not a prop
 // (Figma's combined `state`), how the code spells it: the stories' own header comment, quoted.
 function gridCodeNote(grid, cp, name) {
+	const bools = grid.props.filter((g) => g.boolean);
+	if (bools.length === grid.props.length) {
+		const file = `${cp.dir}/${name}.tsx`;
+		const codeNames = bools.map((g) => `[${c(g.code)}](${blob(file, g.line)})`).join(' and ');
+		const renamed = bools.filter((g) => g.name !== g.code);
+		return `${codeNames} are ${c('boolean')} props, not union types: ${c(`${name}.tsx`)} exports no union type, so this matrix has no variant union to match.${renamed.length ? ` Figma spells the properties ${renamed.map((g) => c(g.name)).join(' and ')}; the code spells them ${renamed.map((g) => c(g.code)).join(' and ')}.` : ''}`;
+	}
 	const natives = grid.props.filter((g) => g.native);
 	if (!natives.length) return `${grid.props[0].union.name} and ${grid.props[1].union.name} are the union types listed on the Code tab.`;
 	const unionsHere = grid.props.filter((g) => g.union);
@@ -512,6 +532,83 @@ function bareControlFacts(cp, fig, review) {
 	};
 }
 
+// Optional props that are not Figma properties, where Figma's own Best Practice line depends on them (Breadcrumbs: the
+// ancestor hrefs). The note is only written when the component's code bears it out; it quotes the QA report and the
+// release review's "Other findings" as written, and says nothing they don't.
+const HREF_NOTE = { Breadcrumbs: { props: ['item1Href', 'item2Href', 'item3Href'], bestPractice: 0 } };
+
+function hrefFacts(cp, fig, review) {
+	const cfgH = HREF_NOTE[cp.name];
+	if (!cfgH) return null;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const tsxL = cp.tsx.split('\n');
+	const hrefLine = tsxL.findIndex((l) => /\bhref=\{a\.href\}/.test(l)) + 1;
+	const found = cfgH.props.map((n) => cp.props.find((p) => p.name === n && p.optional));
+	if (!hrefLine || found.some((p) => !p)) return null;
+	const reportPath = `reports/${cp.name}/qa-report.md`;
+	const qaLine = has(reportPath) ? show(reportPath).split('\n').find((l) => l.startsWith(`- \`${cfgH.props[0]}\``)) : null;
+	const rvLine = review?.other?.find((l) => l.startsWith(`**\`${cfgH.props[0]}\``));
+	const links = found.map((p) => `[${c(p.name)}](${blob(file, p.line)})`).join(', ');
+	const node = fig?.usage?.best_practice_nodes?.items?.[cfgH.bestPractice];
+	const short = `${links} are not Figma properties. ${c(`${cp.name}.tsx`)} declares them as optional props and sets ${c('href={a.href}')} on each ancestor ${c('<a>')} ([${c(`${cp.name}.tsx:${hrefLine}`)}](${blob(file, hrefLine)})), so an ancestor that is given no href renders an anchor without one.`;
+	const quotes = [
+		qaLine ? `From the [QA report](${blob(reportPath)}), as written:\n\n> ${t(plain(qaLine.replace(/^- /, '')))}` : null,
+		rvLine ? `From the [release review](${review.url}), under "Other findings", as written:\n\n> ${t(plain(rvLine))}` : null,
+	].filter(Boolean);
+	return {
+		code: `${short} The Usage tab quotes the QA report and the release review on this.`,
+		usage: [
+			`**Where the built component differs.** Item ${cfgH.bestPractice + 1}${node ? ` (Figma node ${c(node)})` : ''} is copied from Figma as written. Whether it holds depends on the consumer passing the ancestor hrefs, which the component makes optional. ${short}`,
+			...quotes,
+		].join('\n\n'),
+		a11y: rvLine && /holds only when an href is passed/.test(rvLine) ? `The release review says the last fact above, about the native ${c('<a>')}, holds only when an href is passed. See the note under Best practice.` : null,
+	};
+}
+
+// Figma writes a property's name in its own casing in a Usage line (ShowItem2); where the code prop is the same word
+// in lower camel case (showItem2), the page says how the code spells it. Only written when such a prop exists.
+function casingNote(cp, fig, intent) {
+	const out = [];
+	(intent?.use_when ?? []).forEach((item, i) => {
+		const pairs = [...new Set([...item.matchAll(/\b[A-Z][a-z]+(?:[A-Z][a-z0-9]*)+\b/g)].map((m) => m[0]))]
+			.map((w) => ({ w, code: cp.props.find((p) => p.name === w[0].toLowerCase() + w.slice(1)) }))
+			.filter((x) => x.code);
+		if (!pairs.length) return;
+		const node = fig?.usage?.use_when_nodes?.items?.[i];
+		out.push(
+			`**Property names.** Item ${i + 1}${node ? ` (Figma node ${c(node)})` : ''} is copied from Figma as written, with Figma's spelling of the properties. The code spells ${pairs.length > 1 ? 'them' : 'it'} ${pairs.map((x) => `[${c(x.code.name)}](${blob(`${cp.dir}/${cp.name}.tsx`, x.code.line)})`).join(' and ')}.`,
+		);
+	});
+	return out;
+}
+
+// The hover underline that the component description names and the stylesheet builds, but Figma draws no cell for.
+const HOVER_NOTE = { Breadcrumbs: { phrase: 'underline on hover' } };
+
+function hoverFacts(cp, fig) {
+	const cfgH = HOVER_NOTE[cp.name];
+	if (!cfgH || !fig?.description?.includes(cfgH.phrase)) return null;
+	const cssL = cp.css.split('\n');
+	const start = cssL.findIndex((l) => /:hover\s*\{/.test(l)) + 1;
+	if (!start) return null;
+	let end = start;
+	while (end < cssL.length && !cssL[end - 1].includes('}')) end++;
+	const rule = cssL.slice(start - 1, end).map((l) => l.trim()).join(' ');
+	const stories = show(`${cp.dir}/${cp.name}.stories.tsx`).split('\n');
+	const head = stories.slice(0, 15).map((l) => l.replace(/^\/\/\s?/, '')).join(' ');
+	const sentence = head.match(/Figma draws no hover, focus or visited variants; the ancestor-link underline on hover comes from the component description \(node [\d:]+\)\./)?.[0];
+	const sLine = sentence ? stories.findIndex((l) => /Figma draws no hover/.test(l)) + 1 : 0;
+	const qaPath = `reports/${cp.name}/qa-report.md`;
+	const qaRow = has(qaPath) ? show(qaPath).split('\n').find((l) => /^\| ancestor hover/.test(l)) : null;
+	return [
+		`**Hover is not a Figma cell.** The component description (node ${c(fig.component.id)}) says "${t(fig.description.match(/Ancestors are links[^.]*\./)?.[0] ?? cfgH.phrase)}" Figma draws no hover cell, so the matrix above has none. The built component has the rule at [${c(`${cp.name}.css:${start}${end > start ? `-${end}` : ''}`)}](${blob(`${cp.dir}/${cp.name}.css`, end > start ? `${start}-L${end}` : start)}): ${c(rule)}`,
+		sentence ? `The stories' header comment says: "${t(sentence)}" ([${c(`${cp.name}.stories.tsx:${sLine}`)}](${blob(`${cp.dir}/${cp.name}.stories.tsx`, sLine)})).` : null,
+		qaRow ? `The [QA report](${blob(qaPath)}) records the hover case as a pass on the live preview.` : null,
+	]
+		.filter(Boolean)
+		.join(' ');
+}
+
 function componentPage(cp) {
 	const { name, row, intent, intentPath } = cp;
 	const fig = figma.components?.[name] ?? null;
@@ -526,6 +623,9 @@ function componentPage(cp) {
 			const codeProp = cp.props.find((x) => x.name.toLowerCase() === p.name.toLowerCase());
 			const union = codeProp && cp.unions.find((u) => u.name === codeProp.type);
 			if (union) return { name: p.name, code: codeProp.name, values: p.values.map((v) => v.value), union };
+			// A boolean prop of the code that Figma publishes as a boolean property (Breadcrumbs: showItem2, showItem3).
+			if (codeProp?.type === 'boolean' && BOOLEAN_MATRIX[name]?.includes(codeProp.name) && p.values.map((v) => v.value).sort().join() === 'false,true')
+				return { name: p.name, code: codeProp.name, boolean: true, line: codeProp.line, values: p.values.map((v) => v.value), union: null };
 			// Figma's combined property that the code spells as native attributes (no prop, no union type).
 			if (!codeProp && cp.nativeState?.property === p.name) return { name: p.name, code: null, native: true, values: p.values.map((v) => v.value), union: null };
 			return null;
@@ -578,8 +678,11 @@ function componentPage(cp) {
 			);
 	}
 
+	for (const note of casingNote(cp, fig, intent)) usage.push(note);
+
 	const bare = bareControlFacts(cp, fig, review);
 	if (bare) usage.push(bare.useWhen);
+	const hrefN = hrefFacts(cp, fig, review);
 
 	if (!omit.has('Where it goes')) {
 		usage.push('## Where it goes');
@@ -611,10 +714,19 @@ function componentPage(cp) {
 	}
 
 	if (bare) usage.push(bare.bestPractice.join('\n\n'));
+	if (hrefN) usage.push(hrefN.usage);
 
 	usage.push('## What each variant is for');
 	if (!intent?.variant_intent) usage.push(notice(`No variant_intent in ${intentPath}.`));
-	else {
+	else if (!Object.keys(intent.variant_intent).length) {
+		// An empty variant_intent: say why, from the code, rather than draw an empty table.
+		const bools = cp.props.filter((p) => p.type === 'boolean');
+		if (cp.unions.length) usage.push(notice(`variant_intent is empty in ${intentPath}, but ${name}.tsx exports ${cp.unions.map((u) => u.name).join(', ')}.`));
+		else
+			usage.push(
+				`${name} has no variant union type, so there are no variant values to explain: ${c(`${name}.tsx`)} exports none${bools.length ? `, and ${bools.map((p) => `[${c(p.name)}](${blob(`${cp.dir}/${name}.tsx`, p.line)})`).join(' and ')} ${bools.length > 1 ? 'are' : 'is'} ${c('boolean')} ${bools.length > 1 ? 'props' : 'a prop'}` : ''} (${c('variant_intent')} is empty in ${c(intentPath)}).${fig?.variantMatrix ? ` The Design tab shows the ${fig.variantMatrix.cells} combinations that Figma draws.` : ''}`,
+			);
+	} else {
 		const prop = cp.unionProp?.name ?? fig?.variantMatrix?.properties?.[0]?.name ?? 'variant';
 		// A two-property matrix: name the property each value belongs to, from the union types in the code.
 		const propOf = (k) => (grid ? (grid.props.find((g) => g.union?.values.includes(k))?.name ?? prop) : prop);
@@ -637,6 +749,7 @@ function componentPage(cp) {
 				})
 				.join('\n'),
 		);
+	if (hrefN?.a11y) usage.push(hrefN.a11y);
 
 	if (!omit.has('Composition')) {
 		usage.push('## Composition');
@@ -703,6 +816,8 @@ function componentPage(cp) {
 		if (cp.propsExtends) code.push(`${c(name + 'Props')} also extends ${c(cp.propsExtends)}, so native attributes pass through to the element ([${c(`${name}.tsx:${cp.propsLine}`)}](${blob(`${cp.dir}/${name}.tsx`, cp.propsLine)})).`);
 	}
 
+	if (hrefN) code.push(hrefN.code);
+
 	{
 		const d = SOURCE_DIFFS[name];
 		const valueProp = cp.props.find((p) => p.name === 'value');
@@ -744,7 +859,7 @@ function componentPage(cp) {
 	if (!fig) design.push(notice(`No Figma read for ${name} in sources/figma.json.`));
 	else {
 		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(row.figma)}" />`);
-		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), component set ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
+		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), ${fig.component.kind === 'component' ? 'component' : 'component set'} ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
 		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)})`).join(', ')}, which Figma describes as: "${fig.internal.map((x) => t(x.description)).join(' ')}"`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
 	}
@@ -797,6 +912,11 @@ function componentPage(cp) {
 		}
 		}
 	} else design.push(notice(`No variant matrix for ${name} in sources/figma.json.`));
+
+	{
+		const hov = hoverFacts(cp, fig);
+		if (hov) design.push(hov);
+	}
 
 	design.push('## Themes');
 	design.push(fig?.themes ? t(fig.themes.note) : notice(`No theme information for ${name} in sources/figma.json.`));

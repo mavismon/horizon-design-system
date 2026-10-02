@@ -50,6 +50,7 @@ export default defineConfig({
 								{ label: 'All components', slug: 'core/components/overview' },
 								// <generated:components>
 								{ label: 'Avatar', slug: 'core/components/avatar' },
+								{ label: 'Breadcrumbs', slug: 'core/components/breadcrumbs' },
 								{ label: 'Button', slug: 'core/components/button' },
 								{ label: 'Checkbox', slug: 'core/components/checkbox' },
 								{ label: 'Chip', slug: 'core/components/chip' },

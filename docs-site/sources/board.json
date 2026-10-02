@@ -16,12 +16,12 @@
     {
       "name": "Breadcrumbs",
       "category": "MOLECULES",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1639&t=bEurJxon3J2egqXY-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-breadcrumbs--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/7eb2ff874ba3bb46634456343667b51123728540/reports/Breadcrumbs/release-review.md",
       "astroLink": ""
     },
     {
@@ -248,12 +248,12 @@
       "name": "Toggle",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1638&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-toggle--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/fbc021d4556de78fa83d47542827c202da7c68d5/reports/Toggle/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/toggle/"
     }
   ]
 }
