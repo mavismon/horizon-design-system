@@ -1,6 +1,20 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To show how full something is against a known total, such as a property's occupancy for a night (\"38 of 48 · 79%\").",
+    "To compare parts of a whole side by side, such as revenue by booking channel, with each share as the Value.",
+    "To show a score out of a maximum, such as review scores by category; hide the label row when the layout already names it.",
+    "Use tone inverse on navy backgrounds, such as a sold-out night in the calendar."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For steps in a flow, such as \"1 of 3\": use the Stepper component instead.",
+      "instead": "Stepper"
+    },
+    {
+      "when": "To compare exact figures across many rows: use the Table component instead.",
+      "instead": "Table"
+    }
+  ],
   "variant_intent": {
     "md": "8px (default)",
     "sm": "6px (dense layouts such as calendar cells)",
