@@ -16,3 +16,5 @@ export { ProgressBar } from "./components/ProgressBar/ProgressBar";
 export type { ProgressBarProps, ProgressBarSize, ProgressBarTone } from "./components/ProgressBar/ProgressBar";
 export { Toggle } from "./components/Toggle/Toggle";
 export type { ToggleProps, ToggleSize } from "./components/Toggle/Toggle";
+export { Breadcrumbs } from "./components/Breadcrumbs/Breadcrumbs";
+export type { BreadcrumbsProps } from "./components/Breadcrumbs/Breadcrumbs";

@@ -1,13 +1,27 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "To turn a single setting on or off, such as a notification (\"Check in reminders\", \"Price drop alerts\").",
+    "For a setting that takes effect immediately, without a Save button.",
+    "Use size md in settings lists, with the label and helper text on the left and the toggle on the right; use size sm in dense tables, such as the Email, Push and SMS columns.",
+    "Use a disabled state for a setting the user can't change, such as booking confirmations that are always sent."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For a choice submitted together with a form, such as agreeing to terms: use the Checkbox component instead.",
+      "instead": "Checkbox"
+    },
+    {
+      "when": "When the user must choose one of several options: use the Radiocard component instead.",
+      "instead": "Radiocard"
+    },
+    {
+      "when": "To trigger an action, such as saving or sending: use the Button component instead.",
+      "instead": "Button"
+    }
+  ],
   "variant_intent": {
     "md": "default; settings lists",
-    "sm": "dense tables",
-    "off": "default",
-    "on": "",
-    "disabled-off": "",
-    "disabled-on": ""
+    "sm": "dense tables"
   },
   "placement": [],
   "pairs_with": [],
