@@ -1,0 +1,65 @@
+.hz-buttongroup {
+  display: inline-flex;
+  vertical-align: top;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.hz-buttongroup--stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.hz-buttongroup--stack .hz-buttongroup__button {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.hz-buttongroup--segmented {
+  gap: var(--spacing-sm);
+}
+
+.hz-buttongroup__segment {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: calc(var(--spacing-md) / 2);
+  padding-inline: calc(var(--spacing-md) - var(--border-width-sm));
+  border: var(--border-width-sm) solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-secondary);
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-xs);
+  line-height: var(--lineheight-xs);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hz-buttongroup__segment--selected {
+  border-color: var(--color-bg-inverse);
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
+
+/* The native radio fills the label, transparent, so clicks and arrow keys stay native. */
+.hz-buttongroup__input {
+  appearance: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* The input is not visible, so the label carries the native keyboard focus ring. */
+.hz-buttongroup__segment:has(.hz-buttongroup__input:focus-visible) {
+  outline: auto;
+}

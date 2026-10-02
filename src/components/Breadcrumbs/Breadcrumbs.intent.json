@@ -1,6 +1,23 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "Above the page title on pages that sit inside a hierarchy, such as a listing (\"Stays / Portugal / Lisbon / Alfama\") or a back office settings page (\"Team and roles / Roles / Permissions\").",
+    "To let the user go back up to any parent page in one click.",
+    "Show 2 to 4 levels; hide unused levels with ShowItem2 and ShowItem3."
+  ],
+  "dont_use_when": [
+    {
+      "when": "On top-level pages that have no parent: there's nothing to show.",
+      "instead": ""
+    },
+    {
+      "when": "To show the steps of a flow, such as checkout: use the Stepper component instead.",
+      "instead": "Stepper"
+    },
+    {
+      "when": "As the main navigation between sections: use the Sidebar or Header component instead.",
+      "instead": "Sidebar or Header"
+    }
+  ],
   "variant_intent": {},
   "placement": [],
   "pairs_with": [],
