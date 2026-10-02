@@ -21,11 +21,7 @@
   ],
   "variant_intent": {
     "md": "default; settings lists",
-    "sm": "dense tables",
-    "off": "default",
-    "on": "",
-    "disabled-off": "",
-    "disabled-on": ""
+    "sm": "dense tables"
   },
   "placement": [],
   "pairs_with": [],
