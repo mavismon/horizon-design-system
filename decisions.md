@@ -121,3 +121,19 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 5 passes for exactly the cells 140:52 and 140:59 being unbuilt. Quote this ruling in the report. When the designer fixes the inverse colours, this ruling no longer applies: the tone must be built, and the review run again. The Usage line 140:204 ("Use tone inverse on navy backgrounds, such as a sold-out night in the calendar") is copied verbatim from Figma into the intent file and recommends this unbuilt tone: report it as a docs and designer gap, not a gate finding.
 
 **Not ruled.** Any other published Figma variant or state that is not built. Any change to the six built cells. The two literals ruled in "ProgressBar track heights with no token". Whether Figma's Usage line about the inverse tone should be removed or reworded: that is for the designer.
+
+## 2026-10-02 · Toggle track heights and disabled alpha with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Toggle for three literal values. Figma draws the switch track 24px high for size md and 22px high for size sm (component set 144:20; md cells 144:4, 144:8, 144:12, 144:16; sm cells 144:6, 144:10, 144:14, 144:18), and the disabled-on track as the primary colour at 40% alpha (cells 144:16 and 144:18). Figma binds no variable to any of them. No token matches: `--spacing-2xl` is 24px but is a spacing token, and nothing is 22px; there are no size tokens and no opacity or alpha tokens. The track widths (44px and 40px), the knob diameters (20px and 18px) and the 2px knob inset are not literals in the stylesheet: the width comes from a unitless `aspect-ratio`, the knob fills the track height, and the inset is a `var(--border-width-md)` border.
+
+**Ruling.** These literals in `src/components/Toggle/Toggle.css` are accepted, because they are what the Figma node specifies, until the designer adds matching size and opacity tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `24px` | `height` (md track) | the md switch track | 16 |
+| `22px` | `height` (sm track) | the sm switch track | 21 |
+| `40%` | alpha in `color-mix(in srgb, var(--color-primary-default) 40%, transparent)` (disabled-on track only) | the disabled and checked switch track | 45 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these three values on exactly these properties in `Toggle.css`. Quote this ruling in the report. When a size token for 24px or 22px, or an opacity token for 40%, appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The on track, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is the user's choice to use the bound token, not a gate finding. The low contrast of the off track and of the knob on the disabled-off track as Figma draws them, which the user chose to build as drawn: that needs the designer. Any state Figma does not draw (hover, pressed, error, loading).
