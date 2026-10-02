@@ -1,6 +1,25 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "At the end of a dialog or form, to pair the main action with a way out, such as \"Publish review\" and \"Save as draft\", or \"Save role and access\" and \"Cancel\".",
+    "Use type destructive when the main action deletes or cancels something, such as \"Continue to cancel\" and \"Keep my booking\".",
+    "Use type secondary for two actions of equal weight, such as \"View\" and \"Modify\" on a trip card.",
+    "Use layout stack on narrow screens such as the mobile app, with the main action on top.",
+    "Use type segmented to switch a view between 2 to 4 options, such as the time range \"Last 24 hours / 7 days / 30 days / Custom range\" on the back office dashboard. Exactly one segment is selected."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For a single action: use the Button component instead.",
+      "instead": "Button"
+    },
+    {
+      "when": "To filter a list by several values at once: use the Chip component instead. Segments pick exactly one option.",
+      "instead": "Chip"
+    },
+    {
+      "when": "For more than three actions, or more than four segments: move the extras into a Dropdown component.",
+      "instead": "Dropdown"
+    }
+  ],
   "variant_intent": {
     "primary": "primary (filled + outline, default)",
     "destructive": "destructive (error + outline)",
