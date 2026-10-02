@@ -1,0 +1,22 @@
+.hz-logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+.hz-logo--lockup {
+  gap: var(--spacing-sm);
+}
+
+.hz-logo__mark {
+  display: block;
+  flex-shrink: 0;
+}
+
+.hz-logo__wordmark {
+  font-family: var(--fontfamily-body);
+  font-size: var(--fontsize-2xl);
+  font-weight: 600;
+  line-height: var(--lineheight-2xl);
+  color: #2e7cc4;
+  white-space: nowrap;
+}

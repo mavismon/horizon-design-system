@@ -1,0 +1,30 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "lockup": "default; mark and wordmark, the header logo",
+    "mark": "the icon alone"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--fontfamily-body",
+    "--fontsize-2xl",
+    "--lineheight-2xl",
+    "--spacing-sm"
+  ],
+  "a11y": [
+    {
+      "fact": "The mark is a native <img>. Its alt defaults to an empty string in the lockup, where the wordmark text beside it names the logo, and to \"Horizon Stays\" in the mark-only variant; the alt prop overrides either.",
+      "source": "src/components/Logo/Logo.tsx:14"
+    },
+    {
+      "fact": "The mark image carries explicit width and height of 32, its intrinsic size.",
+      "source": "src/components/Logo/Logo.tsx:20"
+    },
+    {
+      "fact": "The wordmark is real text content, so it is the lockup's accessible name and is selectable.",
+      "source": "src/components/Logo/Logo.tsx:21"
+    }
+  ]
+}
