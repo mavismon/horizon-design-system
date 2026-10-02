@@ -1,0 +1,46 @@
+.hz-toggle {
+  appearance: none;
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin: 0;
+  border: var(--border-width-md) solid transparent;
+  border-radius: var(--radius-full);
+  background-color: var(--color-border-strong);
+  cursor: pointer;
+}
+
+.hz-toggle--md {
+  height: 24px;
+  aspect-ratio: 11 / 6;
+}
+
+.hz-toggle--sm {
+  height: 22px;
+  aspect-ratio: 20 / 11;
+}
+
+.hz-toggle::before {
+  content: "";
+  display: block;
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg-elevated);
+}
+
+.hz-toggle:checked {
+  justify-content: flex-end;
+  background-color: var(--color-primary-default);
+}
+
+.hz-toggle:disabled {
+  background-color: var(--color-state-disabled-bg);
+  cursor: not-allowed;
+}
+
+.hz-toggle:disabled:checked {
+  background-color: color-mix(in srgb, var(--color-primary-default) 40%, transparent);
+}

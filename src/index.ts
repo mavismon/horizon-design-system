@@ -14,3 +14,5 @@ export { Logo } from "./components/Logo/Logo";
 export type { LogoProps, LogoType } from "./components/Logo/Logo";
 export { ProgressBar } from "./components/ProgressBar/ProgressBar";
 export type { ProgressBarProps, ProgressBarSize, ProgressBarTone } from "./components/ProgressBar/ProgressBar";
+export { Toggle } from "./components/Toggle/Toggle";
+export type { ToggleProps, ToggleSize } from "./components/Toggle/Toggle";

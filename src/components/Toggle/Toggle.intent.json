@@ -1,0 +1,32 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "md": "default; settings lists",
+    "sm": "dense tables",
+    "off": "default",
+    "on": "",
+    "disabled-off": "",
+    "disabled-on": ""
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--color-bg-elevated",
+    "--color-border-strong",
+    "--color-primary-default",
+    "--color-state-disabled-bg",
+    "--radius-full"
+  ],
+  "a11y": [
+    {
+      "fact": "The control is a native <input type=\"checkbox\"> with role=\"switch\", so keyboard, focus and disabled behaviour are the browser's own, and the checked state maps natively to the switch state (no manual aria-checked).",
+      "source": "src/components/Toggle/Toggle.tsx:16"
+    },
+    {
+      "fact": "There is no built-in label; callers supply aria-label or wrap the input in a <label> to give it an accessible name.",
+      "source": "src/components/Toggle/Toggle.stories.tsx:12"
+    }
+  ]
+}
