@@ -1,6 +1,6 @@
 {
   "readAt": "2026-10-02",
-  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out.",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column.",
   "components": [
     {
       "name": "Avatar",
@@ -11,18 +11,20 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-avatar--all-sizes",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/9326ae954ef8214a33022d68be61ebc58af00f86/reports/Avatar/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/avatar/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/avatar/",
+      "composes": []
     },
     {
       "name": "Breadcrumbs",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1639&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-breadcrumbs--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/7eb2ff874ba3bb46634456343667b51123728540/reports/Breadcrumbs/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/breadcrumbs/",
+      "composes": []
     },
     {
       "name": "Button",
@@ -33,18 +35,22 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/f569313d69d444f2733df0f7464243798abdf806/reports/Button/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/button/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/button/",
+      "composes": []
     },
     {
       "name": "ButtonGroup",
       "category": "MOLECULES",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
-      "astroLink": ""
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1640&t=bEurJxon3J2egqXY-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-buttongroup--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/b6aa331fa03a1a02a086c728357436103b0b05d1/reports/ButtonGroup/release-review.md",
+      "astroLink": "",
+      "composes": [
+        "Button"
+      ]
     },
     {
       "name": "Calendar",
@@ -55,7 +61,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Card",
@@ -66,7 +73,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Checkbox",
@@ -77,7 +85,8 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-checkbox--all-states",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/21cf340fe8d6f569c06ee0570a746d810e0aa4e6/reports/Checkbox/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/checkbox/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/checkbox/",
+      "composes": []
     },
     {
       "name": "Chip",
@@ -88,29 +97,32 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-chip--all-states",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/0465b00cec46ab5d10eaf6999ca4652181a29656/reports/Chip/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/chip/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/chip/",
+      "composes": []
     },
     {
       "name": "DropDown",
       "category": "MOLECULES",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1641&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "File",
       "category": "MOLECULES",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1642&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Form",
@@ -121,7 +133,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Header",
@@ -132,7 +145,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Image",
@@ -143,7 +157,8 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-image--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/90d220240341bd7e05fd8b24708cd79fac20fa69/reports/Image/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/image/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/image/",
+      "composes": []
     },
     {
       "name": "Link",
@@ -154,7 +169,8 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-link--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/22a90aef153b6661a76003dc289f23f2fdfd59b2/reports/Link/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/link/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/link/",
+      "composes": []
     },
     {
       "name": "Logo",
@@ -165,7 +181,8 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-logo--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/5e363d15eeff987f93191d0ab40ab0987e7108ff/reports/Logo/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/logo/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/logo/",
+      "composes": []
     },
     {
       "name": "Modal",
@@ -176,7 +193,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "ProgressBar",
@@ -187,7 +205,8 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-progressbar--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/ab871f8f1f40b4a6dcbb6cd883afa8b952de8c41/reports/ProgressBar/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/progressbar/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/progressbar/",
+      "composes": []
     },
     {
       "name": "RadioCard",
@@ -198,7 +217,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "SearchBar",
@@ -209,7 +229,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "SideBar",
@@ -220,7 +241,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Stepper",
@@ -231,7 +253,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Table",
@@ -242,7 +265,8 @@
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
-      "astroLink": ""
+      "astroLink": "",
+      "composes": []
     },
     {
       "name": "Toggle",
@@ -253,7 +277,8 @@
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-toggle--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/fbc021d4556de78fa83d47542827c202da7c68d5/reports/Toggle/release-review.md",
-      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/toggle/"
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/toggle/",
+      "composes": []
     }
   ]
 }

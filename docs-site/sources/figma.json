@@ -1354,6 +1354,175 @@
           ]
         }
       }
+    },
+    "ButtonGroup": {
+      "readAt": "2026-10-02",
+      "page": {
+        "id": "57:1640",
+        "name": "Buttongroups"
+      },
+      "node": {
+        "id": "192:44",
+        "name": "❖ buttongroup"
+      },
+      "component": {
+        "id": "191:123",
+        "name": "buttongroup"
+      },
+      "internal": [
+        {
+          "id": "194:111",
+          "name": "_buttongroup-segment",
+          "description": "Internal part of buttongroup type=segmented (not for direct use). One option: state unselected or selected.",
+          "states": [
+            {
+              "value": "state=unselected",
+              "node": "194:107"
+            },
+            {
+              "value": "state=selected",
+              "node": "194:109"
+            }
+          ]
+        }
+      ],
+      "description": "Two or three related buttons, or a segmented control. type: primary (filled + outline, default), destructive (error + outline), secondary (two outlines), segmented (2 to 4 options, one selected in navy, the rest outlined; row only). layout: row (default, main action on the left), stack (full width, main action on top; not for segmented). ShowThird adds a third button or segment; ShowFourth adds a fourth segment (segmented only). Edit each button's or segment's text, and which segment is selected, from the group's properties.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "primary"
+              },
+              {
+                "value": "destructive"
+              },
+              {
+                "value": "secondary"
+              },
+              {
+                "value": "segmented"
+              }
+            ]
+          },
+          {
+            "name": "layout",
+            "values": [
+              {
+                "value": "row"
+              },
+              {
+                "value": "stack"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "type=primary, layout=row": "191:3",
+          "type=primary, layout=stack": "191:26",
+          "type=destructive, layout=row": "191:45",
+          "type=destructive, layout=stack": "191:66",
+          "type=secondary, layout=row": "191:85",
+          "type=secondary, layout=stack": "191:104",
+          "type=segmented, layout=row": "195:44"
+        },
+        "cells": 7,
+        "note": "The documentation frame (192:44) lays out type (rows: primary, destructive, secondary, segmented) against layout (columns: row, stack). The component set (191:123) publishes 7 variants, named type=primary, layout=row through type=segmented, layout=row. It has no type=segmented, layout=stack variant, so the grid is 4 x 2 = 8 but 7 are published. ShowThird and ShowFourth are boolean properties of the set, not cells; the page draws them as the Examples ShowThird: true (192:58) and ShowThird + ShowFourth: true (195:964). Figma draws no hover, pressed or disabled states."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The buttongroup frame renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-inverse": "#f9fafb",
+        "--fontSize-xs": "10",
+        "--fontWeight-regular": "Regular",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-xs": "16",
+        "--radius-sm": "6",
+        "--color-primary-default": "#3b71f2",
+        "--color-text-primary": "#161925",
+        "--color-neutral-default": "#8a909c",
+        "--spacing-md": "12",
+        "--color-status-error": "#ea3d3d",
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-inverse": "#161925",
+        "--color-text-secondary": "#4d5361",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-default": "#d7dee7",
+        "--spacing-sm": "8"
+      },
+      "unboundValues": [
+        {
+          "layer": "buttongroup, layout=stack (191:26, 191:66, 191:104)",
+          "property": "width (the code sets width: 100% of the parent, not a width literal)",
+          "value": "320px",
+          "css": {
+            "selector": ".hz-buttongroup--stack",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "_buttongroup-segment, both states (194:107, 194:109)",
+          "property": "vertical padding (the code computes it from --spacing-md with calc(), not a px literal)",
+          "value": "7px",
+          "css": {
+            "selector": ".hz-buttongroup__segment",
+            "property": "padding-block"
+          }
+        }
+      ],
+      "usage": {
+        "node": "193:59",
+        "use_when_heading": "Use a Button group",
+        "use_when_node": "193:62",
+        "use_when": [
+          "At the end of a dialog or form, to pair the main action with a way out, such as \"Publish review\" and \"Save as draft\", or \"Save role and access\" and \"Cancel\".",
+          "Use type destructive when the main action deletes or cancels something, such as \"Continue to cancel\" and \"Keep my booking\".",
+          "Use type secondary for two actions of equal weight, such as \"View\" and \"Modify\" on a trip card.",
+          "Use layout stack on narrow screens such as the mobile app, with the main action on top.",
+          "Use type segmented to switch a view between 2 to 4 options, such as the time range \"Last 24 hours / 7 days / 30 days / Custom range\" on the back office dashboard. Exactly one segment is selected."
+        ],
+        "use_when_nodes": {
+          "group": "193:62",
+          "items": [
+            "193:162",
+            "193:169",
+            "193:175",
+            "193:181",
+            "195:940"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a button group",
+        "dont_use_when_node": "193:71",
+        "dont_use_when": [
+          "For a single action: use the Button component instead.",
+          "To filter a list by several values at once: use the Chip component instead. Segments pick exactly one option.",
+          "For more than three actions, or more than four segments: move the extras into a Dropdown component."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Put the main action first: on the left in a row, on top in a stack.",
+          "Use at most one filled button per group; the others are outline.",
+          "Label buttons with what they do (\"Delete account\", \"Keep my account\"), not \"Yes\" and \"No\".",
+          "Keep the whole group together; don't split its buttons across the layout.",
+          "In a destructive group, make the safe choice easy to find and never the filled button."
+        ],
+        "best_practice_nodes": {
+          "group": "193:77",
+          "items": [
+            "193:209",
+            "193:215",
+            "193:221",
+            "193:227",
+            "193:233"
+          ]
+        }
+      }
     }
   }
 }

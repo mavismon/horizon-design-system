@@ -258,22 +258,31 @@ function parseComponent(row) {
 	const unions = [];
 	for (const m of tsx.matchAll(/export type (\w+)\s*=\s*([^;]+);/g)) {
 		const values = [...m[2].matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+		// An alias that only joins other types (ButtonGroupProps = A | B) has no string values: not a value union.
+		if (!values.length) continue;
 		unions.push({ name: m[1], values, line: lineOf(new RegExp(`export type ${m[1]}\\b`)) });
 	}
+	// The union type a prop's declared type names or draws its literals from (Exclude<ButtonGroupType, "segmented"> and "segmented" both give ButtonGroupType).
+	const unionOf = (type) => {
+		const words = type.match(/\w+/g) ?? [];
+		const byName = unions.find((u) => words.includes(u.name));
+		if (byName) return byName;
+		const lits = [...type.matchAll(/"([^"]+)"/g)].map((x) => x[1]);
+		return lits.length ? unions.find((u) => lits.every((v) => u.values.includes(v))) ?? null : null;
+	};
 
-	// Props interface, with doc comments.
-	const im = tsx.match(new RegExp(`export interface (${name}Props)\\s*(?:extends\\s+([^{]+))?\\{([\\s\\S]*?)\\n\\}`));
-	const props = [];
-	let propsExtends = null;
-	let propsLine = null;
-	if (im) {
-		propsExtends = im[2]?.trim() || null;
-		propsLine = lineOf(new RegExp(`export interface ${im[1]}\\b`));
+	// Props interface, with doc comments. When the code has no single NameProps interface but several interfaces for
+	// one component (a discriminated union such as ButtonGroupProps = ButtonGroupActionProps | ButtonGroupSegmentedProps),
+	// every interface is read, locally extended ones included, and each prop keeps the type, default and doc it has in each.
+	const parseIface = (ifaceName) => {
+		const m = tsx.match(new RegExp(`(?:export )?interface (${ifaceName})\\s*(?:extends\\s+([^{]+))?\\{([\\s\\S]*?)\\n\\}`));
+		if (!m) return null;
+		const startLine = lineOf(new RegExp(`interface ${ifaceName}\\b`));
+		const out = [];
 		let doc = null;
-		const bodyLines = im[3].split('\n');
 		let inDoc = false;
 		let buf = [];
-		for (const raw of bodyLines) {
+		for (const raw of m[3].split('\n')) {
 			const l = raw.trim();
 			if (l.startsWith('/**')) {
 				inDoc = true;
@@ -289,16 +298,76 @@ function parseComponent(row) {
 			}
 			const pm = l.match(/^(\w+)(\?)?:\s*([^;]+);/);
 			if (pm) {
-				props.push({ name: pm[1], optional: !!pm[2], type: pm[3].trim(), doc, line: lineOf(new RegExp(`^\\s*${pm[1]}\\??:`), propsLine) });
+				out.push({ name: pm[1], optional: !!pm[2], type: pm[3].trim(), doc, line: lineOf(new RegExp(`^\\s*${pm[1]}\\??:`), startLine), iface: ifaceName });
 				doc = null;
 			}
 		}
+		return { name: ifaceName, extends: m[2]?.trim() || null, line: startLine, props: out };
+	};
+	const props = [];
+	let propsExtends = null;
+	let propsLine = null;
+	let ifaces = [];
+	let unionAlias = null;
+	const single = parseIface(`${name}Props`);
+	if (single) {
+		ifaces = [single];
+		propsExtends = single.extends;
+		propsLine = single.line;
+		props.push(...single.props);
+	} else {
+		// Interfaces named after the component that the exported props type unions together.
+		const alias = tsx.match(new RegExp(`export type ${name}Props\\s*=\\s*([^;]+);`));
+		const members = alias ? alias[1].split('|').map((x) => x.trim()).filter((x) => /^\w+$/.test(x)) : [];
+		for (const mName of members) {
+			const mi = parseIface(mName);
+			if (!mi) continue;
+			// Fold in locally declared base interfaces.
+			const baseProps = (mi.extends ?? '').match(/\w+/g)?.filter((w) => new RegExp(`interface ${w}\\b`).test(tsx)).flatMap((w) => parseIface(w)?.props ?? []) ?? [];
+			const own = new Set(mi.props.map((p) => p.name));
+			ifaces.push({ ...mi, props: [...baseProps.filter((p) => !own.has(p.name)).map((p) => ({ ...p, iface: mi.name })), ...mi.props] });
+		}
+		// One row per prop name, in order of first appearance; each row keeps what each interface says.
+		const rows = new Map();
+		for (const i of ifaces) for (const p of i.props) rows.set(p.name, [...(rows.get(p.name) ?? []), p]);
+		for (const [pname, list] of rows) {
+			const first = list[0];
+			const distinct = (f) => [...new Set(list.map(f))];
+			props.push({
+				name: pname,
+				optional: list.every((p) => p.optional),
+				type: distinct((p) => p.type).join(' | '),
+				doc: first.doc,
+				line: first.line,
+				perIface: list.length > 1 && distinct((p) => `${p.type}\u0000${p.doc}`).length > 1 ? list : null,
+				ifaceNames: list.map((p) => p.iface),
+			});
+		}
+		propsLine = ifaces[0]?.line ?? null;
+		// The shared local base the members extend, and what that base extends (native attributes pass through it).
+		const baseName = ifaces.flatMap((i) => (i.extends ?? '').match(/\w+/g) ?? []).find((w) => new RegExp(`interface ${w}\\b`).test(tsx));
+		const base = baseName ? parseIface(baseName) : null;
+		propsExtends = base?.extends ?? null;
+		unionAlias = alias ? { name: `${name}Props`, text: alias[1].replace(/\s+/g, ' ').trim(), line: lineOf(new RegExp(`export type ${name}Props\\b`)), members: ifaces.map((i) => i.name), baseName, baseLine: base?.line ?? null } : null;
 	}
-	// Defaults from the destructured signature.
-	const sig = tsx.match(new RegExp(`export function ${name}\\(\\{([\\s\\S]*?)\\}\\s*:`));
-	const defaults = {};
-	if (sig) for (const m of sig[1].matchAll(/(\w+)\s*=\s*([^,\n]+)/g)) defaults[m[1]] = m[2].trim();
-	for (const p of props) p.default = defaults[p.name] ?? null;
+	// Defaults from the destructured signature, per function: the exported component, or the internal functions that take one of the props interfaces.
+	const sigs = [...tsx.matchAll(/function (\w+)\(\{([\s\S]*?)\}\s*:\s*(\w+)\)/g)];
+	const exportSig = tsx.match(new RegExp(`export function ${name}\\(\\{([\\s\\S]*?)\\}\\s*:`));
+	const exportDefaults = {};
+	if (exportSig) for (const m of exportSig[1].matchAll(/(\w+)\s*=\s*([^,\n]+)/g)) exportDefaults[m[1]] = m[2].trim();
+	const defaultsBy = new Map();
+	for (const s of sigs) {
+		const d = {};
+		for (const m of s[2].matchAll(/(\w+)\s*=\s*([^,\n]+)/g)) d[m[1]] = m[2].trim();
+		defaultsBy.set(s[3], d);
+	}
+	for (const p of props) {
+		if (p.ifaceNames) {
+			const per = [...new Set(p.ifaceNames)].map((i) => ({ iface: i, value: defaultsBy.get(i)?.[p.name] ?? null }));
+			p.defaultsPer = per;
+			p.default = per.every((x) => x.value === per[0].value) ? per[0].value : null;
+		} else p.default = defaultsBy.get(`${name}Props`)?.[p.name] ?? exportDefaults[p.name] ?? null;
+	}
 
 	// CSS: declarations with line numbers, and every token read.
 	const cssLines = css.split('\n');
@@ -324,7 +393,7 @@ function parseComponent(row) {
 	}
 
 	// Stories: which are variant-matrix rows, which are examples.
-	const unionProp = props.find((p) => unions.some((u) => u.name === p.type));
+	const unionProp = props.find((p) => unions.some((u) => u.name === p.type)) ?? props.find((p) => unionOf(p.type));
 	const storyDefs = [];
 	const exportRe = /export const (\w+)\s*:\s*Story\s*=\s*\{/g;
 	const starts = [...stories.matchAll(exportRe)];
@@ -338,7 +407,7 @@ function parseComponent(row) {
 		// The value each union-typed prop is set to in this story's args (a two-property matrix needs both).
 		const argValues = {};
 		for (const p of props) {
-			if (!unions.some((u) => u.name === p.type)) continue;
+			if (!unionOf(p.type)) continue;
 			const v = body.match(new RegExp(`\\b${p.name}:\\s*"([^"]+)"`));
 			if (v) argValues[p.name] = v[1];
 		}
@@ -373,7 +442,7 @@ function parseComponent(row) {
 		});
 	const since = tags.find((tag) => has('src/index.ts', tag) && new RegExp(`export \\{[^}]*\\b${name}\\b`).test(show('src/index.ts', tag)));
 
-	return { nativeState, row, name, dir, tsx, css, intent, intentPath, unions, props, propsExtends, propsLine, tokensRead, findDecl, storyDefs, sbDocs, log, since: since?.replace(/^v/, '') ?? null, unionProp };
+	return { nativeState, row, name, dir, tsx, css, intent, intentPath, unions, unionOf, ifaces, unionAlias, props, propsExtends, propsLine, tokensRead, findDecl, storyDefs, sbDocs, log, since: since?.replace(/^v/, '') ?? null, unionProp };
 }
 
 const comps = paged.map(parseComponent);
@@ -445,6 +514,7 @@ const OMIT_USAGE_SECTIONS = {
 	Logo: ['Where it goes', 'Composition'],
 	ProgressBar: ['Where it goes', 'Composition'],
 	Toggle: ['Where it goes', 'Composition'],
+	ButtonGroup: ['Where it goes', 'Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -609,6 +679,99 @@ function hoverFacts(cp, fig) {
 		.join(' ');
 }
 
+// A combination of a two-property grid that Figma does not publish. The page says so from Figma's component description
+// (the sentence that rules it out), from the code's own types (the interface that narrows the property) and from the
+// stories' header comment, each quoted as written. Nothing is added that those three don't say.
+function unpublishedNote(cp, fig, keys, grid) {
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const parts = [`Figma publishes ${fig.variantMatrix.cells} of the ${grid.props[0].values.length * grid.props[1].values.length} combinations: ${keys.map((k) => c(k)).join(', ')} ${keys.length > 1 ? 'are' : 'is'} not published, so the matrix has no cell or story for ${keys.length > 1 ? 'them' : 'it'}.`];
+	for (const k of keys) {
+		const vals = Object.fromEntries(k.split(', ').map((x) => x.split('=')));
+		const rowVal = vals[grid.props[0].name];
+		const colVal = vals[grid.props[1].name];
+		const sentence = fig.description?.match(new RegExp(`${colVal} \\([^)]*not for ${rowVal}\\)`))?.[0];
+		const narrowed = cp.props.find((p) => p.name === grid.props[1].code && p.perIface)?.perIface.find((p) => p.type.includes(`"${grid.props[1].values[0]}"`) && !p.type.includes(`"${colVal}"`));
+		const hdrLine = show(`${cp.dir}/${cp.name}.stories.tsx`).split('\n').findIndex((l) => l.includes(`${grid.props[1].code}="${colVal}" is not available for ${grid.props[0].code}="${rowVal}"`)) + 1;
+		const hdr = hdrLine ? show(`${cp.dir}/${cp.name}.stories.tsx`).split('\n')[hdrLine - 1].match(new RegExp(`${grid.props[1].code}="${colVal}" is not available for ${grid.props[0].code}="${rowVal}" \\(a type error\\)\\.`))?.[0] ?? null : null;
+		if (sentence) parts.push(`The component description says "${t(sentence)}" (node ${c(fig.component.id)}).`);
+		if (narrowed) parts.push(`In the code, [${c(narrowed.iface)}](${blob(file, narrowed.line)}) types ${c(narrowed.name)} as ${c(narrowed.type)}, so ${c(`${rowVal} + ${colVal}`)} is a type error.`);
+		if (hdr) parts.push(`The stories' header comment says: "${t(hdr.trim())}" ([${c(`${cp.name}.stories.tsx:${hdrLine}`)}](${blob(`${cp.dir}/${cp.name}.stories.tsx`, hdrLine)})).`);
+	}
+	return parts.join(' ');
+}
+
+// Props the code adds that Figma doesn't have, and the one Figma sentence that points at them differently (ButtonGroup: the
+// texts are edited "from the group's properties" in Figma, while the code takes a labels array). Everything is quoted as
+// written: the stories' header comment, the Figma description's sentence, and the release review's numbered findings.
+// stackFinding is the review finding about the parent width, quoted with the QA report's limitation line.
+const REVIEW_NOTES = { ButtonGroup: { findings: [1, 2, 3], figmaPhrase: 'Edit each', stackFinding: 4, stackQa: 'The stack layout has' } };
+
+function reviewFinding(review, n) {
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	if (!m) return null;
+	const sec = mdSection(show(m[2], m[1]), '## Findings outside the gates');
+	return sec?.split('\n').find((l) => l.startsWith(`${n}. `))?.replace(/^\d+\.\s*/, '') ?? null;
+}
+
+function reviewNotes(cp, fig, review) {
+	const cfgR = REVIEW_NOTES[cp.name];
+	if (!cfgR) return { props: null, stack: null };
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const sl = show(storyFile).split('\n');
+	const from = sl.findIndex((l) => /^\/\/ Figma properties:/.test(l));
+	const to = sl.findIndex((l, i) => i >= from && /aria-label\.\s*$/.test(l));
+	if (from < 0 || to < 0) return { props: null, stack: null };
+	const header = from >= 0 ? sl.slice(from, to + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' ') : null;
+	const labels = cp.props.find((p) => p.name === 'labels');
+	const sentence = fig?.description?.match(new RegExp(`${cfgR.figmaPhrase}[^.]*\\.`))?.[0];
+	const quotes = cfgR.findings.map((n) => reviewFinding(review, n)).filter(Boolean).map((l) => `> ${t(plain(l))}`);
+	let props = null;
+	if (header && labels && sentence)
+		props = [
+			`**Which props are Figma properties.** The Figma properties are ${c('type')}, ${c('layout')}, ${c('showThird')} and ${c('showFourth')}; the table above marks the others "Not a Figma property" from their doc comments. The stories' header comment says: "${t(header)}" ([${c(`${cp.name}.stories.tsx:${from + 1}-${to + 1}`)}](${blob(storyFile, `${from + 1}-L${to + 1}`)})).`,
+			`**Text and selection.** Figma's component description (node ${c(fig.component.id)}) says, unedited: "${t(sentence)}" The code takes the texts as the [${c('labels')}](${blob(file, labels.line)}) array (the header comment above says Figma edits them inside the instances) and the selected segment as ${c('value')}, ${c('defaultValue')} and ${c('onValueChange')}.`,
+			...(quotes.length ? [`From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${quotes.join('\n>\n')}`] : []),
+		].join('\n\n');
+	// The stack layout's width.
+	const stackDecl = cp.findDecl('.hz-buttongroup--stack', 'width');
+	const qaPath = `reports/${cp.name}/qa-report.md`;
+	const qaLine = has(qaPath) ? show(qaPath).split('\n').flatMap((l) => l.split('**Limitations (not defects):**')).map((x) => x.trim()).flatMap((x) => x.split(/(?<=\.) (?=[A-Z])/)).find((x) => x.startsWith(cfgR.stackQa)) : null;
+	const rvLine = reviewFinding(review, cfgR.stackFinding);
+	let stack = null;
+	if (stackDecl && (qaLine || rvLine))
+		stack = [
+			`**Stack needs a parent with a defined width.** ${c(`${cp.name}.css`)} sets [${c(stackDecl.text)}](${blob(`${cp.dir}/${cp.name}.css`, stackDecl.line)}) on the stack layout.`,
+			qaLine ? `From the [QA report](${blob(qaPath)}), as written:\n\n> ${t(plain(qaLine))}` : null,
+			rvLine ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n> ${t(plain(rvLine))}` : null,
+		]
+			.filter(Boolean)
+			.join('\n\n');
+	return { props, stack };
+}
+
+// The components a component is built from: the registry's Composes column (names in board.json) checked against the code.
+// The sentence is only written when the code imports and renders the component, so the registry and the source agree.
+function composesFacts(cp) {
+	const out = [];
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const lines = cp.tsx.split('\n');
+	for (const n of cp.row.composes ?? []) {
+		const imp = lines.findIndex((l) => new RegExp(`^import \\{[^}]*\\b${n}\\b[^}]*\\} from "\\.\\./${n}/${n}"`).test(l)) + 1;
+		const use = lines.findIndex((l) => new RegExp(`<${n}\\b`).test(l)) + 1;
+		if (!imp || !use) continue;
+		const target = paged.some((r) => r.name === n) ? `[${n}](/core/components/${slugOf(n)}/)` : c(n);
+		out.push(`${c(`${cp.name}.tsx`)} is built from ${target}: it imports it ([${c(`${cp.name}.tsx:${imp}`)}](${blob(file, imp)})) and renders ${c(`<${n}>`)} ([${c(`${cp.name}.tsx:${use}`)}](${blob(file, use)})). The registry's Composes column for ${cp.name} lists ${n}.`);
+	}
+	return out;
+}
+
+// ", but the stylesheet of the component it is built from does", appended where a token the component's own CSS doesn't read is read by a composed component's CSS.
+function composedReads(cp, tokens) {
+	const by = (cp.row.composes ?? []).filter((n) => has(`src/components/${n}/${n}.css`) && tokens.some((tok) => new RegExp(`var\\(${tok}\\b`).test(show(`src/components/${n}/${n}.css`))));
+	return by.length ? `, but ${by.map((n) => `${n}.css`).join(' and ')}, from the ${by.length > 1 ? 'components' : 'component'} it is built from, does` : '';
+}
+
 function componentPage(cp) {
 	const { name, row, intent, intentPath } = cp;
 	const fig = figma.components?.[name] ?? null;
@@ -621,7 +784,7 @@ function componentPage(cp) {
 		if (!vm || vm.properties.length !== 2) return null;
 		const gp = vm.properties.map((p) => {
 			const codeProp = cp.props.find((x) => x.name.toLowerCase() === p.name.toLowerCase());
-			const union = codeProp && cp.unions.find((u) => u.name === codeProp.type);
+			const union = codeProp && (cp.unions.find((u) => u.name === codeProp.type) ?? cp.unionOf(codeProp.type));
 			if (union) return { name: p.name, code: codeProp.name, values: p.values.map((v) => v.value), union };
 			// A boolean prop of the code that Figma publishes as a boolean property (Breadcrumbs: showItem2, showItem3).
 			if (codeProp?.type === 'boolean' && BOOLEAN_MATRIX[name]?.includes(codeProp.name) && p.values.map((v) => v.value).sort().join() === 'false,true')
@@ -630,10 +793,15 @@ function componentPage(cp) {
 			if (!codeProp && cp.nativeState?.property === p.name) return { name: p.name, code: null, native: true, values: p.values.map((v) => v.value), union: null };
 			return null;
 		});
-		if (gp.some((x) => !x) || gp[0].values.length * gp[1].values.length !== vm.cells) return null;
+		if (gp.some((x) => !x)) return null;
+		const product = gp[0].values.length * gp[1].values.length;
+		// A grid with fewer published cells than the product (ButtonGroup: segmented has no stack variant) is drawn as a
+		// grid only when Figma names every published cell (cellNodes) and the missing ones are the rest of the product.
+		const sparse = product !== vm.cells;
+		if (sparse && !(vm.cells < product && Object.keys(vm.cellNodes ?? {}).length === vm.cells)) return null;
 		// Every single-cell story must land on one of Figma's own values for the native property.
 		for (const g of gp.filter((x) => x.native)) if (cp.storyDefs.some((sd) => sd.isRow && !g.values.includes(sd.nativeState))) return null;
-		return { props: gp, nodes: vm.cellNodes ?? {} };
+		return { props: gp, nodes: vm.cellNodes ?? {}, sparse };
 	})();
 	const storyBase = `${cfg.storybookUrl}/?path=/story/`;
 	const firstStory = cp.storyDefs.find((s) => s.sb)?.sb;
@@ -683,6 +851,7 @@ function componentPage(cp) {
 	const bare = bareControlFacts(cp, fig, review);
 	if (bare) usage.push(bare.useWhen);
 	const hrefN = hrefFacts(cp, fig, review);
+	const rn = reviewNotes(cp, fig, review);
 
 	if (!omit.has('Where it goes')) {
 		usage.push('## Where it goes');
@@ -799,24 +968,46 @@ function componentPage(cp) {
 	// ----- Code -----
 	const code = [];
 	code.push('## Import');
-	const typeExports = [...indexTs.matchAll(/export type \{([^}]+)\}/g)].flatMap((m) => m[1].split(',').map((x) => x.trim())).filter((x) => x.startsWith(name));
+	// Types of this component only: those declared in its own file (ButtonGroupProps is not a Button type).
+	const ownTypes = new Set([...cp.tsx.matchAll(/export (?:type|interface) (\w+)/g)].map((m) => m[1]));
+	const typeExports = [...indexTs.matchAll(/export type \{([^}]+)\}/g)].flatMap((m) => m[1].split(',').map((x) => x.trim())).filter((x) => x.startsWith(name) && ownTypes.has(x));
 	code.push('```tsx\n' + `import { ${name} } from "${pkg.name}";\n` + (typeExports.length ? `import type { ${typeExports.join(', ')} } from "${pkg.name}";\n` : '') + '```');
 	code.push(`${c(pkg.name + '/tokens.css')} and ${c(pkg.name + '/styles.css')} must be loaded too; see [Developing](/developing/introduction/).`);
+	for (const line of composesFacts(cp)) code.push(line);
 
 	code.push('## Props');
 	if (!cp.props.length) code.push(notice(`No ${name}Props interface found in ${name}.tsx.`));
 	else {
+		const fileT = `${cp.dir}/${name}.tsx`;
+		const ifLink = (x) => `[${c(x.iface)}](${blob(fileT, x.line)})`;
+		if (cp.unionAlias) code.push(`${c(cp.unionAlias.name)} is ${c(cp.unionAlias.text)} ([${c(`${name}.tsx:${cp.unionAlias.line}`)}](${blob(fileT, cp.unionAlias.line)})). The ${c('type')} prop decides which one applies; where the two differ, the table shows each.`);
+		const typeCell = (p) => (p.perIface ? p.perIface.map((x) => `${c(x.type)} in ${ifLink(x)}`).join('<br/>') : c(p.type));
+		const defaultCell = (p) => {
+			if (!p.defaultsPer) return p.default ? c(p.default) : '—';
+			if (p.default) return c(p.default);
+			if (p.defaultsPer.every((x) => !x.value)) return '—';
+			return p.defaultsPer.map((x) => `${x.value ? c(x.value) : 'none'} in ${c(x.iface)}`).join('<br/>');
+		};
+		const docCell = (p) => {
+			if (!p.perIface) return p.doc ? t(p.doc) : '—';
+			const docs = p.perIface.filter((x) => x.doc);
+			if (!docs.length) return '—';
+			return docs.length > 1 && new Set(docs.map((x) => x.doc)).size > 1 ? docs.map((x) => `${t(x.doc)} (${c(x.iface)})`).join('<br/>') : t(docs[0].doc);
+		};
 		code.push(
 			'| Prop | Type | Default | Description |\n|---|---|---|---|\n' +
 				cp.props
-					.map((p) => `| [${c(p.name)}](${blob(`${cp.dir}/${name}.tsx`, p.line)}) | ${c(p.type)} | ${p.default ? c(p.default) : '—'} | ${p.doc ? t(p.doc) : '—'} |`)
+					.map((p) => `| [${c(p.name)}](${blob(fileT, p.line)}) | ${typeCell(p)} | ${defaultCell(p)} | ${docCell(p)} |`)
 					.join('\n'),
 		);
-		if (cp.props.every((p) => !p.doc)) code.push(notice(`${name}.tsx has no doc comments on its props, so there are no descriptions to show.`));
-		if (cp.propsExtends) code.push(`${c(name + 'Props')} also extends ${c(cp.propsExtends)}, so native attributes pass through to the element ([${c(`${name}.tsx:${cp.propsLine}`)}](${blob(`${cp.dir}/${name}.tsx`, cp.propsLine)})).`);
+		if (cp.props.every((p) => !p.doc && !p.perIface)) code.push(notice(`${name}.tsx has no doc comments on its props, so there are no descriptions to show.`));
+		if (cp.propsExtends && cp.unionAlias?.baseName) code.push(`${cp.unionAlias.members.map(c).join(' and ')} both extend ${c(cp.unionAlias.baseName)}, which extends ${c(cp.propsExtends)}, so native attributes pass through to the element ([${c(`${name}.tsx:${cp.unionAlias.baseLine}`)}](${blob(`${cp.dir}/${name}.tsx`, cp.unionAlias.baseLine)})).`);
+		else if (cp.propsExtends) code.push(`${c(name + 'Props')} also extends ${c(cp.propsExtends)}, so native attributes pass through to the element ([${c(`${name}.tsx:${cp.propsLine}`)}](${blob(`${cp.dir}/${name}.tsx`, cp.propsLine)})).`);
 	}
 
 	if (hrefN) code.push(hrefN.code);
+	if (rn.props) code.push(rn.props);
+	if (rn.stack) code.push(rn.stack);
 
 	{
 		const d = SOURCE_DIFFS[name];
@@ -860,18 +1051,19 @@ function componentPage(cp) {
 	else {
 		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(row.figma)}" />`);
 		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), ${fig.component.kind === 'component' ? 'component' : 'component set'} ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
-		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)})`).join(', ')}, which Figma describes as: "${fig.internal.map((x) => t(x.description)).join(' ')}"`);
+		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)})`).join(', ')}, which Figma describes as: "${fig.internal.map((x) => t(x.description)).join(' ')}"${fig.internal.some((x) => x.states?.length) ? ` Its Figma variants: ${fig.internal.flatMap((x) => x.states ?? []).map((st) => `${c(st.value)} (${c(st.node)})`).join(', ')}.` : ''}`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
 	}
 
 	design.push('## Variant matrix');
 	if (fig?.variantMatrix) {
 		const props = fig.variantMatrix.properties;
-		design.push(`${props.map((p) => `${c(p.name)} (${p.values.length})`).join(' × ')} = ${fig.variantMatrix.cells} cells. ${t(fig.variantMatrix.note)}`);
+		design.push(`${props.map((p) => `${c(p.name)} (${p.values.length})`).join(' × ')} = ${grid?.sparse ? `${props.reduce((n, p) => n * p.values.length, 1)} combinations, of which Figma publishes ${fig.variantMatrix.cells} cells` : `${fig.variantMatrix.cells} cells`}. ${t(fig.variantMatrix.note)}`);
 		const main = props.find((p) => p.name === cp.unionProp?.name) ?? props[0];
 		if (grid) {
 			const [rowP, colP] = grid.props;
 			const noStory = [];
+			const unpublished = [];
 			design.push(
 				`| ${c(rowP.name)} | ${colP.values.map((v) => c(`${colP.name}=${v}`)).join(' | ')} |\n|---|${colP.values.map(() => '---').join('|')}|\n` +
 					rowP.values
@@ -880,14 +1072,18 @@ function componentPage(cp) {
 								const gv = (g, x) => (g.native ? x.nativeState : x.argValues[g.code]);
 								const s = cp.storyDefs.find((x) => x.isRow && gv(rowP, x) === rv && gv(colP, x) === cv);
 								const node = grid.nodes[`${rowP.name}=${rv}, ${colP.name}=${cv}`];
-									if (!s?.sb) noStory.push({ key: `${rowP.name}=${rv}, ${colP.name}=${cv}`, node });
+								if (grid.sparse && !node) {
+									unpublished.push(`${rowP.name}=${rv}, ${colP.name}=${cv}`);
+									return '*not published in Figma*';
+								}
+								if (!s?.sb) noStory.push({ key: `${rowP.name}=${rv}, ${colP.name}=${cv}`, node });
 								return `${s?.sb ? `[${t(s.exportName)}](${storyBase + s.sb.id})` : '*no story*'}<br/>${node ? c(node) : '—'}`;
 							});
 							return `| ${c(rv)} | ${cells.join(' | ')} |`;
 						})
 						.join('\n'),
 			);
-			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${gridCodeNote(grid, cp, name)}${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)}${x.node ? ` (${c(x.node)})` : ''}`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
+			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${gridCodeNote(grid, cp, name)}${unpublished.length ? ` ${unpublishedNote(cp, fig, unpublished, grid)}` : ''}${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)}${x.node ? ` (${c(x.node)})` : ''}`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
 		} else {
 		design.push(
 			`| ${c(main.name)} | Figma node | Story |\n|---|---|---|\n` +
@@ -955,8 +1151,17 @@ function componentPage(cp) {
 		const missing = rows.filter((r) => !r.built);
 		if (missing.length) design.push(`${missing.map((r) => c(r.v)).join(', ')} ${missing.length > 1 ? 'are' : 'is'} bound in Figma but the token build has no token of that name.`);
 		const diffRead = diff.filter((r) => cp.tokensRead.includes(r.codeName));
-		const diffUnread = diff.filter((r) => !cp.tokensRead.includes(r.codeName));
+		// A token this stylesheet doesn't read may still be read by the stylesheet of a component it is built from (Composes).
+		const composedCss = (cp.row.composes ?? []).filter((n) => has(`src/components/${n}/${n}.css`)).map((n) => ({ n, css: show(`src/components/${n}/${n}.css`) }));
+		const viaOf = (tok) => composedCss.filter((x) => new RegExp(`var\\(${tok}\\b`).test(x.css)).map((x) => x.n);
+		const unread = diff.filter((r) => !cp.tokensRead.includes(r.codeName));
+		const diffVia = unread.filter((r) => viaOf(r.codeName).length);
+		const diffUnread = unread.filter((r) => !viaOf(r.codeName).length);
 		if (diffRead.length) design.push(`${diffRead.length} colour variable${diffRead.length > 1 ? 's' : ''} in Figma still hold${diffRead.length > 1 ? '' : 's'} a different value from the token build, so the design file and the shipped component render ${diffRead.map((r) => c(r.v)).join(', ')} differently.`);
+		if (diffVia.length) {
+			const by = [...new Set(diffVia.flatMap((r) => viaOf(r.codeName)))];
+			design.push(`${diffVia.map((r) => c(r.v)).join(', ')} ${diffVia.length > 1 ? 'hold' : 'holds'} a different value in Figma from the token of the same name in the build. ${c(`${name}.css`)} doesn't read ${diffVia.length > 1 ? 'those tokens' : 'that token'}, but the stylesheet of ${by.length > 1 ? 'the components' : 'the component'} ${name} is built from does (${by.map((n) => `[${c(`${n}.css`)}](${blob(`src/components/${n}/${n}.css`)})`).join(', ')}), so the ${by.join(' and ')} rendered inside ${name} uses the build's value, not Figma's.`);
+		}
 		if (diffUnread.length) design.push(`${diffUnread.map((r) => c(r.v)).join(', ')} ${diffUnread.length > 1 ? 'hold' : 'holds'} a different value in Figma from the token of the same name in the build, but ${c(`${name}.css`)} doesn't read ${diffUnread.length > 1 ? 'those tokens' : 'that token'}, so this doesn't change how the shipped component renders.`);
 	}
 
@@ -969,7 +1174,10 @@ function componentPage(cp) {
 				(r.notRuled ? ` *Not ruled:* ${t(plain(r.notRuled))}` : ''),
 		);
 	for (const w of review?.warnings ?? []) gaps.push(`- From the [release review](${review.url}): ${t(plain(w))}`);
-	design.push(gaps.length ? gaps.join('\n') : notice(`No design gaps are recorded against ${name} in decisions.md or its release review.`));
+	// A review that keeps its findings under "Findings outside the gates" (not "Other findings") is only read for warnings here; say so.
+	const reviewMd = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	const hasFindings = !!reviewMd && /^## Findings outside the gates/m.test(show(reviewMd[2], reviewMd[1]));
+	design.push(gaps.length ? gaps.join('\n') : hasFindings ? notice(`No design gaps are recorded against ${name} in decisions.md, and the warnings section of its release review lists none. The review's findings outside the gates are not carried onto this page, except the ones quoted on the Code tab; they stay in the [release review](${review.url}).`) : notice(`No design gaps are recorded against ${name} in decisions.md or its release review.`));
 
 	// ----- Changelog -----
 	const changelog = [];
@@ -1140,7 +1348,7 @@ for (const cp of comps) write(`core/components/${slugOf(cp.name)}.mdx`, componen
 		const fig = figma.components?.[cp.name];
 		if (fig?.boundVariables) {
 			const drift = Object.entries(fig.boundVariables).filter(([v, val]) => /^#/.test(val) && light.get(v.toLowerCase()) && light.get(v.toLowerCase()).toLowerCase() !== val.toLowerCase());
-			if (drift.length) items.push(`- ${drift.length} Figma colour variable${drift.length > 1 ? 's' : ''} on the node hold${drift.length > 1 ? '' : 's'} a different value from the token build (${drift.map(([v]) => c(v)).join(', ')}${drift.every(([v]) => !cp.tokensRead.includes(v.toLowerCase())) ? `; ${c(`${cp.name}.css`)} doesn't read ${drift.length > 1 ? 'them' : 'it'}` : ''}); see the [Design tab](/core/components/${slugOf(cp.name)}/).`);
+			if (drift.length) items.push(`- ${drift.length} Figma colour variable${drift.length > 1 ? 's' : ''} on the node hold${drift.length > 1 ? '' : 's'} a different value from the token build (${drift.map(([v]) => c(v)).join(', ')}${drift.every(([v]) => !cp.tokensRead.includes(v.toLowerCase())) ? `; ${c(`${cp.name}.css`)} doesn't read ${drift.length > 1 ? 'them' : 'it'}${composedReads(cp, drift.map(([v]) => v.toLowerCase()))}` : ''}); see the [Design tab](/core/components/${slugOf(cp.name)}/).`);
 		}
 		if (items.length) {
 			any = true;
