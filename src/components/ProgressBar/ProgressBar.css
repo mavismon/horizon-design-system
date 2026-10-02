@@ -1,0 +1,76 @@
+.hz-progressbar {
+  --hz-progressbar-fill: var(--color-primary-default);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-xs);
+  width: 100%;
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+.hz-progressbar--success {
+  --hz-progressbar-fill: var(--color-status-success);
+}
+
+.hz-progressbar--neutral {
+  --hz-progressbar-fill: var(--color-text-secondary);
+}
+
+.hz-progressbar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.hz-progressbar__label {
+  font-weight: 400;
+}
+
+.hz-progressbar__value {
+  font-weight: 600;
+}
+
+.hz-progressbar__helper {
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.hz-progressbar__track {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  height: 8px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-surface);
+  color: var(--hz-progressbar-fill);
+}
+
+.hz-progressbar--sm .hz-progressbar__track {
+  height: 6px;
+}
+
+.hz-progressbar__track::-webkit-progress-bar {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-full);
+}
+
+.hz-progressbar__track::-webkit-progress-value {
+  background: var(--hz-progressbar-fill);
+  border-radius: var(--radius-full);
+}
+
+.hz-progressbar__track::-moz-progress-bar {
+  background: var(--hz-progressbar-fill);
+  border-radius: var(--radius-full);
+}
