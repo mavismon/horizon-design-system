@@ -18,3 +18,11 @@ export { Toggle } from "./components/Toggle/Toggle";
 export type { ToggleProps, ToggleSize } from "./components/Toggle/Toggle";
 export { Breadcrumbs } from "./components/Breadcrumbs/Breadcrumbs";
 export type { BreadcrumbsProps } from "./components/Breadcrumbs/Breadcrumbs";
+export { ButtonGroup } from "./components/ButtonGroup/ButtonGroup";
+export type {
+  ButtonGroupProps,
+  ButtonGroupActionProps,
+  ButtonGroupSegmentedProps,
+  ButtonGroupType,
+  ButtonGroupLayout,
+} from "./components/ButtonGroup/ButtonGroup";

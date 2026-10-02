@@ -1,0 +1,54 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {
+    "primary": "primary (filled + outline, default)",
+    "destructive": "destructive (error + outline)",
+    "secondary": "secondary (two outlines)",
+    "segmented": "segmented (2 to 4 options, one selected in navy, the rest outlined; row only)",
+    "row": "row (default, main action on the left)",
+    "stack": "stack (full width, main action on top; not for segmented)"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-bg-inverse",
+    "--color-border-default",
+    "--color-text-inverse",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-xs",
+    "--lineheight-xs",
+    "--radius-xs",
+    "--spacing-md",
+    "--spacing-sm"
+  ],
+  "a11y": [
+    {
+      "fact": "The button types render a role=\"group\" container; callers name it with aria-label (spread onto the div).",
+      "source": "src/components/ButtonGroup/ButtonGroup.tsx:71"
+    },
+    {
+      "fact": "The button types compose the native Button, so each action is a real <button> with its visible text as its accessible name.",
+      "source": "src/components/ButtonGroup/ButtonGroup.tsx:76"
+    },
+    {
+      "fact": "The segmented type renders a role=\"radiogroup\" container; callers name it with aria-label.",
+      "source": "src/components/ButtonGroup/ButtonGroup.tsx:109"
+    },
+    {
+      "fact": "Each segment is a native <input type=\"radio\"> inside a <label>, all sharing one name, so exactly one is selected and arrow-key behaviour is the browser's own; aria-pressed is not used.",
+      "source": "src/components/ButtonGroup/ButtonGroup.tsx:119"
+    },
+    {
+      "fact": "The radio input is transparent (not display:none), so it stays focusable and exposed to assistive technology while the label draws the segment.",
+      "source": "src/components/ButtonGroup/ButtonGroup.css:49"
+    },
+    {
+      "fact": "Keyboard focus on a segment shows the browser's native focus ring on its label, via :has(input:focus-visible).",
+      "source": "src/components/ButtonGroup/ButtonGroup.css:63"
+    }
+  ]
+}
