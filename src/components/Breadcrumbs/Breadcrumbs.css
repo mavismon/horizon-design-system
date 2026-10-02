@@ -30,3 +30,9 @@
 .hz-breadcrumbs__current {
   color: var(--color-text-primary);
 }
+
+.hz-breadcrumbs__link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-position: from-font;
+}

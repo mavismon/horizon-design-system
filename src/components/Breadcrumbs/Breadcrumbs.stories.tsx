@@ -3,7 +3,8 @@
 // One story per published cell (showItem2 x showItem3 = 4). The 3-level and 2-level rows in
 // the spec frame are the same cells with the same props (node 163:16 = showItem2 false;
 // node 163:29 = both false), so they add no extra stories. Figma draws no hover, focus or
-// visited variants: the native <a> focus ring and href behaviour apply. item1Href/item2Href/
+// visited variants; the ancestor-link underline on hover comes from the component description
+// (node 163:2). Focus and visited are not styled: the native <a> focus ring and href apply. item1Href/item2Href/
 // item3Href are not Figma properties; they are the native href of each ancestor link.
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Breadcrumbs } from "./Breadcrumbs";
