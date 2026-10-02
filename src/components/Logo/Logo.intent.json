@@ -1,6 +1,22 @@
 {
-  "use_when": [],
-  "dont_use_when": [],
+  "use_when": [
+    "At the left of the header on every page, using the lockup at 32px high.",
+    "Use the mark on its own where there's no room for the wordmark, such as a collapsed sidebar, an app icon or a favicon."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For listing, room or place photos: use the Image component instead.",
+      "instead": "Image"
+    },
+    {
+      "when": "For a person's profile photo: use the Avatar component instead.",
+      "instead": "Avatar"
+    },
+    {
+      "when": "As a decorative icon or bullet: use an icon from the Icon Library instead.",
+      "instead": "Icon Library"
+    }
+  ],
   "variant_intent": {
     "lockup": "default; mark and wordmark, the header logo",
     "mark": "the icon alone"
