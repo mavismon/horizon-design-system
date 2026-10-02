@@ -96,3 +96,18 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly this value on exactly this property in `Logo.css`. Quote this ruling in the report. If the designer later binds a token to the wordmark colour, or the brand colour is added to the token set, the ruling no longer covers it: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. This value in any other component. A change to this value: a different colour needs a new ruling or a token. The `font-weight: 600` hard-coded on line 18 is not a px or hex value and needs no ruling. The Logo has no dark-background version, and any recolouring of the mark or wordmark is outside this ruling.
+
+## 2026-10-02 · ProgressBar track heights with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail ProgressBar for two literal px values. Figma draws the track 8px high for size md and 6px high for size sm (component set 140:66; md cells 140:5, 140:24, 140:38; sm cells 140:17, 140:31, 140:45). Figma binds no variable to either height, and no token matches: `--spacing-sm` is 8px but is a spacing token, `--radius-sm` is 6px but is a radius token, and there are no size tokens. The track has no content or image to take its size from, so no equivalent technique avoids the literals.
+
+**Ruling.** These literals in `src/components/ProgressBar/ProgressBar.css` are accepted, because they are what the Figma node specifies, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `8px` | `height` (md track) | `.hz-progressbar__track` | 50 |
+| `6px` | `height` (sm track) | `.hz-progressbar--sm .hz-progressbar__track` | 60 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `ProgressBar.css`. Quote this ruling in the report. When a size token for 8px or 6px appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The primary fill, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is the user's choice to use the bound token, not a gate finding. The `font-weight` values 400 and 600, which are unitless numbers and need no ruling. The `inverse` tone, which is not built because Figma draws its track and fill the same colour: that needs the designer. Any state Figma does not draw.
