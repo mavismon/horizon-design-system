@@ -56,6 +56,7 @@ export default defineConfig({
 								{ label: 'Image', slug: 'core/components/image' },
 								{ label: 'Link', slug: 'core/components/link' },
 								{ label: 'Logo', slug: 'core/components/logo' },
+								{ label: 'ProgressBar', slug: 'core/components/progressbar' },
 								// </generated:components>
 							],
 						},

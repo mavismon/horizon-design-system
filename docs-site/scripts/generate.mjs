@@ -286,7 +286,9 @@ function parseComponent(row) {
 
 	// CSS: declarations with line numbers, and every token read.
 	const cssLines = css.split('\n');
-	const tokensRead = [...new Set([...css.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]))].sort();
+	// A custom property the stylesheet defines itself (--hz-progressbar-fill) is component-local, not a token.
+	const ownProps = new Set([...css.matchAll(/^\s*(--[\w-]+)\s*:/gm)].map((m) => m[1]));
+	const tokensRead = [...new Set([...css.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]))].filter((n) => !ownProps.has(n)).sort();
 	function findDecl(selector, property) {
 		let current = null;
 		for (let i = 0; i < cssLines.length; i++) {
@@ -403,6 +405,20 @@ const OMIT_USAGE_SECTIONS = {
 	Image: ['Where it goes', 'Composition'],
 	Link: ['Where it goes', 'Composition'],
 	Logo: ['Where it goes', 'Composition'],
+	ProgressBar: ['Where it goes', 'Composition'],
+};
+
+// Where a Figma line and the built component disagree, the page says so, in words taken from the sources:
+// the Figma line verbatim (sources/figma.json), the ruling in decisions.md, and the component code. Nothing is
+// reworded in Figma's lines. useWhen / bestPractice are indexes into usage.use_when / usage.best_practice.
+const SOURCE_DIFFS = {
+	ProgressBar: {
+		// "Use tone inverse on navy backgrounds ...": the inverse tone is not built.
+		useWhen: { index: 3, ruling: 'inverse tone not built', union: 'ProgressBarTone' },
+		// "... type the same number in Value ...": the built component derives the text from value.
+		bestPractice: { index: 1 },
+		valuePhrase: 'then type the matching Value text',
+	},
 };
 
 // A story that shows several variants together may contradict a Best Practice line in Figma. For the stories
@@ -461,6 +477,17 @@ function componentPage(cp) {
 	if (!intent) usage.push(notice(`No ${intentPath} at ${SHORT}.`));
 	else if (!intent.use_when?.length) usage.push(notice(`No usage region in Figma for ${name} (use_when is empty in ${intentPath}).`));
 	else usage.push(intent.use_when.map((x) => `- ${t(x)}`).join('\n'));
+	{
+		const d = SOURCE_DIFFS[name]?.useWhen;
+		const item = d ? intent?.use_when?.[d.index] : null;
+		const ruling = d ? rulingsFor(name).find((r) => r.title.includes(d.ruling)) : null;
+		const union = d ? cp.unions.find((u) => u.name === d.union) : null;
+		const node = d ? fig?.usage?.use_when_nodes?.items?.[d.index] : null;
+		if (item && ruling?.ruling)
+			usage.push(
+				`**Not built.** The last "when to use" item${node ? ` (Figma node ${c(node)})` : ''} is copied from Figma as written, and it recommends something this build does not have.${union ? ` [${c(union.name)}](${blob(`${cp.dir}/${name}.tsx`, union.line)}) has only ${union.values.map(c).join(', ')}.` : ''} From [decisions.md](${blob('decisions.md')}), "${t(ruling.title)}": ${t(plain(ruling.ruling))}`,
+			);
+	}
 
 	if (!omit.has('Where it goes')) {
 		usage.push('## Where it goes');
@@ -484,6 +511,12 @@ function componentPage(cp) {
 				fig.usage.best_practice.map((x) => `- ${t(x)}`).join('\n'),
 		);
 	else usage.push(notice(`No best-practice items for ${name} in sources/figma.json (no usage region was read), and ${name}.intent.json has no field for them.`));
+	{
+		const d = SOURCE_DIFFS[name]?.bestPractice;
+		const node = d ? fig?.usage?.best_practice_nodes?.items?.[d.index] : null;
+		if (d && fig?.usage?.best_practice?.[d.index])
+			usage.push(`**Where the built component differs.** Item ${d.index + 1}${node ? ` (Figma node ${c(node)})` : ''} says to type the same number in Value. ${c(`${name}.tsx`)} has no separate Value text to type: it prints the text from ${c('value')} itself. The Code tab says how.`);
+	}
 
 	usage.push('## What each variant is for');
 	if (!intent?.variant_intent) usage.push(notice(`No variant_intent in ${intentPath}.`));
@@ -576,6 +609,22 @@ function componentPage(cp) {
 		if (cp.propsExtends) code.push(`${c(name + 'Props')} also extends ${c(cp.propsExtends)}, so native attributes pass through to the element ([${c(`${name}.tsx:${cp.propsLine}`)}](${blob(`${cp.dir}/${name}.tsx`, cp.propsLine)})).`);
 	}
 
+	{
+		const d = SOURCE_DIFFS[name];
+		const valueProp = cp.props.find((p) => p.name === 'value');
+		const phrase = d?.valuePhrase && fig?.description?.includes(d.valuePhrase) ? d.valuePhrase : null;
+		const bp = d ? fig?.usage?.best_practice?.[d.bestPractice.index] : null;
+		const bpNode = d ? fig?.usage?.best_practice_nodes?.items?.[d.bestPractice.index] : null;
+		const tsxL = cp.tsx.split('\n');
+		const at = (re) => tsxL.findIndex((l) => re.test(l)) + 1;
+		const printLine = at(/\$\{current\}%/);
+		const clampLine = at(/function clamp\(/);
+		if (valueProp && phrase && bp && printLine && clampLine)
+			code.push(
+				`**${c('value')} against Figma's Value text.** In Figma the percentage is a separate text property: the component description says "${t(phrase)}" (node ${c(fig.component.id)}), and Best Practice${bpNode ? ` (node ${c(bpNode)})` : ''} says "${t(bp)}" The built component works differently: ${c('value')} is a number, ${c(`${name}.tsx`)} clamps it to 0..100 ([${c(`${name}.tsx:${clampLine}`)}](${blob(`${cp.dir}/${name}.tsx`, clampLine)})), uses it for the fill, and prints ${c('${value}%')} itself ([${c(`${name}.tsx:${printLine}`)}](${blob(`${cp.dir}/${name}.tsx`, printLine)})). There is no separate Value text to type, so the bar and the text can't disagree. It also takes any number, not only steps of 10; Figma's steps of 10 come from the nested bar, and the Storybook control steps by 10.`,
+			);
+	}
+
 	code.push('## Union types');
 	if (!cp.unions.length) code.push(notice(`${name}.tsx exports no union types.`));
 	for (const u of cp.unions) code.push(`[${c(u.name)}](${blob(`${cp.dir}/${name}.tsx`, u.line)}): ${u.values.map(c).join(', ')}`);
@@ -602,6 +651,7 @@ function componentPage(cp) {
 	else {
 		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(row.figma)}" />`);
 		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), component set ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
+		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)})`).join(', ')}, which Figma describes as: "${fig.internal.map((x) => t(x.description)).join(' ')}"`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
 	}
 
@@ -612,6 +662,7 @@ function componentPage(cp) {
 		const main = props.find((p) => p.name === cp.unionProp?.name) ?? props[0];
 		if (grid) {
 			const [rowP, colP] = grid.props;
+			const noStory = [];
 			design.push(
 				`| ${c(rowP.name)} | ${colP.values.map((v) => c(`${colP.name}=${v}`)).join(' | ')} |\n|---|${colP.values.map(() => '---').join('|')}|\n` +
 					rowP.values
@@ -619,13 +670,14 @@ function componentPage(cp) {
 							const cells = colP.values.map((cv) => {
 								const s = cp.storyDefs.find((x) => x.isRow && x.argValues[rowP.code] === rv && x.argValues[colP.code] === cv);
 								const node = grid.nodes[`${rowP.name}=${rv}, ${colP.name}=${cv}`];
+									if (!s?.sb) noStory.push({ key: `${rowP.name}=${rv}, ${colP.name}=${cv}`, node });
 								return `${s?.sb ? `[${t(s.exportName)}](${storyBase + s.sb.id})` : '*no story*'}<br/>${node ? c(node) : '—'}`;
 							});
 							return `| ${c(rv)} | ${cells.join(' | ')} |`;
 						})
 						.join('\n'),
 			);
-			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${rowP.union.name} and ${colP.union.name} are the union types listed on the Code tab.${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
+			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${rowP.union.name} and ${colP.union.name} are the union types listed on the Code tab.${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)}${x.node ? ` (${c(x.node)})` : ''}`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
 		} else {
 		design.push(
 			`| ${c(main.name)} | Figma node | Story |\n|---|---|---|\n` +
@@ -863,7 +915,11 @@ for (const cp of comps) write(`core/components/${slugOf(cp.name)}.mdx`, componen
 	for (const cp of comps) {
 		const review = reviewFacts(cp.row.releaseReview);
 		const items = [
-			...rulingsFor(cp.name).map((r) => `- **${t(r.title)}**: accepted in [decisions.md](${blob('decisions.md')}) until the designer adds matching tokens; still open.`),
+			...rulingsFor(cp.name).map((r) => {
+					// Most rulings stand until the designer adds matching tokens; a "not built" ruling gives its own "until" clause.
+					const until = /not built/.test(r.title) ? (r.ruling?.match(/until [^.]*/)?.[0] ?? null) : 'until the designer adds matching tokens';
+					return `- **${t(r.title)}**: accepted in [decisions.md](${blob('decisions.md')})${until ? ` ${t(plain(until))}` : ''}; still open.`;
+				}),
 			...(review?.warnings ?? []).map((w) => `- ${t(plain(w))} ([release review](${review.url}))`),
 		];
 		const fig = figma.components?.[cp.name];

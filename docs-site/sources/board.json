@@ -160,12 +160,12 @@
       "name": "Logo",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1636&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-logo--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/5e363d15eeff987f93191d0ab40ab0987e7108ff/reports/Logo/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/logo/"
     },
     {
       "name": "Modal",
@@ -182,11 +182,11 @@
       "name": "ProgressBar",
       "category": "ATOMS",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1637&t=bEurJxon3J2egqXY-1",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-progressbar--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/ab871f8f1f40b4a6dcbb6cd883afa8b952de8c41/reports/ProgressBar/release-review.md",
       "astroLink": ""
     },
     {

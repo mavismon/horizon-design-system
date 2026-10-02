@@ -894,6 +894,163 @@
           ]
         }
       }
+    },
+    "ProgressBar": {
+      "readAt": "2026-10-02",
+      "page": {
+        "id": "57:1637",
+        "name": "Progressbar"
+      },
+      "node": {
+        "id": "140:67",
+        "name": "❖ progressbar"
+      },
+      "component": {
+        "id": "140:66",
+        "name": "progressbar"
+      },
+      "internal": [
+        {
+          "id": "142:207",
+          "name": "_progressbar-bar",
+          "description": "Internal part of progressbar (not for direct use). value sets the fill length in steps of 10; the fill scales with the bar's width."
+        }
+      ],
+      "description": "Shows a value against a known total, such as occupancy or a share of revenue. size: md 8px (default), sm 6px (dense layouts such as calendar cells). tone: primary (default), success, neutral, inverse (on navy). value: 0 to 100 in steps of 10 (from the nested bar; default 60), then type the matching Value text. Properties: Label, Value, Helper, ShowLabel, ShowHelper.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "size",
+            "values": [
+              {
+                "value": "md"
+              },
+              {
+                "value": "sm"
+              }
+            ]
+          },
+          {
+            "name": "tone",
+            "values": [
+              {
+                "value": "primary"
+              },
+              {
+                "value": "success"
+              },
+              {
+                "value": "neutral"
+              },
+              {
+                "value": "inverse"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "size=md, tone=primary": "140:5",
+          "size=sm, tone=primary": "140:17",
+          "size=md, tone=success": "140:24",
+          "size=sm, tone=success": "140:31",
+          "size=md, tone=neutral": "140:38",
+          "size=sm, tone=neutral": "140:45",
+          "size=md, tone=inverse": "140:52",
+          "size=sm, tone=inverse": "140:59"
+        },
+        "cells": 8,
+        "note": "The component set (140:66) publishes all 8 variants, named size=md, tone=primary (140:5) through size=sm, tone=inverse (140:59). Label, Value, Helper, ShowLabel and ShowHelper are component properties, not matrix axes. The two tone=inverse cells (140:52, 140:59) are published in Figma but not built: see the design gap \"ProgressBar inverse tone not built\" below. Figma draws no states."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The progressbar component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-primary": "#161925",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-lg": "20",
+        "--fontWeight-semibold": "Semi Bold",
+        "--radius-full": "999",
+        "--color-primary-default": "#3b71f2",
+        "--color-bg-surface": "#f2f3f5",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-sm": "11",
+        "--lineHeight-sm": "16",
+        "--spacing-xs": "4",
+        "--color-status-success": "#229c4a",
+        "--color-text-inverse": "#f9fafb",
+        "--color-text-inverse-secondary": "#d1d5db"
+      },
+      "unboundValues": [
+        {
+          "layer": "track, size=md (140:5, 140:24, 140:38, and the unbuilt 140:52)",
+          "property": "height",
+          "value": "8px",
+          "css": {
+            "selector": ".hz-progressbar__track",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "track, size=sm (140:17, 140:31, 140:45, and the unbuilt 140:59)",
+          "property": "height",
+          "value": "6px",
+          "css": {
+            "selector": ".hz-progressbar--sm .hz-progressbar__track",
+            "property": "height"
+          }
+        }
+      ],
+      "usage": {
+        "node": "140:82",
+        "use_when_heading": "Use a Progressbar",
+        "use_when_node": "140:85",
+        "use_when": [
+          "To show how full something is against a known total, such as a property's occupancy for a night (\"38 of 48 · 79%\").",
+          "To compare parts of a whole side by side, such as revenue by booking channel, with each share as the Value.",
+          "To show a score out of a maximum, such as review scores by category; hide the label row when the layout already names it.",
+          "Use tone inverse on navy backgrounds, such as a sold-out night in the calendar."
+        ],
+        "use_when_nodes": {
+          "group": "140:85",
+          "items": [
+            "140:185",
+            "140:192",
+            "140:198",
+            "140:204"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a progressbar",
+        "dont_use_when_node": "140:94",
+        "dont_use_when": [
+          "For steps in a flow, such as \"1 of 3\": use the Stepper component instead.",
+          "To compare exact figures across many rows: use the Table component instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Always show the number too, as the Value or a nearby label; the bar alone isn't precise and screen readers can't read it.",
+          "Pick the value (0 to 100 in steps of 10) and type the same number in Value, so the bar and the text agree.",
+          "Keep bars in the same group the same size and width so they can be compared.",
+          "Give colours a consistent meaning, such as one colour per booking channel, and name it in the label.",
+          "Use size sm in dense layouts such as calendar cells, and md everywhere else.",
+          "Keep the fill between 0 and 100%; show overbooking with a separate marker, not a bar longer than its track."
+        ],
+        "best_practice_nodes": {
+          "group": "140:100",
+          "items": [
+            "140:226",
+            "140:232",
+            "140:238",
+            "140:244",
+            "140:250",
+            "140:256"
+          ]
+        }
+      }
     }
   }
 }
