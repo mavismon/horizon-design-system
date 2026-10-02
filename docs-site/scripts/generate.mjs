@@ -215,6 +215,16 @@ try {
 }
 const darkValue = (name) => (dark.has(name) ? c(dark.get(name)) : 'same as light');
 
+// Figma's combined `state` property, where the code has no such prop: the stories map it to native attributes
+// and say so in a header comment. The matrix grid is only drawn when that comment is there to quote, and each
+// single-cell story gets its state from the native args it sets. `of` reads those args from the story's source.
+const NATIVE_STATE = {
+	Toggle: {
+		property: 'state',
+		of: (body) => `${/\bdisabled:\s*true/.test(body) ? 'disabled-' : ''}${/\b(?:defaultChecked|checked):\s*true/.test(body) ? 'on' : 'off'}`,
+	},
+};
+
 // ---------- components that get a page ----------
 
 const paged = board.components.filter(
@@ -326,6 +336,17 @@ function parseComponent(row) {
 		}
 		storyDefs.push({ exportName: m[1], line, isRow, value: argVal?.[1] ?? null, argValues, body });
 	});
+	// Figma's combined `state`, mapped to native attributes in the stories' header comment (see NATIVE_STATE).
+	const ns = NATIVE_STATE[name];
+	const storyLines = stories.split('\n');
+	const nsStart = ns ? storyLines.findIndex((l) => /combined `state` maps to the native props/.test(l)) : -1;
+	let nativeState = null;
+	if (ns && nsStart >= 0) {
+		let nsEnd = nsStart;
+		while (nsEnd < storyLines.length - 1 && !/\.\s*$/.test(storyLines[nsEnd])) nsEnd++;
+		nativeState = { property: ns.property, startLine: nsStart + 1, endLine: nsEnd + 1, text: storyLines.slice(nsStart, nsEnd + 1).map((l) => l.replace(/^\s*\/\/\s?/, '')).join(' ') };
+		for (const sd of storyDefs) if (sd.isRow) sd.nativeState = ns.of(sd.body);
+	}
 	const sbFor = sbEntries.filter((e) => e.importPath?.includes(`/${name}/${name}.stories`));
 	for (const s of storyDefs) s.sb = sbFor.find((e) => e.exportName === s.exportName && e.type === 'story') ?? null;
 	const sbDocs = sbFor.find((e) => e.type === 'docs') ?? null;
@@ -340,7 +361,7 @@ function parseComponent(row) {
 		});
 	const since = tags.find((tag) => has('src/index.ts', tag) && new RegExp(`export \\{[^}]*\\b${name}\\b`).test(show('src/index.ts', tag)));
 
-	return { row, name, dir, tsx, css, intent, intentPath, unions, props, propsExtends, propsLine, tokensRead, findDecl, storyDefs, sbDocs, log, since: since?.replace(/^v/, '') ?? null, unionProp };
+	return { nativeState, row, name, dir, tsx, css, intent, intentPath, unions, props, propsExtends, propsLine, tokensRead, findDecl, storyDefs, sbDocs, log, since: since?.replace(/^v/, '') ?? null, unionProp };
 }
 
 const comps = paged.map(parseComponent);
@@ -361,9 +382,13 @@ function reviewFacts(url) {
 				.split('\n')
 				.filter((l) => l.startsWith('- '))
 				.map((l) => l.slice(2)),
+			other: (mdSection(md, '## Other findings (outside the gates)') ?? '')
+				.split('\n')
+				.filter((l) => l.startsWith('- '))
+				.map((l) => l.slice(2)),
 		};
 	} catch {
-		return { url, date: null, verdict: null, sha: null, warnings: [] };
+		return { url, date: null, verdict: null, sha: null, warnings: [], other: [] };
 	}
 }
 
@@ -406,6 +431,14 @@ const OMIT_USAGE_SECTIONS = {
 	Link: ['Where it goes', 'Composition'],
 	Logo: ['Where it goes', 'Composition'],
 	ProgressBar: ['Where it goes', 'Composition'],
+	Toggle: ['Where it goes', 'Composition'],
+};
+
+// Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
+// (useWhen / bestPractice indexes) and the one that names aria-checked (ariaItem) get a sourced note. The note is
+// only written when the component's own code bears it out, and quotes the release review's findings as written.
+const BARE_CONTROL = {
+	Toggle: { useWhen: [2], bestPractice: [3, 4], ariaItem: 5, reviewLeads: ["Usage lines the built component doesn't provide.", "Best Practice says `aria-checked`; the code doesn't set it."] },
 };
 
 // Where a Figma line and the built component disagree, the page says so, in words taken from the sources:
@@ -428,6 +461,57 @@ const STORY_CAVEATS = {
 	Logo: { AllVariants: { bestPractice: 5 } },
 };
 
+// Says which of a grid's properties are union types in the code, and, for a property that is not a prop
+// (Figma's combined `state`), how the code spells it: the stories' own header comment, quoted.
+function gridCodeNote(grid, cp, name) {
+	const natives = grid.props.filter((g) => g.native);
+	if (!natives.length) return `${grid.props[0].union.name} and ${grid.props[1].union.name} are the union types listed on the Code tab.`;
+	const unionsHere = grid.props.filter((g) => g.union);
+	const ns = cp.nativeState;
+	const where = `${cp.dir}/${name}.stories.tsx`;
+	return [
+		`${unionsHere.map((g) => g.union.name).join(' and ')} ${unionsHere.length > 1 ? 'are the union types' : 'is the union type'} listed on the Code tab.`,
+		...natives.map(
+			(g) =>
+				`${c(g.name)} is not a prop of ${name}, and the code has no ${c(g.name)} union type. The ${c(`${name}.stories.tsx`)} header comment says: "${t(ns.text)}" ([${c(`${name}.stories.tsx:${ns.startLine}-${ns.endLine}`)}](${blob(where, `${ns.startLine}-L${ns.endLine}`)})). Each ${c(g.name)} column is the story that sets those native attributes.`,
+		),
+	].join(' ');
+}
+
+// The sourced note for a component that is the bare control (see BARE_CONTROL). Returns null when the
+// component's own code doesn't bear it out, so nothing is said that the source doesn't support.
+function bareControlFacts(cp, fig, review) {
+	const cfgB = BARE_CONTROL[cp.name];
+	if (!cfgB || !fig?.usage) return null;
+	const tsxL = cp.tsx.split('\n');
+	const lineOf = (re, from = 0) => {
+		const i = tsxL.findIndex((l, k) => k >= from && re.test(l));
+		return i < 0 ? null : i + 1;
+	};
+	const elements = cp.tsx.match(/<[a-z][a-z0-9]*[\s>/]/g) ?? [];
+	const start = lineOf(/<input\b/);
+	const end = start ? lineOf(/^\s*\/>/, start) : null;
+	const roleLine = lineOf(/role="switch"/);
+	if (elements.length !== 1 || !start || !end || !roleLine || /aria-checked/.test(cp.tsx) || !fig.description?.includes('No built-in label')) return null;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const link = (a, b) => `[${c(`${cp.name}.tsx:${a}${b ? `-${b}` : ''}`)}](${blob(file, b ? `${a}-L${b}` : a)})`;
+	const node = (list, i) => fig.usage[list]?.items?.[i];
+	const nodes = (list, idx) => idx.map((i) => `${i + 1}${node(list, i) ? ` (${c(node(list, i))})` : ''}`);
+	const quotes = cfgB.reviewLeads
+		.map((lead) => review?.other?.find((l) => l.startsWith(`**${lead}**`)))
+		.filter(Boolean)
+		.map((l) => `> ${t(plain(l))}`);
+	const ariaFact = cp.intent?.a11y?.find((a) => /aria-checked/.test(a.fact));
+	return {
+		useWhen: `**Where the built component differs.** Item${cfgB.useWhen.length > 1 ? 's' : ''} ${nodes('use_when_nodes', cfgB.useWhen).join(', ')} above ${cfgB.useWhen.length > 1 ? 'are' : 'is'} copied from Figma as written, and ${cfgB.useWhen.length > 1 ? 'assume' : 'assumes'} a label and helper text laid out beside the toggle. ${c(`${cp.name}.tsx`)} renders one element, the ${c('<input type="checkbox" role="switch">')} (${link(start, end)}), with no label or helper-text slot, and the Figma component description says "No built-in label: place the setting's label beside it." (node ${c(fig.component.id)}).`,
+		bestPractice: [
+			`**Where the built component differs.** Items ${nodes('best_practice_nodes', cfgB.bestPractice).join(' and ')} are copied from Figma as written. They describe helper text and a clickable whole row, which ${c(`${cp.name}.tsx`)} doesn't provide: it renders only the bare switch, one ${c('<input>')} (${link(start, end)}), with no helper-text slot and no row to click. The label goes beside it, as the Figma component description says (node ${c(fig.component.id)}).`,
+			`Item ${cfgB.ariaItem + 1}${node('best_practice_nodes', cfgB.ariaItem) ? ` (${c(node('best_practice_nodes', cfgB.ariaItem))})` : ''} names ${c('role="switch"')} with ${c('aria-checked')}. ${c(`${cp.name}.tsx`)} sets the role on a native checkbox input (${link(roleLine)}) and never sets ${c('aria-checked')}.${ariaFact ? ` ${t(ariaFact.fact)}` : ''}`,
+			...(quotes.length ? [`From the [release review](${review.url}), as written:\n\n${quotes.join('\n>\n')}`] : []),
+		],
+	};
+}
+
 function componentPage(cp) {
 	const { name, row, intent, intentPath } = cp;
 	const fig = figma.components?.[name] ?? null;
@@ -441,9 +525,14 @@ function componentPage(cp) {
 		const gp = vm.properties.map((p) => {
 			const codeProp = cp.props.find((x) => x.name.toLowerCase() === p.name.toLowerCase());
 			const union = codeProp && cp.unions.find((u) => u.name === codeProp.type);
-			return union ? { name: p.name, code: codeProp.name, values: p.values.map((v) => v.value), union } : null;
+			if (union) return { name: p.name, code: codeProp.name, values: p.values.map((v) => v.value), union };
+			// Figma's combined property that the code spells as native attributes (no prop, no union type).
+			if (!codeProp && cp.nativeState?.property === p.name) return { name: p.name, code: null, native: true, values: p.values.map((v) => v.value), union: null };
+			return null;
 		});
 		if (gp.some((x) => !x) || gp[0].values.length * gp[1].values.length !== vm.cells) return null;
+		// Every single-cell story must land on one of Figma's own values for the native property.
+		for (const g of gp.filter((x) => x.native)) if (cp.storyDefs.some((sd) => sd.isRow && !g.values.includes(sd.nativeState))) return null;
 		return { props: gp, nodes: vm.cellNodes ?? {} };
 	})();
 	const storyBase = `${cfg.storybookUrl}/?path=/story/`;
@@ -489,6 +578,9 @@ function componentPage(cp) {
 			);
 	}
 
+	const bare = bareControlFacts(cp, fig, review);
+	if (bare) usage.push(bare.useWhen);
+
 	if (!omit.has('Where it goes')) {
 		usage.push('## Where it goes');
 		if (intent?.placement?.length) usage.push(intent.placement.map((x) => `- ${t(x)}`).join('\n'));
@@ -518,12 +610,14 @@ function componentPage(cp) {
 			usage.push(`**Where the built component differs.** Item ${d.index + 1}${node ? ` (Figma node ${c(node)})` : ''} says to type the same number in Value. ${c(`${name}.tsx`)} has no separate Value text to type: it prints the text from ${c('value')} itself. The Code tab says how.`);
 	}
 
+	if (bare) usage.push(bare.bestPractice.join('\n\n'));
+
 	usage.push('## What each variant is for');
 	if (!intent?.variant_intent) usage.push(notice(`No variant_intent in ${intentPath}.`));
 	else {
 		const prop = cp.unionProp?.name ?? fig?.variantMatrix?.properties?.[0]?.name ?? 'variant';
 		// A two-property matrix: name the property each value belongs to, from the union types in the code.
-		const propOf = (k) => (grid ? (grid.props.find((g) => g.union.values.includes(k))?.name ?? prop) : prop);
+		const propOf = (k) => (grid ? (grid.props.find((g) => g.union?.values.includes(k))?.name ?? prop) : prop);
 		usage.push(
 			'| Property | Value | What it is for |\n|---|---|---|\n' +
 				Object.entries(intent.variant_intent)
@@ -668,7 +762,8 @@ function componentPage(cp) {
 					rowP.values
 						.map((rv) => {
 							const cells = colP.values.map((cv) => {
-								const s = cp.storyDefs.find((x) => x.isRow && x.argValues[rowP.code] === rv && x.argValues[colP.code] === cv);
+								const gv = (g, x) => (g.native ? x.nativeState : x.argValues[g.code]);
+								const s = cp.storyDefs.find((x) => x.isRow && gv(rowP, x) === rv && gv(colP, x) === cv);
 								const node = grid.nodes[`${rowP.name}=${rv}, ${colP.name}=${cv}`];
 									if (!s?.sb) noStory.push({ key: `${rowP.name}=${rv}, ${colP.name}=${cv}`, node });
 								return `${s?.sb ? `[${t(s.exportName)}](${storyBase + s.sb.id})` : '*no story*'}<br/>${node ? c(node) : '—'}`;
@@ -677,7 +772,7 @@ function componentPage(cp) {
 						})
 						.join('\n'),
 			);
-			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${rowP.union.name} and ${colP.union.name} are the union types listed on the Code tab.${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)}${x.node ? ` (${c(x.node)})` : ''}`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
+			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${gridCodeNote(grid, cp, name)}${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)}${x.node ? ` (${c(x.node)})` : ''}`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
 		} else {
 		design.push(
 			`| ${c(main.name)} | Figma node | Story |\n|---|---|---|\n` +

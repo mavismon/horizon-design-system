@@ -182,12 +182,12 @@
       "name": "ProgressBar",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1637&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-progressbar--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/ab871f8f1f40b4a6dcbb6cd883afa8b952de8c41/reports/ProgressBar/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/progressbar/"
     },
     {
       "name": "RadioCard",
@@ -248,11 +248,11 @@
       "name": "Toggle",
       "category": "ATOMS",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1638&t=bEurJxon3J2egqXY-1",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-toggle--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/fbc021d4556de78fa83d47542827c202da7c68d5/reports/Toggle/release-review.md",
       "astroLink": ""
     }
   ]

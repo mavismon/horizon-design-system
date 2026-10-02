@@ -1051,6 +1051,200 @@
           ]
         }
       }
+    },
+    "Toggle": {
+      "readAt": "2026-10-02",
+      "page": {
+        "id": "57:1638",
+        "name": "Toggle"
+      },
+      "node": {
+        "id": "145:2",
+        "name": "❖ toggle"
+      },
+      "component": {
+        "id": "144:20",
+        "name": "toggle"
+      },
+      "description": "Turns a single setting on or off, and the change applies straight away. size: md 44x24 (default; settings lists), sm 40x22 (dense tables). state: off (default), on, disabled-off, disabled-on. No built-in label: place the setting's label beside it.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "size",
+            "values": [
+              {
+                "value": "md"
+              },
+              {
+                "value": "sm"
+              }
+            ]
+          },
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "off"
+              },
+              {
+                "value": "on"
+              },
+              {
+                "value": "disabled-off"
+              },
+              {
+                "value": "disabled-on"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "size=md, state=off": "144:4",
+          "size=sm, state=off": "144:6",
+          "size=md, state=on": "144:8",
+          "size=sm, state=on": "144:10",
+          "size=md, state=disabled-off": "144:12",
+          "size=sm, state=disabled-off": "144:14",
+          "size=md, state=disabled-on": "144:16",
+          "size=sm, state=disabled-on": "144:18"
+        },
+        "cells": 8,
+        "note": "The documentation frame (145:2) lays out size (rows: md, sm) against state (columns: off, on, disabled-off, disabled-on). The component set (144:20) publishes all 8 variants, named size=md, state=off (144:4) through size=sm, state=disabled-on (144:18). In Figma, state is one combined property."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The toggle component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-bg-elevated": "#f9fafb",
+        "--radius-full": "999",
+        "--color-border-strong": "#c8d2dd",
+        "--color-primary-default": "#3b71f2",
+        "--color-state-disabled-bg": "#e5e7ed"
+      },
+      "unboundValues": [
+        {
+          "layer": "track, size=md (144:4, 144:8, 144:12, 144:16)",
+          "property": "height",
+          "value": "24px",
+          "css": {
+            "selector": ".hz-toggle--md",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "track, size=sm (144:6, 144:10, 144:14, 144:18)",
+          "property": "height",
+          "value": "22px",
+          "css": {
+            "selector": ".hz-toggle--sm",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "track, state=disabled-on (144:16, 144:18)",
+          "property": "fill: primary colour at 40% alpha",
+          "value": "40%",
+          "css": {
+            "selector": ".hz-toggle:disabled:checked",
+            "property": "background-color"
+          }
+        },
+        {
+          "layer": "track, size=md (144:4, 144:8, 144:12, 144:16)",
+          "property": "width (the code reproduces 44px with aspect-ratio, not a width literal)",
+          "value": "44px",
+          "css": {
+            "selector": ".hz-toggle--md",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "track, size=sm (144:6, 144:10, 144:14, 144:18)",
+          "property": "width (the code reproduces 40px with aspect-ratio, not a width literal)",
+          "value": "40px",
+          "css": {
+            "selector": ".hz-toggle--sm",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "knob, size=md (the 24px track less the 2px inset on each side)",
+          "property": "diameter (the code fills the track height, not a size literal)",
+          "value": "20px",
+          "css": {
+            "selector": ".hz-toggle::before",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "knob, size=sm (the 22px track less the 2px inset on each side)",
+          "property": "diameter (the code fills the track height, not a size literal)",
+          "value": "18px",
+          "css": {
+            "selector": ".hz-toggle::before",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "track, all 8 variants",
+          "property": "knob inset (the code uses a border, not a size literal)",
+          "value": "2px",
+          "css": {
+            "selector": ".hz-toggle",
+            "property": "border"
+          }
+        }
+      ],
+      "usage": {
+        "node": "145:712",
+        "use_when_heading": "Use a Toggle",
+        "use_when_node": "145:715",
+        "use_when": [
+          "To turn a single setting on or off, such as a notification (\"Check in reminders\", \"Price drop alerts\").",
+          "For a setting that takes effect immediately, without a Save button.",
+          "Use size md in settings lists, with the label and helper text on the left and the toggle on the right; use size sm in dense tables, such as the Email, Push and SMS columns.",
+          "Use a disabled state for a setting the user can't change, such as booking confirmations that are always sent."
+        ],
+        "use_when_nodes": {
+          "group": "145:715",
+          "items": [
+            "145:811",
+            "145:818",
+            "145:824",
+            "145:830"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a toggle",
+        "dont_use_when_node": "145:724",
+        "dont_use_when": [
+          "For a choice submitted together with a form, such as agreeing to terms: use the Checkbox component instead.",
+          "When the user must choose one of several options: use the Radiocard component instead.",
+          "To trigger an action, such as saving or sending: use the Button component instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Always pair the toggle with a visible label that names the setting, not its state (\"Price drop alerts\", not \"On\").",
+          "Apply the change straight away; don't make the user press Save afterwards.",
+          "Leave optional notifications and marketing off by default.",
+          "Explain why a disabled toggle can't be changed in the helper text (for example, \"Always on, cannot be changed\").",
+          "Make the whole row clickable, not only the switch.",
+          "Give the toggle the switch role and its label for assistive technology (role=\"switch\" with aria-checked)."
+        ],
+        "best_practice_nodes": {
+          "group": "145:730",
+          "items": [
+            "145:854",
+            "145:860",
+            "145:866",
+            "145:872",
+            "145:878",
+            "145:884"
+          ]
+        }
+      }
     }
   }
 }
