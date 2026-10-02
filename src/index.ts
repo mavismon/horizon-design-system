@@ -10,3 +10,5 @@ export { Image } from "./components/Image/Image";
 export type { ImageProps, ImageRatio, ImageRadius } from "./components/Image/Image";
 export { Link } from "./components/Link/Link";
 export type { LinkProps, LinkSize, LinkState } from "./components/Link/Link";
+export { Logo } from "./components/Logo/Logo";
+export type { LogoProps, LogoType } from "./components/Logo/Logo";
