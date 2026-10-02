@@ -82,3 +82,17 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly this value on exactly this property in `Chip.css`. Quote this ruling in the report. When a size token for 32px appears, the ruling no longer covers it: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback and any 7px padding. This value in any other component. A change to this value: a different number needs a new ruling or a token. The selected fill, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is the user's choice to use the bound token, not a gate finding. Any state Figma does not draw (hover, focus, disabled, pressed).
+
+## 2026-10-02 · Logo wordmark colour with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Logo for a literal hex value. The wordmark "Horizon Stays" in the lockup (node 137:11, variant 137:6, component set 137:17) is coloured `#2e7cc4`. Figma binds no variable to it, and no token matches: the blues in the token set are `#3b71f2`, `#2b5ad6`, `#1d44ba` and lighter steps, and none is `#2e7cc4`. The Figma description of the component says the brand colours are fixed on purpose and do not follow the UI tokens (mark `#3B82F6` with white, wordmark `#2e7cc4`). The mark's own colours live inside the SVG asset, not in the stylesheet.
+
+**Ruling.** This literal in `src/components/Logo/Logo.css` is accepted, because it is the fixed brand colour the Figma node specifies, and it does not follow the UI tokens by design:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `#2e7cc4` | `color` on the wordmark | `.hz-logo__wordmark` | 20 |
+
+**For an agent that hits it.** Gate 2 passes for exactly this value on exactly this property in `Logo.css`. Quote this ruling in the report. If the designer later binds a token to the wordmark colour, or the brand colour is added to the token set, the ruling no longer covers it: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. This value in any other component. A change to this value: a different colour needs a new ruling or a token. The `font-weight: 600` hard-coded on line 18 is not a px or hex value and needs no ruling. The Logo has no dark-background version, and any recolouring of the mark or wordmark is outside this ruling.
