@@ -44,11 +44,11 @@
     },
     {
       "fact": "The radio input is transparent (not display:none), so it stays focusable and exposed to assistive technology while the label draws the segment.",
-      "source": "src/components/ButtonGroup/ButtonGroup.css:47"
+      "source": "src/components/ButtonGroup/ButtonGroup.css:49"
     },
     {
       "fact": "Keyboard focus on a segment shows the browser's native focus ring on its label, via :has(input:focus-visible).",
-      "source": "src/components/ButtonGroup/ButtonGroup.css:61"
+      "source": "src/components/ButtonGroup/ButtonGroup.css:63"
     }
   ]
 }
