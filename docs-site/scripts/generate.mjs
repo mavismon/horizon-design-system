@@ -402,6 +402,14 @@ const OMIT_USAGE_SECTIONS = {
 	Chip: ['Where it goes', 'Composition'],
 	Image: ['Where it goes', 'Composition'],
 	Link: ['Where it goes', 'Composition'],
+	Logo: ['Where it goes', 'Composition'],
+};
+
+// A story that shows several variants together may contradict a Best Practice line in Figma. For the stories
+// listed here the Examples tab quotes that line, verbatim from sources/figma.json, so the story isn't read as
+// guidance. Story names are the export names; bestPractice is an index into usage.best_practice.
+const STORY_CAVEATS = {
+	Logo: { AllVariants: { bestPractice: 5 } },
 };
 
 function componentPage(cp) {
@@ -538,6 +546,11 @@ function componentPage(cp) {
 		examples.push(
 			`<StoryFrame title="${attr(`${name} · ${s.sb.name} (light)`)}" src="${attr(`${cfg.storybookUrl}/iframe.html?id=${s.sb.id}&viewMode=story`)}" href="${attr(storyBase + s.sb.id)}" />`,
 		);
+		const caveat = STORY_CAVEATS[name]?.[s.exportName];
+		const line = caveat != null ? fig?.usage?.best_practice?.[caveat.bestPractice] : null;
+		const lineNode = caveat != null ? fig?.usage?.best_practice_nodes?.items?.[caveat.bestPractice] : null;
+		if (line)
+			examples.push(`**Not guidance for a product screen.** This story is a side-by-side comparison for the Storybook. Figma's Best Practice for ${name}${lineNode ? ` (node ${c(lineNode)})` : ''} says: "${t(line)}"`);
 		examples.push(notice("The Storybook has no theme switch, so there's no dark rendering of this story to embed."));
 	}
 	if (cp.storyDefs.some((s) => s.isRow))
@@ -649,8 +662,9 @@ function componentPage(cp) {
 			`Values on the Figma node that aren't bound to a variable, and what ${c(`${name}.css`)} at ${c(SHORT)} does with each.\n\n| Layer | Property | Figma value | In the code |\n|---|---|---|---|\n` +
 				fig.unboundValues
 					.map((u) => {
-						const d = cp.findDecl(u.css.selector, u.css.property);
-						const inCode = d ? `[${c(d.text)}](${blob(`${cp.dir}/${name}.css`, d.line)})` : `No ${c(u.css.property)} on ${c(u.css.selector)}`;
+						const d = u.css ? cp.findDecl(u.css.selector, u.css.property) : null;
+						// A value that lives in an asset, not in the stylesheet, names the file and says so.
+						const inCode = !u.css ? (u.codeFile ? `${t(u.codeNote ?? 'In the asset')}: [${c(u.codeFile)}](${blob(u.codeFile)})` : t(u.codeNote ?? 'Not set in the stylesheet')) : d ? `[${c(d.text)}](${blob(`${cp.dir}/${name}.css`, d.line)})` : `No ${c(u.css.property)} on ${c(u.css.selector)}`;
 						return `| ${t(u.layer)} | ${t(u.property)} | ${c(u.value)} | ${inCode} |`;
 					})
 					.join('\n'),

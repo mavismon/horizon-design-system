@@ -1,5 +1,5 @@
 {
-  "readAt": "2026-10-01",
+  "readAt": "2026-10-02",
   "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out.",
   "components": [
     {
@@ -60,7 +60,7 @@
     {
       "name": "Card",
       "category": "ORGANISMS",
-      "design": "Done",
+      "design": "",
       "development": "To-do",
       "figma": "",
       "productionStorybook": "",
@@ -149,22 +149,22 @@
       "name": "Link",
       "category": "ATOMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1635&t=WByFKcVxB5jPIcTp-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-link--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/22a90aef153b6661a76003dc289f23f2fdfd59b2/reports/Link/release-review.md",
-      "astroLink": ""
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/link/"
     },
     {
       "name": "Logo",
       "category": "ATOMS",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1636&t=bEurJxon3J2egqXY-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-logo--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/5e363d15eeff987f93191d0ab40ab0987e7108ff/reports/Logo/release-review.md",
       "astroLink": ""
     },
     {
@@ -181,9 +181,9 @@
     {
       "name": "ProgressBar",
       "category": "ATOMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1637&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -247,9 +247,9 @@
     {
       "name": "Toggle",
       "category": "ATOMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1638&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",

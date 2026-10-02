@@ -792,6 +792,108 @@
           ]
         }
       }
+    },
+    "Logo": {
+      "page": {
+        "id": "57:1636",
+        "name": "Logo"
+      },
+      "node": {
+        "id": "137:18",
+        "name": "❖ logo"
+      },
+      "component": {
+        "id": "137:17",
+        "name": "logo"
+      },
+      "description": "The Horizon Stays logo. type: lockup (default; mark and wordmark, the header logo), mark (the icon alone). 32px high, vector. Brand colours are fixed on purpose and don't follow UI tokens: mark #3B82F6 with white, wordmark #2e7cc4.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "lockup",
+                "node": "137:6"
+              },
+              {
+                "value": "mark",
+                "node": "137:12"
+              }
+            ]
+          }
+        ],
+        "cells": 2,
+        "note": "The documentation frame (137:18) lays the two variants out in one column, each beside a text label. The component set (137:17) publishes two variants, type=lockup (137:6, 162x32) and type=mark (137:12, 32x32). Figma draws no states and no sizes."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The Logo frame renders both variants once, in one theme, and has no separate light and dark frames. The mark is the committed SVG asset (src/assets/images/logo-mark.svg) with its colours fixed inside the file, and the wordmark colour is a fixed literal in the stylesheet, so neither follows the UI theme tokens and the Logo does not change between light and dark. Figma's Best Practice says there's no version for dark backgrounds yet."
+      },
+      "boundVariables": {
+        "--spacing-sm": "8",
+        "--fontFamily-body": "Inter",
+        "--fontSize-2xl": "18",
+        "--lineHeight-2xl": "26",
+        "--fontWeight-semibold": "Semi Bold"
+      },
+      "unboundValues": [
+        {
+          "layer": "wordmark text \"Horizon Stays\" (137:11), in type=lockup (137:6)",
+          "property": "text colour",
+          "value": "#2e7cc4",
+          "css": {
+            "selector": ".hz-logo__wordmark",
+            "property": "color"
+          }
+        },
+        {
+          "layer": "mark (137:7 in type=lockup, 137:13 in type=mark)",
+          "property": "fill colours inside the vector: tile #3B82F6, sun and wave white",
+          "value": "#3B82F6 with white",
+          "css": null,
+          "codeFile": "src/assets/images/logo-mark.svg",
+          "codeNote": "Set inside the SVG asset, not in the stylesheet"
+        }
+      ],
+      "usage": {
+        "node": "137:506",
+        "use_when_heading": "Use the Logo",
+        "use_when_node": "137:509",
+        "use_when": [
+          "At the left of the header on every page, using the lockup at 32px high.",
+          "Use the mark on its own where there's no room for the wordmark, such as a collapsed sidebar, an app icon or a favicon."
+        ],
+        "dont_use_when_heading": "Do not use the logo",
+        "dont_use_when_node": "137:518",
+        "dont_use_when": [
+          "For listing, room or place photos: use the Image component instead.",
+          "For a person's profile photo: use the Avatar component instead.",
+          "As a decorative icon or bullet: use an icon from the Icon Library instead."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Use the logo as it is: don't recolour, stretch, rotate or add effects to it.",
+          "Scale an instance proportionally only (hold Shift while resizing); never change its width and height separately.",
+          "Don't edit the wordmark text or retype it in another font.",
+          "Leave clear space around the logo; don't crowd it with other elements.",
+          "Place it on a light background so the blue stays readable; there's no version for dark backgrounds yet.",
+          "Don't show the mark and the lockup side by side on the same screen."
+        ],
+        "best_practice_nodes": {
+          "group": "137:524",
+          "items": [
+            "137:636",
+            "137:642",
+            "137:648",
+            "137:654",
+            "137:660",
+            "137:666"
+          ]
+        }
+      }
     }
   }
 }

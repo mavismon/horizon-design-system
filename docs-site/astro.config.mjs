@@ -55,6 +55,7 @@ export default defineConfig({
 								{ label: 'Chip', slug: 'core/components/chip' },
 								{ label: 'Image', slug: 'core/components/image' },
 								{ label: 'Link', slug: 'core/components/link' },
+								{ label: 'Logo', slug: 'core/components/logo' },
 								// </generated:components>
 							],
 						},
