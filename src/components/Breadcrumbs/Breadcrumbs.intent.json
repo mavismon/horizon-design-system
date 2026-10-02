@@ -1,0 +1,33 @@
+{
+  "use_when": [],
+  "dont_use_when": [],
+  "variant_intent": {},
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-md",
+    "--lineheight-md",
+    "--spacing-sm"
+  ],
+  "a11y": [
+    {
+      "fact": "The trail is a native <nav> landmark labelled \"Breadcrumb\", containing an ordered list; the label can be overridden through the passthrough props.",
+      "source": "src/components/Breadcrumbs/Breadcrumbs.tsx:36"
+    },
+    {
+      "fact": "The current page is the last list item, a non-link <span> marked aria-current=\"page\".",
+      "source": "src/components/Breadcrumbs/Breadcrumbs.tsx:49"
+    },
+    {
+      "fact": "The \"/\" separators are aria-hidden so assistive technology does not announce them.",
+      "source": "src/components/Breadcrumbs/Breadcrumbs.tsx:43"
+    },
+    {
+      "fact": "Each ancestor is a native <a>, so keyboard focus, the focus ring and activation are the browser's own; no focus style is overridden.",
+      "source": "src/components/Breadcrumbs/Breadcrumbs.tsx:40"
+    }
+  ]
+}
