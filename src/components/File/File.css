@@ -27,7 +27,7 @@
   gap: var(--spacing-xs);
   box-sizing: border-box;
   width: 100%;
-  padding: var(--spacing-xl);
+  padding: calc(var(--spacing-xl) - var(--border-width-sm));
   cursor: pointer;
 }
 
@@ -78,7 +78,7 @@
 .hz-file--item {
   align-items: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-md);
+  padding: calc(var(--spacing-md) - var(--border-width-sm));
   background: var(--color-bg-elevated);
 }
 
