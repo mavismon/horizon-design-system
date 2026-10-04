@@ -1,0 +1,129 @@
+/* TODO: the raw px heights (64 / 56 / 52), the 72px app side columns, the 20px app side height
+   and the 20px back icon come straight from the Figma frames; no sizing tokens exist yet.
+   Replace with tokens when they are added. */
+.hz-header {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--color-bg-elevated);
+  border-bottom: var(--border-width-sm) solid var(--color-border-subtle);
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+.hz-header--web {
+  height: 64px;
+  padding: 0 var(--spacing-2xl);
+}
+
+.hz-header--backoffice {
+  height: 56px;
+  padding: 0 var(--spacing-2xl);
+}
+
+.hz-header--app {
+  height: 52px;
+  padding: 0 var(--spacing-xl);
+}
+
+.hz-header__right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: var(--spacing-xl);
+}
+
+.hz-header__right--backoffice {
+  gap: var(--spacing-md);
+}
+
+.hz-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+/* Nav links: header text styling (not the blue Link color); doubled class beats Link's single class. */
+.hz-header .hz-header__link {
+  font-size: var(--fontsize-xl);
+  line-height: var(--lineheight-xl);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.hz-header .hz-header__link--current {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.hz-header__side {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 72px;
+  height: 20px;
+}
+
+.hz-header__side--end {
+  justify-content: flex-end;
+}
+
+.hz-header__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.hz-header__back-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.hz-header__title {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fontsize-2xl);
+  line-height: var(--lineheight-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.hz-header__action {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 500;
+  color: var(--color-text-link);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hz-header__page-title {
+  margin: 0;
+  font-size: var(--fontsize-2xl);
+  line-height: var(--lineheight-2xl);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+.hz-header__back:focus-visible,
+.hz-header__action:focus-visible {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: 2px;
+}

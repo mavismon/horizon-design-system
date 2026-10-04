@@ -26,3 +26,5 @@ export type {
   ButtonGroupType,
   ButtonGroupLayout,
 } from "./components/ButtonGroup/ButtonGroup";
+export { Header } from "./components/Header/Header";
+export type { HeaderProps, HeaderType } from "./components/Header/Header";
