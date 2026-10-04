@@ -2,7 +2,10 @@
   "use_when": [
     "Use type web at the top of every page of the guest website, with the current section as the first, darker link.",
     "Use type app at the top of each app screen below the status bar: back on the left, the screen name in the centre, one text action on the right when the screen has one, such as \"Save\" or \"Mark read\".",
-    "Use type backoffice above the content of each back office page, next to the Sidebar, with the page name and search."
+    "Use type backoffice above the content of each back office page, next to the Sidebar, with the page name and search.",
+    "Keep the app title short (one or two words) so it stays centred and never truncates.",
+    "Turn ShowAvatar off for signed-out guests on web; the Book now button stays.",
+    "Hide the back chevron (ShowBack off) only on the top-level tabs of the app, such as Explore or Trips."
   ],
   "dont_use_when": [
     {
