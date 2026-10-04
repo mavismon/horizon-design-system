@@ -1,0 +1,112 @@
+.hz-radiocard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-lg);
+  border: var(--border-width-sm) solid var(--color-border-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  cursor: pointer;
+}
+
+.hz-radiocard--selected {
+  border-color: var(--color-primary-default);
+}
+
+.hz-radiocard--disabled {
+  border-color: var(--color-border-default);
+  background: var(--color-state-disabled-bg);
+  cursor: not-allowed;
+}
+
+/* The native input stays in the tab order and carries checked/disabled; the card draws the radio. */
+.hz-radiocard__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.hz-radiocard:has(.hz-radiocard__input:focus-visible) {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: var(--border-width-md);
+}
+
+.hz-radiocard__radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border: var(--border-width-sm) solid var(--color-border-strong);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-elevated);
+}
+
+.hz-radiocard--selected .hz-radiocard__radio {
+  border-color: var(--color-primary-default);
+}
+
+.hz-radiocard--selected .hz-radiocard__radio::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-default);
+}
+
+.hz-radiocard--disabled .hz-radiocard__radio {
+  border-color: var(--color-border-default);
+  background: var(--color-state-disabled-bg);
+}
+
+.hz-radiocard__text {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  min-width: 1px;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.hz-radiocard__title,
+.hz-radiocard__trailing {
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-xl);
+  line-height: var(--lineheight-xl);
+  color: var(--color-text-primary);
+}
+
+.hz-radiocard__title {
+  font-weight: 500;
+}
+
+.hz-radiocard__description {
+  font-family: var(--fontfamily-body), sans-serif;
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.hz-radiocard__trailing {
+  flex-shrink: 0;
+  font-weight: 600;
+  white-space: nowrap;
+  word-break: break-word;
+}
+
+.hz-radiocard--disabled .hz-radiocard__title,
+.hz-radiocard--disabled .hz-radiocard__description,
+.hz-radiocard--disabled .hz-radiocard__trailing {
+  color: var(--color-text-disabled);
+}
