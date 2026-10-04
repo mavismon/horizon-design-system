@@ -25,7 +25,10 @@
     "field": "to search within one list or page, such as \"Search messages\", \"Search reviews\" or the back office \"Search\" in the header.",
     "stay": "at the top of the website and search results to find a stay by place, dates and guests.",
     "md": "(36px) on web and in the back office.",
-    "lg": "(44px) in the mobile app for a bigger tap target."
+    "lg": "(44px) in the mobile app for a bigger tap target.",
+    "empty": "",
+    "focused": "",
+    "filled": ""
   },
   "placement": [],
   "pairs_with": [],
