@@ -26,3 +26,5 @@ export type {
   ButtonGroupType,
   ButtonGroupLayout,
 } from "./components/ButtonGroup/ButtonGroup";
+export { Dropdown } from "./components/Dropdown/Dropdown";
+export type { DropdownProps, DropdownSize } from "./components/Dropdown/Dropdown";
