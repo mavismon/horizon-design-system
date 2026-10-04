@@ -1,5 +1,5 @@
 {
-  "readAt": "2026-10-02",
+  "readAt": "2026-10-04",
   "source": "Figma MCP reads (get_metadata, get_design_context, get_variable_defs, get_screenshot) of the Core Component file.",
   "file": {
     "key": "dIHHqSq8c75n4olME0s9JS",
@@ -1850,6 +1850,212 @@
             "204:91",
             "204:92",
             "204:93"
+          ]
+        }
+      }
+    },
+    "SearchBar": {
+      "readAt": "2026-10-04",
+      "page": {
+        "id": "57:1645",
+        "name": "Searchbar"
+      },
+      "node": {
+        "id": "214:7",
+        "name": "❖ searchbar"
+      },
+      "component": {
+        "id": "213:54",
+        "name": "searchbar"
+      },
+      "registryLink": {
+        "node": "57:1645",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1645), not the component set 213:54."
+      },
+      "description": "Lets people search. type field (default): a search input with a magnifier; size md (36px, web and back office) or lg (44px, mobile app); state empty (Placeholder), focused (blue border) or filled (Value, with a clear × button). type stay: the website's stay search, with Where, Check in, Check out and Guests values and a nested Search Button. Field width 320, stretch to fill.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "field"
+              },
+              {
+                "value": "stay"
+              }
+            ]
+          },
+          {
+            "name": "size",
+            "values": [
+              {
+                "value": "md"
+              },
+              {
+                "value": "lg"
+              }
+            ]
+          },
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "empty"
+              },
+              {
+                "value": "focused"
+              },
+              {
+                "value": "filled"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "type=field, size=md, state=empty": "213:2",
+          "type=field, size=md, state=focused": "213:6",
+          "type=field, size=md, state=filled": "213:10",
+          "type=field, size=lg, state=empty": "213:16",
+          "type=field, size=lg, state=focused": "213:20",
+          "type=field, size=lg, state=filled": "213:24",
+          "type=stay, size=lg, state=filled": "213:30"
+        },
+        "cells": 7,
+        "note": "The component set (213:54) publishes 7 variants, not the 12 that type x size x state would give: type field has all six size x state cells (md and lg, each empty, focused and filled); type stay has one, size lg, state filled (960 wide). Placeholder, Value and the stay values Where, Check in, Check out and Guests are properties of the set, not cells; the specimen board (214:7) draws them as the instances Back office (214:14), Trips (web) (214:19) and App, lg (214:24). Figma draws no hover, pressed, disabled or error state."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The searchbar component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-lg": "20",
+        "--spacing-sm": "8",
+        "--spacing-md": "12",
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-default": "#d7dee7",
+        "--color-border-focus": "#1d44ba",
+        "--color-text-primary": "#161925",
+        "--fontSize-xl": "14",
+        "--lineHeight-xl": "20",
+        "--fontSize-sm": "11",
+        "--fontWeight-medium": "Medium",
+        "--lineHeight-sm": "16",
+        "--color-text-inverse": "#f9fafb",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--radius-sm": "6",
+        "--color-primary-default": "#3b71f2",
+        "--spacing-lg": "16"
+      },
+      "unboundValues": [
+        {
+          "layer": "type=field, size=md (213:2, 213:6, 213:10)",
+          "property": "vertical padding (the code computes it from --spacing-sm and --border-width-sm with calc(), not a px literal)",
+          "value": "8px",
+          "css": {
+            "selector": ".hz-searchbar--field",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "type=field, size=lg (213:16, 213:20, 213:24)",
+          "property": "vertical padding (the code computes it from --spacing-md and --border-width-sm with calc(), not a px literal)",
+          "value": "12px",
+          "css": {
+            "selector": ".hz-searchbar--field.hz-searchbar--lg",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "Where, Check in, Check out, Guests, type=stay (213:31, 213:35, 213:39, 213:43)",
+          "property": "gap between label and value (the code computes it from --spacing-xs with calc(), not a px literal)",
+          "value": "2px",
+          "css": {
+            "selector": ".hz-searchbar__part",
+            "property": "gap"
+          }
+        },
+        {
+          "layer": "Divider, type=stay (213:34, 213:38, 213:42)",
+          "property": "height (the code computes it from --spacing-2xl and --spacing-sm with calc(), not a px literal)",
+          "value": "32px",
+          "css": {
+            "selector": ".hz-searchbar__divider",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Divider, type=stay (213:34, 213:38, 213:42)",
+          "property": "fill (bound in Figma to the variable color/border/subtle, which is not named like a --color-... token; the code reads --color-border-subtle)",
+          "value": "#eef1f5",
+          "css": {
+            "selector": ".hz-searchbar__divider",
+            "property": "background"
+          }
+        },
+        {
+          "layer": "Button, type=stay (213:46)",
+          "property": "width (the code computes it from --spacing-xl with calc(), not a px literal)",
+          "value": "80px",
+          "css": {
+            "selector": ".hz-searchbar__button",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Search icon and Clear, type=field (14px)",
+          "property": "width and height",
+          "value": "14px",
+          "codeFile": "src/components/SearchBar/SearchBar.tsx",
+          "codeNote": "Not in the stylesheet: set as width=\"14\" height=\"14\" attributes on the <svg> elements (SearchBar.tsx lines 48 and 56)"
+        }
+      ],
+      "usage": {
+        "node": "214:29",
+        "use_when_heading": "Use a search bar",
+        "use_when_node": "214:32",
+        "use_when": [
+          "Use type field to search within one list or page, such as \"Search messages\", \"Search reviews\" or the back office \"Search\" in the header.",
+          "Use size md (36px) on web and in the back office; use size lg (44px) in the mobile app for a bigger tap target.",
+          "Use type stay at the top of the website and search results to find a stay by place, dates and guests."
+        ],
+        "use_when_nodes": {
+          "group": "214:32",
+          "items": [
+            "214:34",
+            "214:35",
+            "214:36"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a search bar",
+        "dont_use_when_node": "214:37",
+        "dont_use_when": [
+          "To filter by fixed values such as status or property: use Chip filters or a Dropdown.",
+          "To type data into a form, such as a name or an address: use a text field.",
+          "More than one type stay on the same page."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Say what is being searched in the placeholder: \"Search messages\", not just \"Search\", unless the page makes it obvious.",
+          "Show the clear (×) button as soon as there is text, and keep the typed value after the results load.",
+          "In type stay, always show a value in each part, such as the dates already chosen, never an empty slot."
+        ],
+        "best_practice_nodes": {
+          "group": "214:42",
+          "items": [
+            "214:44",
+            "214:45",
+            "214:46"
           ]
         }
       }

@@ -61,6 +61,7 @@ export default defineConfig({
 								{ label: 'Link', slug: 'core/components/link' },
 								{ label: 'Logo', slug: 'core/components/logo' },
 								{ label: 'ProgressBar', slug: 'core/components/progressbar' },
+								{ label: 'SearchBar', slug: 'core/components/searchbar' },
 								{ label: 'Toggle', slug: 'core/components/toggle' },
 								// </generated:components>
 							],

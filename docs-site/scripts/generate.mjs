@@ -533,6 +533,8 @@ const OMIT_USAGE_SECTIONS = {
 	Dropdown: ['Where it goes', 'Composition'],
 	// File composes ProgressBar (composesFacts states it on the Code tab); its intent has no placement or pairs_with, so the empty notices are left out.
 	File: ['Where it goes', 'Composition'],
+	// SearchBar composes Button (composesFacts states it on the Code tab); its intent has no placement or pairs_with, so the empty notices are left out.
+	SearchBar: ['Where it goes', 'Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -845,7 +847,90 @@ function fileNotes(cp, fig, review) {
 	return out;
 }
 
+// SearchBar: the designer's open items, each quoted as written from the release review. props = the props Figma
+// doesn't have and how Figma's state is read by the code (Code tab); stack = the stay parts that are not keyboard
+// reachable (Code tab); usage = the "text field" pointer to a component that isn't built; variants = the three
+// states with no usage text (under "What each variant is for"); design = the canvas link in the registry and the
+// 14px SVG icon attributes (Design tab). Each is only written when the code or the review bears it out.
+const SEARCHBAR_NOTES = { props: 1, keyboard: 2, notBuilt: 4, registry: 9, states: 11, svgHeading: '## SVG icon attributes (width="14" height="14")' };
+
+function searchBarNotes(cp, fig, review) {
+	const cfgS = SEARCHBAR_NOTES;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const css = `${cp.dir}/${cp.name}.css`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const out = { props: null, stack: null, usage: [], variants: [], design: [] };
+	const q = (n) => {
+		const l = reviewFinding(review, n);
+		return l ? `> ${t(plain(l))}` : null;
+	};
+	const from = (n) => (q(n) ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(n)}` : null);
+	const tl = cp.tsx.split('\n');
+	const lineOfTsx = (re, fromLine = 0) => {
+		const i = tl.findIndex((l, k) => k >= fromLine && re.test(l));
+		return i < 0 ? 0 : i + 1;
+	};
+	const tsxLink = (a, b) => `[${c(`${cp.name}.tsx:${a}${b && b > a ? `-${b}` : ''}`)}](${blob(file, b && b > a ? `${a}-L${b}` : a)})`;
+
+	// Props that are not Figma properties, and how Figma's state is read.
+	const sl = show(storyFile).split('\n');
+	const a = sl.findIndex((l) => /^\/\/ Not Figma properties/.test(l));
+	const b = sl.findIndex((l, i) => i >= a && /no hover, pressed or disabled state\.\s*$/.test(l));
+	const extra = ['defaultValue', 'onValueChange', 'onSearch', 'onClear', 'label', 'name'].map((n) => cp.props.find((p) => p.name === n));
+	const parts = [];
+	if (a >= 0 && b >= 0 && extra.every(Boolean) && from(cfgS.props))
+		parts.push(
+			`**Props that are not Figma properties.** The stories' header comment says: "${t(sl.slice(a, b + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' '))}" ([${c(`${cp.name}.stories.tsx:${a + 1}-${b + 1}`)}](${blob(storyFile, `${a + 1}-L${b + 1}`)})). They are declared at ${extra.map((p) => `[${c(p.name)}](${blob(file, p.line)})`).join(', ')}.`,
+			from(cfgS.props),
+		);
+	const initL = lineOfTsx(/useState\(defaultValue \?\? \(state === "filled"/);
+	const pinL = lineOfTsx(/state === "focused" && "hz-searchbar--focused"/);
+	const stayL = lineOfTsx(/if \(type === "stay"\)/);
+	const fixedL = lineOfTsx(/"hz-searchbar--stay", "hz-searchbar--lg"/);
+	const focusRule = cp.findDecl('.hz-searchbar--field:focus-within', 'border-color');
+	const stateProp = cp.props.find((p) => p.name === 'state');
+	if (initL && pinL && stayL && fixedL && focusRule && stateProp)
+		parts.push(
+			`**How Figma's ${c('state')} is read.** ${c('state')} is a prop (${c('SearchBarState')}: ${c('empty')}, ${c('focused')}, ${c('filled')}), but in the code it only sets a starting point: ${c('filled')} starts the text at the Figma value ${c('Alfama')} when neither ${c('value')} nor ${c('defaultValue')} is given (${tsxLink(initL)}), ${c('focused')} adds the ${c('hz-searchbar--focused')} class that pins the focus border as drawn in the Figma cell (${tsxLink(pinL)}), and ${c('empty')} is what an empty field already is. Real focus does not come from ${c('state')}: the border follows [${c(focusRule.text)}](${blob(css, focusRule.line)}), the ${c(':focus-within')} rule. The doc comment on ${c('state')} says: "${t(stateProp.doc ?? '')}" ([${c(`${cp.name}.tsx:${stateProp.line}`)}](${blob(file, stateProp.line)})). For ${c('type="stay"')}, the component returns at ${tsxLink(stayL)} before it reads ${c('size')} or ${c('state')}, and sets ${c('hz-searchbar--lg')} itself (${tsxLink(fixedL)}), so those two props do nothing there.`,
+		);
+	if (parts.length) out.props = parts.join('\n\n');
+
+	// The stay parts are static spans; only the Search button takes focus.
+	const mapL = lineOfTsx(/\{parts\.map\(/);
+	const fragL = lineOfTsx(/<\/Fragment>/, mapL);
+	const spanL = lineOfTsx(/hz-searchbar__part-value/, mapL);
+	const btnL = lineOfTsx(/<Button\b/);
+	if (mapL && fragL && spanL && btnL && !/tabIndex|tabindex/.test(cp.tsx) && from(cfgS.keyboard))
+		out.stack = `**The stay parts are not keyboard reachable.** ${c(`${cp.name}.tsx`)} renders Where, Check in, Check out and Guests as a ${c('<div>')} holding two ${c('<span>')}s each (${tsxLink(mapL, fragL)}), with no ${c('tabIndex')} anywhere in the file; the only focusable element in ${c('type="stay"')} is the ${c('<Button>')} for Search (${tsxLink(btnL)}).\n\n${from(cfgS.keyboard)}`;
+
+	// "text field" is the alternative the intent names, and it isn't a built component.
+	const pointer = (cp.intent?.dont_use_when ?? []).find((x) => /^text field$/i.test((x.instead ?? '').trim()));
+	const built = git('ls-tree', '--name-only', SHA, 'src/components/').split('\n').filter(Boolean).map((x) => x.replace(/\/$/, '').split('/').pop());
+	if (pointer && !built.some((n) => /^text-?field$/i.test(n)) && from(cfgS.notBuilt))
+		out.usage.push(`**Not built.** The second "when not to use it" item names ${c(pointer.instead)} as the alternative. There is no text-field component in ${c('src/components/')} at ${c(SHORT)} (the folders there are ${built.map(c).join(', ')}), so that alternative does not exist yet.\n\n${from(cfgS.notBuilt)}`);
+
+	// The three states have no usage text.
+	const emptyStates = ['empty', 'focused', 'filled'].filter((k) => cp.intent?.variant_intent && k in cp.intent.variant_intent && cp.intent.variant_intent[k] === '');
+	const stateSentence = fig?.description?.match(/state empty[^.]*\)\./)?.[0];
+	if (emptyStates.length === 3 && stateSentence && from(cfgS.states))
+		out.variants.push(`**No description for the three states.** ${emptyStates.map((k) => c(k)).join(', ')} are empty strings in ${c(`${cp.name}.intent.json`)}, shown above as "Figma doesn't say." Figma's component description (node ${c(fig.component.id)}) only names them: "${t(stateSentence)}" It gives no usage text for them.\n\n${from(cfgS.states)}`);
+
+	// The registry link is the canvas, not the component set.
+	if (fig?.registryLink?.kind === 'canvas' && from(cfgS.registry))
+		out.design.push(`**The registry link is the canvas.** The Figma cell for ${cp.name} on the board holds the canvas page (node ${c(fig.registryLink.node)}, ${c(fig.page.name)}), not the component set (${c(fig.component.id)}). The page header's Figma link goes to that canvas and says so; the frame above is the documentation frame ${c(fig.node.id)}.\n\n${from(cfgS.registry)}`);
+
+	// The 14px SVG attributes: the review's own section, quoted.
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	const svgSection = m ? mdSection(show(m[2], m[1]), cfgS.svgHeading) : null;
+	const svgA = lineOfTsx(/<svg className="hz-searchbar__icon" width="14" height="14"/);
+	const svgB = lineOfTsx(/<svg className="hz-searchbar__icon" width="14" height="14"/, svgA);
+	if (svgSection && svgA && svgB)
+		out.design.push(`**The icon size is an attribute, not a token.** The search icon and the clear icon each carry ${c('width="14" height="14"')} on the ${c('<svg>')} (${tsxLink(svgA)}, ${tsxLink(svgB)}), and ${c(`${cp.name}.css`)} sets no width or height on ${c('.hz-searchbar__icon')}. From the [release review](${review.url}), under "${t(cfgS.svgHeading.replace(/^## /, ''))}", as written:\n\n${svgSection.split('\n').map((l) => (l ? `> ${t(plain(l))}` : '>')).join('\n')}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'SearchBar') return searchBarNotes(cp, fig, review);
 	if (cp.name === 'File') return fileNotes(cp, fig, review);
 	if (cp.name === 'Dropdown') return dropdownNotes(cp, fig, review);
 	const cfgR = REVIEW_NOTES[cp.name];
@@ -906,6 +991,12 @@ function composedReads(cp, tokens) {
 	return by.length ? `, but ${by.map((n) => `${n}.css`).join(' and ')}, from the ${by.length > 1 ? 'components' : 'component'} it is built from, does` : '';
 }
 
+// Three or more Figma properties, with every published cell named: listed cell by cell, not drawn as a two-way grid.
+function isMultiMatrix(fig) {
+	const vm = fig?.variantMatrix;
+	return !!vm && vm.properties.length >= 3 && Object.keys(vm.cellNodes ?? {}).length === vm.cells;
+}
+
 function componentPage(cp) {
 	const { name, row, intent, intentPath } = cp;
 	const fig = figma.components?.[name] ?? null;
@@ -947,7 +1038,7 @@ function componentPage(cp) {
 		cp.since ? `<span>Shipped in ${t(cp.since)}</span>` : `<span>Not in a published version yet</span>`,
 		'<span class="hz-page-header__links">',
 		firstStory ? `<a href="${attr(storyBase + firstStory.id)}">Storybook</a>` : '',
-		row.figma ? `<a href="${attr(row.figma)}">Figma node ${t(fig?.node.id ?? '')}</a>` : '',
+		row.figma ? `<a href="${attr(row.figma)}">${fig?.registryLink?.kind === 'canvas' ? `Figma canvas ${t(fig.registryLink.node)}` : `Figma node ${t(fig?.node.id ?? '')}`}</a>` : '',
 		`<a href="${attr(tree(cp.dir))}">Source</a>`,
 		'</span>',
 		'</div>',
@@ -1034,13 +1125,14 @@ function componentPage(cp) {
 	} else {
 		const prop = cp.unionProp?.name ?? fig?.variantMatrix?.properties?.[0]?.name ?? 'variant';
 		// A two-property matrix: name the property each value belongs to, from the union types in the code.
-		const propOf = (k) => (grid ? (grid.props.find((g) => g.union?.values.includes(k))?.name ?? prop) : prop);
+		const propOf = (k) => (grid ? (grid.props.find((g) => g.union?.values.includes(k))?.name ?? prop) : isMultiMatrix(fig) ? (cp.props.find((x) => cp.unionOf(x.type)?.values.includes(k))?.name ?? prop) : prop);
 		usage.push(
 			'| Property | Value | What it is for |\n|---|---|---|\n' +
 				Object.entries(intent.variant_intent)
 					.map(([k, v]) => `| ${c(propOf(k))} | ${c(k)} | ${v ? t(v) : '*Figma doesn\'t say.*'} |`)
 					.join('\n'),
 		);
+		for (const n of rn.variants ?? []) usage.push(n);
 	}
 
 	usage.push('## Accessibility');
@@ -1099,7 +1191,7 @@ function componentPage(cp) {
 		examples.push(notice("The Storybook has no theme switch, so there's no dark rendering of this story to embed."));
 	}
 	if (cp.storyDefs.some((s) => s.isRow))
-		examples.push(`The single-variant stories (${cp.storyDefs.filter((s) => s.isRow).map((s) => c(s.exportName)).join(', ')}) are ${grid ? 'cells' : 'rows'} of the variant matrix; the Design tab links each one.`);
+		examples.push(`The single-variant stories (${cp.storyDefs.filter((s) => s.isRow).map((s) => c(s.exportName)).join(', ')}) are ${grid || isMultiMatrix(fig) ? 'cells' : 'rows'} of the variant matrix; the Design tab links each one.`);
 
 	// ----- Code -----
 	const code = [];
@@ -1185,7 +1277,9 @@ function componentPage(cp) {
 	design.push('## Figma node');
 	if (!fig) design.push(notice(`No Figma read for ${name} in sources/figma.json.`));
 	else {
-		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(row.figma)}" />`);
+		// When the registry's Figma cell is the canvas page, the frame links to the documentation frame, not to the canvas.
+		const frameHref = fig.registryLink?.kind === 'canvas' ? `${figma.file.url}?node-id=${fig.node.id.replace(':', '-')}` : row.figma;
+		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(frameHref)}" />`);
 		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), ${fig.component.kind === 'component' ? 'component' : 'component set'} ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
 		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)})`).join(', ')}, which Figma describes as: "${fig.internal.map((x) => t(x.description)).join(' ')}"${fig.internal.some((x) => x.states?.length) ? ` Its Figma variants: ${fig.internal.flatMap((x) => x.states ?? []).map((st) => `${c(st.value)} (${c(st.node)})`).join(', ')}.` : ''}`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
@@ -1194,7 +1288,10 @@ function componentPage(cp) {
 	design.push('## Variant matrix');
 	if (fig?.variantMatrix) {
 		const props = fig.variantMatrix.properties;
-		design.push(`${props.map((p) => `${c(p.name)} (${p.values.length})`).join(' × ')} = ${grid?.sparse ? `${props.reduce((n, p) => n * p.values.length, 1)} combinations, of which Figma publishes ${fig.variantMatrix.cells} cells` : `${fig.variantMatrix.cells} cells`}. ${t(fig.variantMatrix.note)}`);
+		// Three or more Figma properties with every published cell named: a list of cells, not a two-way grid.
+		const multi = !grid && isMultiMatrix(fig);
+		const productAll = props.reduce((n, p) => n * p.values.length, 1);
+		design.push(`${props.map((p) => `${c(p.name)} (${p.values.length})`).join(' × ')} = ${grid?.sparse || (multi && productAll !== fig.variantMatrix.cells) ? `${productAll} combinations, of which Figma publishes ${fig.variantMatrix.cells} cells` : `${fig.variantMatrix.cells} cells`}. ${t(fig.variantMatrix.note)}`);
 		const main = props.find((p) => p.name === cp.unionProp?.name) ?? props[0];
 		if (grid) {
 			const [rowP, colP] = grid.props;
@@ -1220,6 +1317,33 @@ function componentPage(cp) {
 						.join('\n'),
 			);
 			design.push(`Each cell is the Storybook story for that combination and its Figma variant node. ${gridCodeNote(grid, cp, name)}${unpublished.length ? ` ${unpublishedNote(cp, fig, unpublished, grid)}` : ''}${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)}${x.node ? ` (${c(x.node)})` : ''}`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`);
+		} else if (multi) {
+			const nodes = fig.variantMatrix.cellNodes;
+			const parseKey = (k) => Object.fromEntries(k.split(', ').map((x) => x.split('=')));
+			const codeName = (pn) => cp.props.find((x) => x.name.toLowerCase() === pn.toLowerCase())?.name;
+			// A story belongs to a cell when every one of these props that it sets agrees with the cell, and it fits exactly one published cell.
+			const storyCells = new Map();
+			for (const sd of cp.storyDefs.filter((x) => x.isRow && x.sb)) {
+				const fits = Object.keys(nodes).filter((k) => props.every((p) => sd.argValues[codeName(p.name)] === undefined || sd.argValues[codeName(p.name)] === parseKey(k)[p.name]));
+				if (fits.length === 1) storyCells.set(fits[0], sd);
+			}
+			const noStory = [];
+			design.push(
+				'| Figma variant | Figma node | Story |\n|---|---|---|\n' +
+					Object.entries(nodes)
+						.map(([k, node]) => {
+							const sd = storyCells.get(k);
+							if (!sd) noStory.push({ key: k, node });
+							return `| ${c(k)} | ${c(node)} | ${sd ? `[${t(sd.exportName)}](${storyBase + sd.sb.id})` : '*no story*'} |`;
+						})
+						.join('\n'),
+			);
+			const combos = props.reduce((acc, p) => acc.flatMap((x) => p.values.map((v) => [...x, `${p.name}=${v.value}`])), [[]]).map((x) => x.join(', '));
+			const unpublishedKeys = combos.filter((k) => !nodes[k]);
+			const unionNames = props.map((p) => cp.unionOf(cp.props.find((x) => x.name.toLowerCase() === p.name.toLowerCase())?.type ?? '')?.name).filter(Boolean);
+			design.push(
+				`Each row is the Storybook story for that Figma variant and its node. ${unionNames.map((n) => c(n)).join(', ')} are the union types listed on the Code tab; Figma's ${props.map((p) => c(p.name)).join(', ')} are props of the code, and the Code tab says how ${c('state')} is read.${unpublishedKeys.length ? ` Figma publishes ${fig.variantMatrix.cells} of the ${productAll} combinations; ${unpublishedKeys.map((k) => c(k)).join(', ')} ${unpublishedKeys.length > 1 ? 'are' : 'is'} not published, so there is no cell or story for ${unpublishedKeys.length > 1 ? 'them' : 'it'}.` : ''}${noStory.length ? ` ${noStory.length} of the ${fig.variantMatrix.cells} cells have no story in the deployed Storybook (marked *no story* above): ${noStory.map((x) => `${c(x.key)} (${c(x.node)})`).join(', ')}. Figma publishes ${noStory.length > 1 ? 'them' : 'it'}; the build does not.` : ''}${exampleStories.length ? ` The ${exampleStories.length > 1 ? 'stories' : 'story'} that ${exampleStories.length > 1 ? "aren't" : "isn't"} a single cell (${exampleStories.map((x) => (x.sb ? `[${c(x.exportName)}](${storyBase + x.sb.id})` : c(x.exportName))).join(', ')}) ${exampleStories.length > 1 ? 'are' : 'is'} embedded on the Examples tab.` : ''}`,
+			);
 		} else {
 		design.push(
 			`| ${c(main.name)} | Figma node | Story |\n|---|---|---|\n` +
