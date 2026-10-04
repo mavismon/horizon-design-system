@@ -537,6 +537,8 @@ const OMIT_USAGE_SECTIONS = {
 	SearchBar: ['Where it goes', 'Composition'],
 	// RadioCard composes nothing (pairs_with is empty), so the empty Composition notice is left out; its placement is not empty, so 'Where it goes' stays.
 	RadioCard: ['Composition'],
+	// Header composes Logo, Link, Button, Avatar and SearchBar (composesFacts states each on the Code tab); its intent has no placement or pairs_with, so the empty notices are left out.
+	Header: ['Where it goes', 'Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -999,7 +1001,101 @@ function radioCardNotes(cp, fig, review) {
 	return out;
 }
 
+// Header: the designer's open items, each quoted as written from the release review. props = the 11 props Figma doesn't
+// define (finding 1, Code tab); stack = the empty placement and pairs_with against the five components it renders (finding 4,
+// Code tab); usage = the empty "instead" on all three dont_use_when entries (the review's warning, under "When not to use it");
+// design = the sizes the ruling covers with the 2px focus offset a not-shipped swap would replace (findings 3 and 8), the
+// states Figma doesn't draw (finding 3), the hand-drawn back chevron (finding 5), the numeric font weights, and the
+// primary colour drift (finding 2). Each is only written when the code and the review bear it out.
+const HEADER_NOTES = { props: 1, drift: 2, states: 3, composition: 4, chevron: 5, fix: 8, ruling: '2026-10-04 · Header sizes with no token' };
+
+function headerNotes(cp, fig, review) {
+	const cfgH = HEADER_NOTES;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const css = `${cp.dir}/${cp.name}.css`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const out = { props: null, stack: null, usage: [], design: [] };
+	const q = (n) => {
+		const l = reviewFinding(review, n);
+		return l ? `> ${t(plain(l))}` : null;
+	};
+	const from = (n) => (q(n) ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(n)}` : null);
+	const tl = cp.tsx.split('\n');
+	const lineOfTsx = (re, fromLine = 0) => {
+		const i = tl.findIndex((l, k) => k >= fromLine && re.test(l));
+		return i < 0 ? 0 : i + 1;
+	};
+	const cl = cp.css.split('\n');
+	const lineOfCss = (re, fromLine = 0) => {
+		const i = cl.findIndex((l, k) => k >= fromLine && re.test(l));
+		return i < 0 ? 0 : i + 1;
+	};
+	const tsxLink = (a, b) => `[${c(`${cp.name}.tsx:${a}${b && b > a ? `-${b}` : ''}`)}](${blob(file, b && b > a ? `${a}-L${b}` : a)})`;
+	const cssLink = (a, b) => `[${c(`${cp.name}.css:${a}${b && b > a ? `-${b}` : ''}`)}](${blob(css, b && b > a ? `${a}-L${b}` : a)})`;
+
+	// The 11 props Figma does not define.
+	const sl = show(storyFile).split('\n');
+	const a = sl.findIndex((l) => /^\/\/ Not Figma properties/.test(l));
+	const b = sl.findIndex((l, i) => i >= a && /onSearch\.\s*$/.test(l));
+	const extra = ['buttonText', 'avatarSrc', 'avatarAlt', 'searchPlaceholder', 'link1Href', 'link2Href', 'link3Href', 'onButtonClick', 'onBackClick', 'onActionClick', 'onSearch'].map((n) => cp.props.find((p) => p.name === n));
+	if (a >= 0 && b >= 0 && extra.every(Boolean) && from(cfgH.props))
+		out.props = [
+			`**Props that are not Figma properties.** The stories' header comment says: "${t(sl.slice(a, b + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' '))}" ([${c(`${cp.name}.stories.tsx:${a + 1}-${b + 1}`)}](${blob(storyFile, `${a + 1}-L${b + 1}`)})). They are declared at ${extra.map((p) => `[${c(p.name)}](${blob(file, p.line)})`).join(', ')}.`,
+			from(cfgH.props),
+		].join('\n\n');
+
+	// Composition is stated on the Code tab; the intent records none.
+	const composed = (cp.row.composes ?? []).length;
+	if (composed && !(cp.intent?.placement?.length) && !(cp.intent?.pairs_with?.length) && from(cfgH.composition))
+		out.stack = `**Composition is stated here, not in the intent.** ${c(`${cp.name}.intent.json`)} has ${c('placement')} and ${c('pairs_with')} as empty lists, so the Usage tab leaves out "Where it goes" and "Composition". ${cp.name} does render ${(cp.row.composes ?? []).map(c).join(', ')}: see the lines above.\n\n${from(cfgH.composition)}`;
+
+	// All three dont_use_when entries have an empty "instead".
+	const dont = cp.intent?.dont_use_when ?? [];
+	const warn = (review?.warnings ?? []).find((w) => /empty `?instead`?/.test(w));
+	if (dont.length && dont.every((x) => !x.instead) && warn)
+		out.usage.push(`**No alternative named.** All ${dont.length} items above have an empty ${c('instead')} in ${c(`${cp.name}.intent.json`)}. From the [release review](${review.url}), under "Warnings (not blocking)", as written:\n\n> ${t(plain(warn))}`);
+
+	// The sizes the ruling covers, and the focus offset a swap would replace.
+	const rb = decisions ? mdSection(decisions, `## ${cfgH.ruling}`) : null;
+	const tableLines = rb ? rb.split('\n').filter((l) => /^\|/.test(l)) : [];
+	const swapPara = rb?.split('\n').find((l) => /^The `2px` focus offset/.test(l));
+	const offL = lineOfCss(/outline-offset:\s*2px/);
+	const focusL = lineOfCss(/\.hz-header__back:focus-visible/);
+	if (tableLines.length > 2 && swapPara && offL && focusL && from(cfgH.fix)) {
+		const rows = tableLines.map((l, i) => (i === 1 ? '> |---|---|---|---|' : `> | ${l.split('|').slice(1, -1).map((x) => (i === 0 ? t(plain(x.trim())) : c(plain(x.trim())))).join(' | ')} |`));
+		out.design.push(
+			`**Sizes with no token, and the focus offset.** The ruling "${t(cfgH.ruling)}" in [decisions.md](${blob('decisions.md')}) accepts these literals in ${c(`${cp.name}.css`)}, as written:\n\n${rows.join('\n')}\n\nThe focus offset is at ${cssLink(offL)}, in the keyboard-focus rule that opens at ${cssLink(focusL)}. The ruling goes on: "${t(plain(swapPara))}" From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(cfgH.fix)}`,
+		);
+	}
+
+	// States Figma doesn't draw.
+	const focusRule = focusL ? cl.slice(focusL - 1, focusL + 4).join(' ') : null;
+	if (focusRule && /:focus-visible/.test(focusRule) && from(cfgH.states))
+		out.design.push(`**States Figma doesn't draw.** The component description (node ${c(fig.component.id)}) and the matrix above cover the three types only. The stylesheet adds a keyboard-focus ring on the back and action buttons at ${cssLink(focusL, focusL + 4)}; Figma draws no hover, pressed, disabled or focus state.\n\n${from(cfgH.states)}`);
+
+	// The hand-drawn back chevron.
+	const iconA = lineOfTsx(/function BackIcon/);
+	const vbL = lineOfTsx(/viewBox="0 0 20 20"/);
+	const swL = lineOfTsx(/strokeWidth="1\.75"/);
+	const dL = lineOfTsx(/d="M12\.5 4L6\.5 10L12\.5 16"/);
+	if (iconA && vbL && swL && dL && from(cfgH.chevron))
+		out.design.push(`**The back chevron is drawn by hand.** ${c('BackIcon')} (${tsxLink(iconA, lineOfTsx(/^}/, iconA))}) is an inline ${c('<svg>')} with ${c('viewBox="0 0 20 20"')} (${tsxLink(vbL)}), ${c('strokeWidth="1.75"')} (${tsxLink(swL)}) and the path ${c('d="M12.5 4L6.5 10L12.5 16"')} (${tsxLink(dL)}). Figma's Back layer (node ${c('208:31')}) is an exported vector.\n\n${from(cfgH.chevron)}`);
+
+	// Font weights are numbers in the stylesheet.
+	const w = cl.map((l, i) => (/font-weight:\s*\d+;/.test(l) ? [i + 1, l.match(/font-weight:\s*(\d+)/)[1]] : null)).filter(Boolean);
+	const noted = decisions ? rulingsFor(cp.name).find((r) => r.title.includes(cfgH.ruling))?.notRuled?.match(/The font weights[^.]*\./)?.[0] : null;
+	if (w.length && noted)
+		out.design.push(`**Font weights are numbers.** ${c(`${cp.name}.css`)} sets ${w.map(([l, v]) => `${c(`font-weight: ${v}`)} (${cssLink(l)})`).join(', ')}, where Figma binds ${c('--fontWeight-regular')}, ${c('--fontWeight-medium')} and ${c('--fontWeight-semibold')}. The ruling's "Not ruled" paragraph says, as written: "${t(plain(noted))}"`);
+
+	// The primary colour.
+	const bv = fig?.boundVariables ?? {};
+	if (bv['--color-primary-default'] && composed && !cp.tokensRead.includes('--color-primary-default') && from(cfgH.drift))
+		out.design.push(`**Colour drift.** The Figma variable ${c('--color-primary-default')} (${c(bv['--color-primary-default'])}) holds a different value from the token build; see the table above. ${c(`${cp.name}.css`)} does not read it: the nested web Button, from the component it is built from, does.\n\n${from(cfgH.drift)}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'Header') return headerNotes(cp, fig, review);
 	if (cp.name === 'RadioCard') return radioCardNotes(cp, fig, review);
 	if (cp.name === 'SearchBar') return searchBarNotes(cp, fig, review);
 	if (cp.name === 'File') return fileNotes(cp, fig, review);
