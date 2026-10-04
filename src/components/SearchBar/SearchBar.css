@@ -1,0 +1,138 @@
+.hz-searchbar {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  border: var(--border-width-sm) solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+.hz-searchbar__icon {
+  display: block;
+  flex-shrink: 0;
+  fill: none;
+  stroke: var(--color-text-secondary);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- type=field ---- */
+
+.hz-searchbar--field {
+  gap: var(--spacing-sm);
+  /* Strokes sit inside the Figma box: padding is the Figma value minus the border. */
+  padding-inline: calc(var(--spacing-md) - var(--border-width-sm));
+  /* md: 8px - 1px (36px tall); lg: 12px - 1px (44px tall). */
+  padding-block: calc(var(--spacing-sm) - var(--border-width-sm));
+  /* md text 13px / 20px; lg text 14px / 20px. */
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+}
+
+.hz-searchbar--field.hz-searchbar--lg {
+  padding-block: calc(var(--spacing-md) - var(--border-width-sm));
+  font-size: var(--fontsize-xl);
+  line-height: var(--lineheight-xl);
+}
+
+.hz-searchbar--focused,
+.hz-searchbar--field:focus-within {
+  border-color: var(--color-border-focus);
+}
+
+.hz-searchbar__input {
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--lineheight-lg);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  text-overflow: ellipsis;
+  appearance: none;
+}
+
+.hz-searchbar__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.hz-searchbar__input::-webkit-search-cancel-button,
+.hz-searchbar__input::-webkit-search-decoration {
+  display: none;
+  appearance: none;
+}
+
+.hz-searchbar__clear {
+  display: flex;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  cursor: pointer;
+}
+
+.hz-searchbar__clear:focus-visible {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: var(--border-width-sm);
+}
+
+/* ---- type=stay ---- */
+
+.hz-searchbar--stay {
+  gap: var(--spacing-lg);
+  /* Figma: 16px left, 8px right and top/bottom, measured to the outer edge. */
+  padding-block: var(--spacing-sm);
+  padding-inline: calc(var(--spacing-lg) - var(--border-width-sm)) calc(var(--spacing-sm) - var(--border-width-sm));
+}
+
+.hz-searchbar__divider {
+  align-self: center;
+  flex-shrink: 0;
+  width: var(--border-width-sm);
+  /* Figma: 32px. */
+  height: calc(var(--spacing-2xl) + var(--spacing-sm));
+  background: var(--color-border-subtle);
+}
+
+.hz-searchbar__part {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: calc(var(--spacing-xs) / 2);
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hz-searchbar__part-label {
+  color: var(--color-text-secondary);
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  font-weight: 500;
+}
+
+.hz-searchbar__part-value {
+  overflow: hidden;
+  color: var(--color-text-primary);
+  font-size: var(--fontsize-xl);
+  line-height: var(--lineheight-xl);
+  font-weight: 400;
+  text-overflow: ellipsis;
+}
+
+/* Figma: Button instance 80px wide. */
+.hz-searchbar__button {
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: calc(var(--spacing-xl) * 4);
+}
