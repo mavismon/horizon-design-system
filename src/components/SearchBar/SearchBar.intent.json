@@ -1,0 +1,90 @@
+{
+  "use_when": [
+    "Use type field to search within one list or page, such as \"Search messages\", \"Search reviews\" or the back office \"Search\" in the header.",
+    "Use size md (36px) on web and in the back office; use size lg (44px) in the mobile app for a bigger tap target.",
+    "Use type stay at the top of the website and search results to find a stay by place, dates and guests.",
+    "Say what is being searched in the placeholder: \"Search messages\", not just \"Search\", unless the page makes it obvious.",
+    "Show the clear (×) button as soon as there is text, and keep the typed value after the results load.",
+    "In type stay, always show a value in each part, such as the dates already chosen, never an empty slot."
+  ],
+  "dont_use_when": [
+    {
+      "when": "To filter by fixed values such as status or property: use Chip filters or a Dropdown.",
+      "instead": "Chip, Dropdown"
+    },
+    {
+      "when": "To type data into a form, such as a name or an address: use a text field.",
+      "instead": "text field"
+    },
+    {
+      "when": "More than one type stay on the same page.",
+      "instead": ""
+    }
+  ],
+  "variant_intent": {
+    "field": "to search within one list or page, such as \"Search messages\", \"Search reviews\" or the back office \"Search\" in the header.",
+    "stay": "at the top of the website and search results to find a stay by place, dates and guests.",
+    "md": "(36px) on web and in the back office.",
+    "lg": "(44px) in the mobile app for a bigger tap target."
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-border-subtle",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-lg",
+    "--fontsize-sm",
+    "--fontsize-xl",
+    "--lineheight-lg",
+    "--lineheight-sm",
+    "--lineheight-xl",
+    "--radius-xs",
+    "--spacing-2xl",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-sm",
+    "--spacing-xl",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The field type is a role=\"search\" landmark wrapping a native <input type=\"search\">, so text entry and focus are the browser's own.",
+      "source": "src/components/SearchBar/SearchBar.tsx:137"
+    },
+    {
+      "fact": "The input is named by the label prop, falling back to the placeholder (aria-label).",
+      "source": "src/components/SearchBar/SearchBar.tsx:155"
+    },
+    {
+      "fact": "The clear control is a native <button type=\"button\"> named \"Clear search\"; it shows only while the field has text, and focus returns to the input after clearing.",
+      "source": "src/components/SearchBar/SearchBar.tsx:160"
+    },
+    {
+      "fact": "Focus after clearing is returned to the input.",
+      "source": "src/components/SearchBar/SearchBar.tsx:132"
+    },
+    {
+      "fact": "The clear button shows a focus-visible outline in the focus border colour; the field border also turns to the focus colour while the input has focus (focus-within).",
+      "source": "src/components/SearchBar/SearchBar.css:84"
+    },
+    {
+      "fact": "The stay type is a role=\"search\" landmark named \"Search stays\" (aria-label).",
+      "source": "src/components/SearchBar/SearchBar.tsx:93"
+    },
+    {
+      "fact": "The search and clear icons and the stay dividers are hidden from assistive technology (aria-hidden).",
+      "source": "src/components/SearchBar/SearchBar.tsx:48"
+    },
+    {
+      "fact": "The stay Search control is the Button component, a native <button type=\"button\">.",
+      "source": "src/components/Button/Button.tsx:36"
+    }
+  ]
+}
