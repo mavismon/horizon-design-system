@@ -1,0 +1,68 @@
+{
+  "use_when": [
+    "To pick one option from two to five where each needs a line of detail, such as the rate (\"Whole apartment · non refundable\"), when to pay, or which saved card to use at checkout.",
+    "Use the trailing text for the price of each option, such as \"484.00 EUR\" or \"0.00 EUR now\"; turn it off when options have no price, such as payment methods.",
+    "Use state disabled for an option that exists but can't be picked right now, such as a sold-out rate, and say why in the description."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For more than five options, or options with no detail: use a Dropdown.",
+      "instead": "Dropdown"
+    },
+    {
+      "when": "To pick several options: use Checkboxes.",
+      "instead": "Checkbox"
+    },
+    {
+      "when": "To switch a view, such as a time range: use Buttongroup type segmented.",
+      "instead": "ButtonGroup"
+    }
+  ],
+  "variant_intent": {
+    "unselected": "(default)",
+    "selected": "blue border and filled radio",
+    "disabled": "greyed out, can't be picked"
+  },
+  "placement": [
+    "Stacked vertically in a radiogroup (the Group story, as in the Figma \"Payment group\")."
+  ],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-border-strong",
+    "--color-border-subtle",
+    "--color-primary-default",
+    "--color-state-disabled-bg",
+    "--color-text-disabled",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-md",
+    "--fontsize-xl",
+    "--lineheight-md",
+    "--lineheight-xl",
+    "--radius-full",
+    "--radius-xs",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The control is a native <input type=\"radio\">, so keyboard (Tab, arrow keys within a name group), focus and disabled behaviour are the browser's own; state=\"disabled\" sets the real disabled attribute.",
+      "source": "src/components/RadioCard/RadioCard.tsx:34"
+    },
+    {
+      "fact": "The whole card is one <label> around the input, so clicking anywhere on the card selects it and the title and description give it its accessible name.",
+      "source": "src/components/RadioCard/RadioCard.tsx:32"
+    },
+    {
+      "fact": "The drawn radio is decorative (aria-hidden); checked state is carried by the native input.",
+      "source": "src/components/RadioCard/RadioCard.tsx:41"
+    }
+  ]
+}
