@@ -152,3 +152,20 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `File.css`. Quote this ruling in the report. When a size token for 32px appears, the ruling no longer covers it: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The `disabled` prop's `0.6` opacity, which Figma does not draw: it is unitless, and whether it should exist is for the designer. The primary and error colours, which use bound tokens (`#2b5ad6`, `#d02727`) and differ from the `#3b71f2` and `#ea3d3d` Figma shows: that is accepted pipeline drift, not a gate finding. Any state Figma does not draw.
+
+## 2026-10-04 · RadioCard radio and dot sizes with no token
+
+**Finding.** Release review gate 2 (Tokens) failed RadioCard for four literal px values. Figma (component set 212:21; radio 212:3, 212:9, 212:16; dot 212:10) draws the radio circle 18px wide and 18px high and the selected dot 8px wide and 8px high, and binds no variable to either. There are no size tokens. 18px exists only as `--fontsize-2xl` and `--lineheight-md`, which are typography. 8px is `--spacing-sm`, but it is a spacing token and a dot diameter is a size, so it is not used.
+
+**Ruling.** These literals in `src/components/RadioCard/RadioCard.css` are accepted, because they are what the Figma node specifies, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `18px` | `width` | `.hz-radiocard__radio` | 47 |
+| `18px` | `height` | `.hz-radiocard__radio` | 48 |
+| `8px` | `width` | `.hz-radiocard--selected .hz-radiocard__radio::after` | 60 |
+| `8px` | `height` | `.hz-radiocard--selected .hz-radiocard__radio::after` | 61 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `RadioCard.css`. Quote this ruling in the report. When a size token for 18px or 8px appears, the ruling no longer covers it: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The selected colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The 76px card height against Figma's 74px (stroke counted outside the frame). Any state Figma does not draw (hover, pressed).
