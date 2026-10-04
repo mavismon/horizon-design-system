@@ -56,6 +56,7 @@ export default defineConfig({
 								{ label: 'Checkbox', slug: 'core/components/checkbox' },
 								{ label: 'Chip', slug: 'core/components/chip' },
 								{ label: 'Dropdown', slug: 'core/components/dropdown' },
+								{ label: 'File', slug: 'core/components/file' },
 								{ label: 'Image', slug: 'core/components/image' },
 								{ label: 'Link', slug: 'core/components/link' },
 								{ label: 'Logo', slug: 'core/components/logo' },

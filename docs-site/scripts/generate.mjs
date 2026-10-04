@@ -367,11 +367,11 @@ function parseComponent(row) {
 	const sigs = [...tsx.matchAll(/function (\w+)\(\{([\s\S]*?)\}\s*:\s*(\w+)\)/g)];
 	const exportSig = tsx.match(new RegExp(`export function ${name}\\(\\{([\\s\\S]*?)\\}\\s*:`));
 	const exportDefaults = {};
-	if (exportSig) for (const m of exportSig[1].matchAll(/(\w+)\s*=\s*([^,\n]+)/g)) exportDefaults[m[1]] = m[2].trim();
+	if (exportSig) for (const m of exportSig[1].matchAll(/(\w+)\s*=\s*("(?:[^"\\]|\\.)*"|[^,\n]+)/g)) exportDefaults[m[1]] = m[2].trim();
 	const defaultsBy = new Map();
 	for (const s of sigs) {
 		const d = {};
-		for (const m of s[2].matchAll(/(\w+)\s*=\s*([^,\n]+)/g)) d[m[1]] = m[2].trim();
+		for (const m of s[2].matchAll(/(\w+)\s*=\s*("(?:[^"\\]|\\.)*"|[^,\n]+)/g)) d[m[1]] = m[2].trim();
 		defaultsBy.set(s[3], d);
 	}
 	for (const p of props) {
@@ -531,6 +531,8 @@ const OMIT_USAGE_SECTIONS = {
 	Toggle: ['Where it goes', 'Composition'],
 	ButtonGroup: ['Where it goes', 'Composition'],
 	Dropdown: ['Where it goes', 'Composition'],
+	// File composes ProgressBar (composesFacts states it on the Code tab); its intent has no placement or pairs_with, so the empty notices are left out.
+	File: ['Where it goes', 'Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -776,7 +778,75 @@ function dropdownNotes(cp, fig, review) {
 	return out;
 }
 
+// File: the designer's open items, each quoted as written from the release review's numbered findings and from
+// the stories' header comment. props = findings about props Figma doesn't have (Code tab); stack = the empty
+// pairs_with/placement next to the real ProgressBar composition and the exported name that shadows a DOM global
+// (Code tab); design = the colour drift and the states Figma doesn't draw (Design tab). Each is only written when
+// the code or the stylesheet bears it out.
+const FILE_NOTES = { props: 1, drift: 2, states: 3, composition: 4, global: 8 };
+
+function fileNotes(cp, fig, review) {
+	const cfgF = FILE_NOTES;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const css = `${cp.dir}/${cp.name}.css`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const out = { props: null, stack: null, usage: [], design: [] };
+	const q = (n) => {
+		const l = reviewFinding(review, n);
+		return l ? `> ${t(plain(l))}` : null;
+	};
+	const from = (n) => (q(n) ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(n)}` : null);
+	const tl = cp.tsx.split('\n');
+	const lineOfTsx = (re) => tl.findIndex((l) => re.test(l)) + 1;
+
+	// Props that are not Figma properties, and how type and state combine.
+	const sl = show(storyFile).split('\n');
+	const a = sl.findIndex((l) => /^\/\/ Not Figma properties/.test(l));
+	const b = sl.findIndex((l, i) => i >= a && /drag events\.\s*$/.test(l));
+	const extra = ['progress', 'actionLabel', 'onAction', 'onFiles', 'accept', 'multiple', 'disabled'].map((n) => cp.props.find((p) => p.name === n));
+	const parts = [];
+	if (a >= 0 && b >= 0 && extra.every(Boolean) && from(cfgF.props))
+		parts.push(
+			`**Props that are not Figma properties.** The stories' header comment says: "${t(sl.slice(a, b + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' '))}" ([${c(`${cp.name}.stories.tsx:${a + 1}-${b + 1}`)}](${blob(storyFile, `${a + 1}-L${b + 1}`)})). They are declared at ${extra.map((p) => `[${c(p.name)}](${blob(file, p.line)})`).join(', ')}.`,
+			from(cfgF.props),
+		);
+	const itemL = lineOfTsx(/const itemState = state === "uploading"/);
+	const dragL = lineOfTsx(/const dragover = state \? state === "dragover" : over;/);
+	const overL = lineOfTsx(/onDragOver=\{onDragOver\}/);
+	if (itemL && dragL && overL)
+		parts.push(
+			`**How ${c('type')} and ${c('state')} combine.** Both are props, and ${c('FileState')} lists all five values whatever ${c('type')} is, so the code accepts pairs Figma does not publish. For ${c('type="item"')}, a ${c('state')} other than ${c('uploading')} or ${c('error')} (including none) renders as ${c('uploaded')} ([${c(`${cp.name}.tsx:${itemL}`)}](${blob(file, itemL)})). For ${c('type="dropzone"')}, ${c('dragover')} is ${c('state === "dragover"')} when ${c('state')} is set, and follows the real drag events (${c('over')}) when it is not ([${c(`${cp.name}.tsx:${dragL}`)}](${blob(file, dragL)}), handlers at [${c(`${cp.name}.tsx:${overL}`)}](${blob(file, overL)})); any other ${c('state')} on a dropzone renders as the default. Each Design tab cell is the story that sets ${c('type')} and ${c('state')} for that Figma variant.`,
+		);
+	if (parts.length) out.props = parts.join('\n\n');
+
+	// ProgressBar is composed, but pairs_with and placement are empty; the name shadows the DOM File global.
+	const stack = [];
+	const emptyIntent = cp.intent && !(cp.intent.pairs_with ?? []).length && !(cp.intent.placement ?? []).length;
+	const composed = (cp.row.composes ?? []).includes('ProgressBar') && lineOfTsx(/<ProgressBar\b/);
+	if (emptyIntent && composed && from(cfgF.composition))
+		stack.push(`**Composition is not in the intent.** ${c(`${cp.name}.tsx`)} renders ${c('<ProgressBar>')} ([${c(`${cp.name}.tsx:${composed}`)}](${blob(file, composed)})) for ${c('state="uploading"')}, but ${c('pairs_with')} and ${c('placement')} in ${c(`${cp.name}.intent.json`)} are empty.\n\n${from(cfgF.composition)}`);
+	const exportL = lineOfTsx(/^export function File\(/);
+	if (exportL && from(cfgF.global))
+		stack.push(`**The exported name shadows a DOM global.** ${c(`${cp.name}.tsx`)} exports [${c('File')}](${blob(file, exportL)}), the same name as the browser's ${c('File')} constructor.\n\n${from(cfgF.global)}`);
+	if (stack.length) out.stack = stack.join('\n\n');
+
+	// Colour drift.
+	const bv = fig?.boundVariables ?? {};
+	if (bv['--color-primary-default'] && bv['--color-status-error'] && from(cfgF.drift))
+		out.design.push(`**Colour drift.** The Figma variables ${c('--color-primary-default')} (${c(bv['--color-primary-default'])}) and ${c('--color-status-error')} (${c(bv['--color-status-error'])}) hold different values from the token build; see the table above.\n\n${from(cfgF.drift)}`);
+
+	// States Figma doesn't draw, and the disabled opacity.
+	const dis = cp.findDecl('.hz-file--dropzone:has(.hz-file__input:disabled)', 'opacity');
+	const focus = cp.findDecl('.hz-file--dropzone:has(.hz-file__input:focus-visible)', 'outline');
+	if (dis && focus && from(cfgF.states))
+		out.design.push(
+			`**States Figma doesn't draw.** The component description (node ${c(fig.component.id)}) and the matrix above cover ${c('dropzone')} default and dragover, and ${c('item')} uploaded, uploading and error only. The stylesheet dims a disabled dropzone with [${c(dis.text)}](${blob(css, dis.line)}), and has a keyboard-focus rule at [${c(`${cp.name}.css:${focus.line}`)}](${blob(css, focus.line)}); Figma draws neither, nor a hover or pressed state.\n\n${from(cfgF.states)}`,
+		);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'File') return fileNotes(cp, fig, review);
 	if (cp.name === 'Dropdown') return dropdownNotes(cp, fig, review);
 	const cfgR = REVIEW_NOTES[cp.name];
 	if (!cfgR) return { props: null, stack: null };

@@ -1700,6 +1700,159 @@
           ]
         }
       }
+    },
+    "File": {
+      "readAt": "2026-10-04",
+      "page": {
+        "id": "57:1642",
+        "name": "File"
+      },
+      "node": {
+        "id": "204:56",
+        "name": "❖ file"
+      },
+      "component": {
+        "id": "204:41",
+        "name": "file"
+      },
+      "description": "Lets people add files and shows the files they added. type dropzone: the area to drop or browse for files; state default (dashed border) or dragover (blue, while a file is held over it). Title and Hint carry the call to action and the accepted types and size limit. type item: one added file, with a type badge, File name, a meta line and an action; state uploaded (meta = type · size, action Remove), uploading (meta + Progressbar, action Cancel) or error (red, meta = the reason). Width 400, stretch to fill the form.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "dropzone"
+              },
+              {
+                "value": "item"
+              }
+            ]
+          },
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "default"
+              },
+              {
+                "value": "dragover"
+              },
+              {
+                "value": "uploaded"
+              },
+              {
+                "value": "uploading"
+              },
+              {
+                "value": "error"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "type=dropzone, state=default": "204:6",
+          "type=dropzone, state=dragover": "204:9",
+          "type=item, state=uploaded": "204:12",
+          "type=item, state=uploading": "204:19",
+          "type=item, state=error": "204:34"
+        },
+        "cells": 5,
+        "note": "The component set (204:41) publishes 5 variants, not the 10 that type x state would give: dropzone has default and dragover; item has uploaded, uploading and error. The documentation frame lays them out as two rows (type dropzone, type item) against the state columns. Title and Hint (dropzone) and File name, file type badge and meta (item) are properties of the set, not cells; the page draws them as the instances Back office photos (204:65) and Image file (204:69). Figma draws no hover, pressed, disabled or keyboard-focus states."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The file component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-primary": "#161925",
+        "--fontSize-lg": "13",
+        "--fontWeight-medium": "Medium",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-lg": "20",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-sm": "11",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-sm": "16",
+        "--spacing-xs": "4",
+        "--spacing-xl": "20",
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-surface": "#f2f3f5",
+        "--color-border-default": "#d7dee7",
+        "--color-primary-default": "#3b71f2",
+        "--color-primary-light": "#eff3ff",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--fontSize-md": "12",
+        "--lineHeight-md": "18",
+        "--color-text-link": "#1d44ba",
+        "--spacing-md": "12",
+        "--color-bg-elevated": "#f9fafb",
+        "--radius-full": "999",
+        "--color-status-error": "#ea3d3d"
+      },
+      "unboundValues": [
+        {
+          "layer": "Thumbnail, type=item (204:13, 204:20, 204:35)",
+          "property": "width",
+          "value": "32px",
+          "css": {
+            "selector": ".hz-file__thumbnail",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Thumbnail, type=item (204:13, 204:20, 204:35)",
+          "property": "height",
+          "value": "32px",
+          "css": {
+            "selector": ".hz-file__thumbnail",
+            "property": "height"
+          }
+        }
+      ],
+      "usage": {
+        "node": "204:76",
+        "use_when_heading": "Use File",
+        "use_when_node": "204:79",
+        "use_when": [
+          "Use type dropzone where people add files: attachments in messages and support requests, room photos and verification documents in the back office.",
+          "Use type item for each file once it is added, in a list under the drop zone, with its name, type and size.",
+          "Show state uploading with the progress while a file is sending, and state error with the reason when a file is refused."
+        ],
+        "use_when_nodes": {
+          "group": "204:79",
+          "items": [
+            "204:81",
+            "204:82",
+            "204:83"
+          ]
+        },
+        "dont_use_when_heading": "Do not use File",
+        "dont_use_when_node": "204:84",
+        "dont_use_when": [
+          "To show a document people download but never upload, such as a receipt or invoice: use a Link or a table row.",
+          "For a profile photo: use Avatar with its own upload action.",
+          "Do not hide the limits: never leave the Hint empty."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Put the accepted types and the size limit in the Hint, such as \"PDF, JPG or PNG · 10 MB each\".",
+          "Say what went wrong and how to fix it in the error, such as \"Too large: the limit is 10 MB\".",
+          "Keep the whole drop zone clickable, so \"browse\" works without dragging, on touch screens too."
+        ],
+        "best_practice_nodes": {
+          "group": "204:89",
+          "items": [
+            "204:91",
+            "204:92",
+            "204:93"
+          ]
+        }
+      }
     }
   }
 }

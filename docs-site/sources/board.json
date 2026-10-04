@@ -104,25 +104,27 @@
       "name": "Dropdown",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1641&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-dropdown--md-closed",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/eb7adcdaa1626b154435b47400174490706c2fed/reports/Dropdown/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/dropdown/",
       "composes": []
     },
     {
       "name": "File",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1642&t=bEurJxon3J2egqXY-1",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-file--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/af4bc0f980df25322b5dc4bcfdbd6cfcbea52968/reports/File/release-review.md",
       "astroLink": "",
-      "composes": []
+      "composes": [
+        "ProgressBar"
+      ]
     },
     {
       "name": "Form",
