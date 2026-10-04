@@ -26,3 +26,5 @@ export type {
   ButtonGroupType,
   ButtonGroupLayout,
 } from "./components/ButtonGroup/ButtonGroup";
+export { RadioCard } from "./components/RadioCard/RadioCard";
+export type { RadioCardProps, RadioCardState } from "./components/RadioCard/RadioCard";
