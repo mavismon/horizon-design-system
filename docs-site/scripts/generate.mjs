@@ -223,7 +223,20 @@ const NATIVE_STATE = {
 		property: 'state',
 		of: (body) => `${/\bdisabled:\s*true/.test(body) ? 'disabled-' : ''}${/\b(?:defaultChecked|checked):\s*true/.test(body) ? 'on' : 'off'}`,
 	},
+	// Dropdown: Figma's state is behaviour in the code (open = defaultOpen / open, disabled = disabled), not a prop.
+	// `start` and `end` find the sentence in the stories' header comment; the quote stops where `end` matches.
+	Dropdown: {
+		property: 'state',
+		start: /Figma's `state` maps to behaviour, not a prop/,
+		columnNote: 'the story that sets the matching props (`defaultOpen` for open, `disabled` for disabled, neither for closed)',
+		end: /`disabled`\./,
+		of: (body) => (/\bdisabled:\s*true/.test(body) ? 'disabled' : /\b(?:defaultOpen|open):\s*true/.test(body) ? 'open' : 'closed'),
+	},
 };
+
+// Stories that are single matrix cells, where the args alone don't tell them from the examples (Dropdown: LabelHidden
+// and LabelAndValue also set size). A component listed here has as rows only the stories whose export name matches.
+const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/ };
 
 // A component whose Figma matrix is two boolean properties on one component (not a variant set, and no union type in
 // the code). The listed code props are the booleans; a single-cell story is one that sets all of them in its args.
@@ -403,7 +416,7 @@ function parseComponent(row) {
 		const argVal = unionProp ? body.match(new RegExp(`${unionProp.name}:\\s*"([^"]+)"`)) : null;
 		const boolProps = BOOLEAN_MATRIX[name] ?? [];
 		const boolSet = boolProps.every((bp) => new RegExp(`\\b${bp}:\\s*(?:true|false)`).test(body));
-		const isRow = !/render\s*:/.test(body) && (!!argVal || (boolProps.length > 0 && boolSet));
+		const isRow = !/render\s*:/.test(body) && (!!argVal || (boolProps.length > 0 && boolSet)) && (!ROW_STORIES[name] || ROW_STORIES[name].test(m[1]));
 		// The value each union-typed prop is set to in this story's args (a two-property matrix needs both).
 		const argValues = {};
 		for (const p of props) {
@@ -420,12 +433,14 @@ function parseComponent(row) {
 	// Figma's combined `state`, mapped to native attributes in the stories' header comment (see NATIVE_STATE).
 	const ns = NATIVE_STATE[name];
 	const storyLines = stories.split('\n');
-	const nsStart = ns ? storyLines.findIndex((l) => /combined `state` maps to the native props/.test(l)) : -1;
+	const nsStart = ns ? storyLines.findIndex((l) => (ns.start ?? /combined `state` maps to the native props/).test(l)) : -1;
 	let nativeState = null;
 	if (ns && nsStart >= 0) {
 		let nsEnd = nsStart;
-		while (nsEnd < storyLines.length - 1 && !/\.\s*$/.test(storyLines[nsEnd])) nsEnd++;
-		nativeState = { property: ns.property, startLine: nsStart + 1, endLine: nsEnd + 1, text: storyLines.slice(nsStart, nsEnd + 1).map((l) => l.replace(/^\s*\/\/\s?/, '')).join(' ') };
+		while (nsEnd < storyLines.length - 1 && !(ns.end ?? /\.\s*$/).test(storyLines[nsEnd])) nsEnd++;
+		let nsText = storyLines.slice(nsStart, nsEnd + 1).map((l) => l.replace(/^\s*\/\/\s?/, '')).join(' ');
+		if (ns.end) nsText = nsText.slice(0, nsText.search(ns.end) + nsText.match(ns.end)[0].length);
+		nativeState = { property: ns.property, startLine: nsStart + 1, endLine: nsEnd + 1, text: nsText };
 		for (const sd of storyDefs) if (sd.isRow) sd.nativeState = ns.of(sd.body);
 	}
 	const sbFor = sbEntries.filter((e) => e.importPath?.includes(`/${name}/${name}.stories`));
@@ -515,6 +530,7 @@ const OMIT_USAGE_SECTIONS = {
 	ProgressBar: ['Where it goes', 'Composition'],
 	Toggle: ['Where it goes', 'Composition'],
 	ButtonGroup: ['Where it goes', 'Composition'],
+	Dropdown: ['Where it goes', 'Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -563,7 +579,7 @@ function gridCodeNote(grid, cp, name) {
 		`${unionsHere.map((g) => g.union.name).join(' and ')} ${unionsHere.length > 1 ? 'are the union types' : 'is the union type'} listed on the Code tab.`,
 		...natives.map(
 			(g) =>
-				`${c(g.name)} is not a prop of ${name}, and the code has no ${c(g.name)} union type. The ${c(`${name}.stories.tsx`)} header comment says: "${t(ns.text)}" ([${c(`${name}.stories.tsx:${ns.startLine}-${ns.endLine}`)}](${blob(where, `${ns.startLine}-L${ns.endLine}`)})). Each ${c(g.name)} column is the story that sets those native attributes.`,
+				`${c(g.name)} is not a prop of ${name}, and the code has no ${c(g.name)} union type. The ${c(`${name}.stories.tsx`)} header comment says: "${t(ns.text)}" ([${c(`${name}.stories.tsx:${ns.startLine}-${ns.endLine}`)}](${blob(where, `${ns.startLine}-L${ns.endLine}`)})). Each ${c(g.name)} column is ${NATIVE_STATE[name]?.columnNote ?? 'the story that sets those native attributes'}.`,
 		),
 	].join(' ');
 }
@@ -713,7 +729,55 @@ function reviewFinding(review, n) {
 	return sec?.split('\n').find((l) => l.startsWith(`${n}. `))?.replace(/^\d+\.\s*/, '') ?? null;
 }
 
+// Dropdown: the designer's open items, each quoted as written from the release review's numbered findings and from
+// the stories' header comment. props = findings about props Figma doesn't have (Code tab); notBuilt = the pointer to
+// a component that isn't built (Usage tab, under "When not to use it"); design = the menu shadow and the undrawn
+// states (Design tab). Each is only written when the code or the stylesheet bears it out.
+const DROPDOWN_NOTES = { props: 1, shadow: 2, states: 3, notBuilt: 5, notBuiltName: 'Radiocard' };
+
+function dropdownNotes(cp, fig, review) {
+	const cfgD = DROPDOWN_NOTES;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const out = { props: null, stack: null, usage: [], design: [] };
+	const q = (n) => {
+		const l = reviewFinding(review, n);
+		return l ? `> ${t(plain(l))}` : null;
+	};
+	const from = (n, where) => (q(n) ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(n)}` : null);
+
+	// Props that are not Figma properties.
+	const sl = show(storyFile).split('\n');
+	const a = sl.findIndex((l) => /^\/\/ Figma properties:/.test(l));
+	const b = sl.findIndex((l, i) => i >= a && /\bname\.\s*$/.test(l));
+	const names = ['options', 'value', 'defaultValue', 'onValueChange', 'open', 'defaultOpen', 'onOpenChange', 'name'];
+	const found = names.map((n) => cp.props.find((p) => p.name === n));
+	if (a >= 0 && b >= 0 && found.every(Boolean) && from(cfgD.props))
+		out.props = [
+			`**Props that are not Figma properties.** The stories' header comment says: "${t(sl.slice(a, b + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' '))}" ([${c(`${cp.name}.stories.tsx:${a + 1}-${b + 1}`)}](${blob(storyFile, `${a + 1}-L${b + 1}`)})). They are declared at ${found.map((p) => `[${c(p.name)}](${blob(file, p.line)})`).join(', ')}.`,
+			from(cfgD.props),
+		].join('\n\n');
+
+	// A component the intent points at that is not built.
+	const target = cfgD.notBuiltName;
+	const pointer = (cp.intent?.dont_use_when ?? []).find((x) => x.instead?.includes(target));
+	if (pointer && !has(`src/components/${target}/${target}.tsx`) && from(cfgD.notBuilt))
+		out.usage.push(`**Not built.** The first "when not to use it" item names ${c(target)} as an alternative. There is no ${c(`src/components/${target}/`)} in the repository at ${c(SHORT)}, so that alternative does not exist yet; the other alternative on that line, ButtonGroup with ${c('type="segmented"')}, is built.\n\n${from(cfgD.notBuilt)}`);
+
+	// The menu shadow.
+	const shadow = cp.findDecl('.hz-dropdown__menu', 'box-shadow');
+	if (shadow && from(cfgD.shadow))
+		out.design.push(`**Menu shadow.** ${c(`${cp.name}.css`)} sets [${c(shadow.text)}](${blob(`${cp.dir}/${cp.name}.css`, shadow.line)}) on the open menu. The Figma menu (node ${c('199:24')}, ${c('199:51')}) has a drop shadow that is not bound to a variable (see the table above).\n\n${from(cfgD.shadow)}`);
+
+	// States Figma doesn't draw.
+	const focus = cp.findDecl('.hz-dropdown__field:focus-visible', 'border-color');
+	if (focus && from(cfgD.states))
+		out.design.push(`**States Figma doesn't draw.** The component description (node ${c(fig.component.id)}) and the matrix above cover closed, open and disabled only. The stylesheet has a keyboard-focus rule at [${c(`${cp.name}.css:${focus.line}`)}](${blob(`${cp.dir}/${cp.name}.css`, focus.line)}), which Figma does not draw.\n\n${from(cfgD.states)}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'Dropdown') return dropdownNotes(cp, fig, review);
 	const cfgR = REVIEW_NOTES[cp.name];
 	if (!cfgR) return { props: null, stack: null };
 	const file = `${cp.dir}/${cp.name}.tsx`;
@@ -867,6 +931,8 @@ function componentPage(cp) {
 				.map((x) => `- ${t(x.when)}<br/>${x.instead ? `**Instead:** ${t(x.instead)}` : '*The Figma page names no alternative.*'}`)
 				.join('\n'),
 		);
+
+	for (const n of rn.usage ?? []) usage.push(n);
 
 	usage.push('## Best practice');
 	if (fig?.usage?.best_practice?.length)
@@ -1177,7 +1243,10 @@ function componentPage(cp) {
 	// A review that keeps its findings under "Findings outside the gates" (not "Other findings") is only read for warnings here; say so.
 	const reviewMd = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
 	const hasFindings = !!reviewMd && /^## Findings outside the gates/m.test(show(reviewMd[2], reviewMd[1]));
-	design.push(gaps.length ? gaps.join('\n') : hasFindings ? notice(`No design gaps are recorded against ${name} in decisions.md, and the warnings section of its release review lists none. The review's findings outside the gates are not carried onto this page, except the ones quoted on the Code tab; they stay in the [release review](${review.url}).`) : notice(`No design gaps are recorded against ${name} in decisions.md or its release review.`));
+	for (const n of rn.design ?? []) design.push(n);
+	if (!gaps.length && rn.design?.length) {
+		// The design findings above are the gaps; nothing else is recorded.
+	} else design.push(gaps.length ? gaps.join('\n') : hasFindings ? notice(`No design gaps are recorded against ${name} in decisions.md, and the warnings section of its release review lists none. The review's findings outside the gates are not carried onto this page, except the ones quoted on the Code tab; they stay in the [release review](${review.url}).`) : notice(`No design gaps are recorded against ${name} in decisions.md or its release review.`));
 
 	// ----- Changelog -----
 	const changelog = [];

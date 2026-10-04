@@ -1523,6 +1523,183 @@
           ]
         }
       }
+    },
+    "Dropdown": {
+      "readAt": "2026-10-04",
+      "page": {
+        "id": "57:1641",
+        "name": "Dropdown"
+      },
+      "node": {
+        "id": "200:10",
+        "name": "❖ dropdown"
+      },
+      "component": {
+        "id": "199:66",
+        "name": "dropdown"
+      },
+      "internal": [
+        {
+          "id": "199:11",
+          "name": "_dropdown-option",
+          "description": "Internal part of dropdown (not for direct use). One option in the open menu: state default or selected.",
+          "states": [
+            {
+              "value": "state=default",
+              "node": "199:7"
+            },
+            {
+              "value": "state=selected",
+              "node": "199:9"
+            }
+          ]
+        }
+      ],
+      "description": "Lets people pick one value from a list. size: md (36px, default, forms and sort) or sm (30px, compact filter bars). state: closed (default), open (shows the menu with the selected option highlighted), disabled. Label sits above the field (ShowLabel to hide it); Value is the current choice. Options in the open menu are _dropdown-option instances: edit their text, and which one is selected, from the layers.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "size",
+            "values": [
+              {
+                "value": "md"
+              },
+              {
+                "value": "sm"
+              }
+            ]
+          },
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "closed"
+              },
+              {
+                "value": "open"
+              },
+              {
+                "value": "disabled"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "size=md, state=closed": "199:12",
+          "size=md, state=open": "199:18",
+          "size=md, state=disabled": "199:33",
+          "size=sm, state=closed": "199:39",
+          "size=sm, state=open": "199:45",
+          "size=sm, state=disabled": "199:60"
+        },
+        "cells": 6,
+        "note": "The documentation frame (196:2097) lays out state (rows: closed, open, disabled) against size (columns: md, sm), each cell an instance. The component set (199:66) publishes all 6 variants, named size=md, state=closed (199:12) through size=sm, state=disabled (199:60). In Figma, state is one property of the set. ShowLabel and Label are properties of the set, not cells; the page draws them as the instances ShowLabel: false (200:17) and Label + Value (200:24). Figma draws no hover, pressed, error or keyboard-focus states."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The dropdown component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-sm": "11",
+        "--fontWeight-medium": "Medium",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-sm": "16",
+        "--color-text-primary": "#161925",
+        "--fontSize-md": "12",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-md": "18",
+        "--spacing-sm": "8",
+        "--spacing-md": "12",
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-default": "#d7dee7",
+        "--spacing-xs": "4",
+        "--color-border-focus": "#1d44ba",
+        "--color-primary-light": "#eff3ff",
+        "--color-text-disabled": "#d1d5db",
+        "--color-state-disabled-bg": "#e5e7ed"
+      },
+      "unboundValues": [
+        {
+          "layer": "Field, size=md (199:14, 199:20, 199:35)",
+          "property": "vertical padding (the code computes it from --spacing-md and --border-width-sm with calc(), not a px literal)",
+          "value": "9px",
+          "css": {
+            "selector": ".hz-dropdown__field",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "Field, size=sm (199:41, 199:47, 199:62)",
+          "property": "vertical padding (the code computes it from --spacing-md and --border-width-sm with calc(), not a px literal)",
+          "value": "6px",
+          "css": {
+            "selector": ".hz-dropdown--sm .hz-dropdown__field",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "_dropdown-option, both states (199:7, 199:9)",
+          "property": "vertical padding (the code computes it from --spacing-md with calc(), not a px literal)",
+          "value": "6px",
+          "css": {
+            "selector": ".hz-dropdown__option",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "Menu, state=open (199:24, 199:51)",
+          "property": "drop shadow (an effect not bound to a variable)",
+          "value": "0 4 12 rgba(15,23,41,0.08)",
+          "css": {
+            "selector": ".hz-dropdown__menu",
+            "property": "box-shadow"
+          }
+        }
+      ],
+      "usage": {
+        "node": "200:30",
+        "use_when_heading": "Use a dropdown",
+        "use_when_node": "200:33",
+        "use_when": [
+          "To pick one value from a list of five or more, such as the property filter \"All properties\" on the back office calendar, or \"Who\" in the activity log filters.",
+          "Use size md (36px) in forms and for the sort control on search results; use size sm (30px) in compact filter bars and table headers.",
+          "Show the label above the field in forms. Hide it (ShowLabel off) only when the value says what it is, such as \"Sort: Price, low first\"."
+        ],
+        "use_when_nodes": {
+          "group": "200:33",
+          "items": [
+            "200:35",
+            "200:36",
+            "200:37"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a dropdown",
+        "dont_use_when_node": "200:40",
+        "dont_use_when": [
+          "For two to four options that should stay visible: use Buttongroup type segmented, or Radiocard.",
+          "To pick several values at once: use Chip filters or Checkboxes instead.",
+          "For actions such as \"Export\" or \"Delete\": use Button, or a Buttongroup."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Always show a value in the field: the current choice or a neutral default such as \"All properties\". Never leave it blank.",
+          "Order options in a way people expect: by frequency, by time, or alphabetically, and put \"All\" first.",
+          "Keep option text short enough for one line at the field's width."
+        ],
+        "best_practice_nodes": {
+          "group": "200:45",
+          "items": [
+            "200:47",
+            "200:48",
+            "200:49"
+          ]
+        }
+      }
     }
   }
 }

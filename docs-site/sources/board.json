@@ -1,6 +1,6 @@
 {
-  "readAt": "2026-10-02",
-  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column.",
+  "readAt": "2026-10-04",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-04 by the release agent's session; the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
   "components": [
     {
       "name": "Avatar",
@@ -42,12 +42,12 @@
       "name": "ButtonGroup",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1640&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-buttongroup--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/b6aa331fa03a1a02a086c728357436103b0b05d1/reports/ButtonGroup/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/buttongroup/",
       "composes": [
         "Button"
       ]
@@ -101,14 +101,14 @@
       "composes": []
     },
     {
-      "name": "DropDown",
+      "name": "Dropdown",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1641&t=bEurJxon3J2egqXY-1",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-dropdown--md-closed",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/eb7adcdaa1626b154435b47400174490706c2fed/reports/Dropdown/release-review.md",
       "astroLink": "",
       "composes": []
     },

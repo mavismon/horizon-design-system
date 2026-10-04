@@ -55,6 +55,7 @@ export default defineConfig({
 								{ label: 'ButtonGroup', slug: 'core/components/buttongroup' },
 								{ label: 'Checkbox', slug: 'core/components/checkbox' },
 								{ label: 'Chip', slug: 'core/components/chip' },
+								{ label: 'Dropdown', slug: 'core/components/dropdown' },
 								{ label: 'Image', slug: 'core/components/image' },
 								{ label: 'Link', slug: 'core/components/link' },
 								{ label: 'Logo', slug: 'core/components/logo' },
