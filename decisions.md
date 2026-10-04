@@ -137,3 +137,18 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly these three values on exactly these properties in `Toggle.css`. Quote this ruling in the report. When a size token for 24px or 22px, or an opacity token for 40%, appears, the ruling no longer covers that value: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The on track, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is the user's choice to use the bound token, not a gate finding. The low contrast of the off track and of the knob on the disabled-off track as Figma draws them, which the user chose to build as drawn: that needs the designer. Any state Figma does not draw (hover, pressed, error, loading).
+
+## 2026-10-04 · File thumbnail size with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail File for two literal px values. Figma (component set 204:41, item cells 204:12, 204:19, 204:34) draws the file-type thumbnail 32px wide and 32px high, and the spacing scale (4, 8, 12, 16, 20, 24px) and the token set have nothing that matches 32px: there are no size tokens. The thumbnail holds a short type label, not an image, so no intrinsic size can supply the number.
+
+**Ruling.** These literals in `src/components/File/File.css` are accepted, because they are what the Figma node specifies, until the designer adds a matching size token:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `32px` | `width` (thumbnail) | `.hz-file__thumbnail` | 95 |
+| `32px` | `height` (thumbnail) | `.hz-file__thumbnail` | 96 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `File.css`. Quote this ruling in the report. When a size token for 32px appears, the ruling no longer covers it: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The `disabled` prop's `0.6` opacity, which Figma does not draw: it is unitless, and whether it should exist is for the designer. The primary and error colours, which use bound tokens (`#2b5ad6`, `#d02727`) and differ from the `#3b71f2` and `#ea3d3d` Figma shows: that is accepted pipeline drift, not a gate finding. Any state Figma does not draw.

@@ -26,5 +26,11 @@ export type {
   ButtonGroupType,
   ButtonGroupLayout,
 } from "./components/ButtonGroup/ButtonGroup";
+export { Dropdown } from "./components/Dropdown/Dropdown";
+export type { DropdownProps, DropdownSize } from "./components/Dropdown/Dropdown";
+export { File } from "./components/File/File";
+export type { FileProps, FileType, FileState } from "./components/File/File";
+export { SearchBar } from "./components/SearchBar/SearchBar";
+export type { SearchBarProps, SearchBarType, SearchBarSize, SearchBarState } from "./components/SearchBar/SearchBar";
 export { RadioCard } from "./components/RadioCard/RadioCard";
 export type { RadioCardProps, RadioCardState } from "./components/RadioCard/RadioCard";
