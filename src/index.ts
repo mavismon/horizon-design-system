@@ -28,3 +28,5 @@ export type {
 } from "./components/ButtonGroup/ButtonGroup";
 export { Dropdown } from "./components/Dropdown/Dropdown";
 export type { DropdownProps, DropdownSize } from "./components/Dropdown/Dropdown";
+export { File } from "./components/File/File";
+export type { FileProps, FileType, FileState } from "./components/File/File";
