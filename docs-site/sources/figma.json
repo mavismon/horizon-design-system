@@ -2059,6 +2059,174 @@
           ]
         }
       }
+    },
+    "RadioCard": {
+      "readAt": "2026-10-04",
+      "page": {
+        "id": "57:1644",
+        "name": "Radiocard"
+      },
+      "node": {
+        "id": "212:22",
+        "name": "❖ radiocard"
+      },
+      "component": {
+        "id": "212:21",
+        "name": "radiocard"
+      },
+      "description": "One option in a group where people pick exactly one, with room for a line of detail. state: unselected (default), selected (blue border and filled radio), disabled (greyed out, can't be picked). Title, Description (ShowDescription) and an optional Trailing text for a price (ShowTrailing). Width 480, stretch to fill; stack cards with 8px between them.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "unselected",
+                "node": "212:2"
+              },
+              {
+                "value": "selected",
+                "node": "212:8"
+              },
+              {
+                "value": "disabled",
+                "node": "212:15"
+              }
+            ]
+          },
+          {
+            "name": "showDescription",
+            "values": [
+              {
+                "value": "true"
+              },
+              {
+                "value": "false"
+              }
+            ]
+          },
+          {
+            "name": "showTrailing",
+            "values": [
+              {
+                "value": "true"
+              },
+              {
+                "value": "false"
+              }
+            ]
+          }
+        ],
+        "cells": 12,
+        "note": "The component set (212:21) publishes three variants, state=unselected (212:2), state=selected (212:8) and state=disabled (212:15). showDescription and showTrailing are boolean component properties of the set, not variants, so the other nine combinations (3 x 2 x 2 = 12) are the same three variants with the description or the trailing text switched off. The documentation frame (212:22) draws only the three variants, one per state, and a \"Payment group\" of three instances (212:27, 212:35, 212:42). Figma draws no hover, pressed or focus state."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The radiocard component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--radius-full": "999",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-strong": "#c8d2dd",
+        "--color-text-primary": "#161925",
+        "--fontSize-xl": "14",
+        "--fontWeight-medium": "Medium",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-xl": "20",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-md": "12",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-md": "18",
+        "--spacing-xs": "4",
+        "--fontWeight-semibold": "Semi Bold",
+        "--spacing-md": "12",
+        "--spacing-lg": "16",
+        "--radius-xs": "2",
+        "--color-primary-default": "#3b71f2",
+        "--color-state-disabled-bg": "#e5e7ed",
+        "--color-border-default": "#d7dee7",
+        "--color-text-disabled": "#d1d5db"
+      },
+      "unboundValues": [
+        {
+          "layer": "card, every state (212:2, 212:8, 212:15)",
+          "property": "width (a fixed 480 in Figma; the code stretches to its parent)",
+          "value": "480px",
+          "css": {
+            "selector": ".hz-radiocard",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "card, state=unselected (212:2)",
+          "property": "border colour (bound in Figma to the variable color/border/subtle, which is not named like a --color-... token; the code reads --color-border-subtle)",
+          "value": "#eef1f5",
+          "css": {
+            "selector": ".hz-radiocard",
+            "property": "border"
+          }
+        },
+        {
+          "layer": "Radio, every state (212:3, 212:9, 212:16)",
+          "property": "width and height",
+          "value": "18px",
+          "css": {
+            "selector": ".hz-radiocard__radio",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Dot, state=selected (212:10)",
+          "property": "width and height",
+          "value": "8px",
+          "css": {
+            "selector": ".hz-radiocard--selected .hz-radiocard__radio::after",
+            "property": "width"
+          }
+        }
+      ],
+      "usage": {
+        "node": "212:49",
+        "use_when_heading": "Use a radio card",
+        "use_when_node": "212:52",
+        "use_when": [
+          "To pick one option from two to five where each needs a line of detail, such as the rate (\"Whole apartment · non refundable\"), when to pay, or which saved card to use at checkout.",
+          "Use the trailing text for the price of each option, such as \"484.00 EUR\" or \"0.00 EUR now\"; turn it off when options have no price, such as payment methods.",
+          "Use state disabled for an option that exists but can't be picked right now, such as a sold-out rate, and say why in the description."
+        ],
+        "use_when_nodes": {
+          "group": "212:52",
+          "items": [
+            "212:54",
+            "212:55",
+            "212:56"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a radio card",
+        "dont_use_when_node": "212:57",
+        "dont_use_when": [
+          "For more than five options, or options with no detail: use a Dropdown.",
+          "To pick several options: use Checkboxes.",
+          "To switch a view, such as a time range: use Buttongroup type segmented."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Always preselect one card, usually the recommended or the current choice, such as the default card.",
+          "Stack cards vertically with 8px between them, all the same width, and make the whole card clickable.",
+          "Keep the title short and put conditions in the description, such as \"free cancellation until 12 Sep\"."
+        ],
+        "best_practice_nodes": {
+          "group": "212:62",
+          "items": [
+            "212:64",
+            "212:65",
+            "212:66"
+          ]
+        }
+      }
     }
   }
 }

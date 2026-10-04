@@ -1,6 +1,6 @@
 {
   "readAt": "2026-10-04",
-  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-04 by the release agent's session; the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-04 by the doc-generator session; the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
   "components": [
     {
       "name": "Avatar",
@@ -55,9 +55,9 @@
     {
       "name": "Calendar",
       "category": "ORGANISMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1647&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -67,9 +67,9 @@
     {
       "name": "Card",
       "category": "ORGANISMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1648&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -129,9 +129,9 @@
     {
       "name": "Form",
       "category": "ORGANISMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1649&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -141,14 +141,20 @@
     {
       "name": "Header",
       "category": "MOLECULES",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1643&t=Mt63ncyvMqR38Jl0-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-header--all-variants",
       "releaseVerdict": "",
       "releaseReview": "",
       "astroLink": "",
-      "composes": []
+      "composes": [
+        "Logo",
+        "Link",
+        "Button",
+        "Avatar",
+        "SearchBar"
+      ]
     },
     {
       "name": "Image",
@@ -189,9 +195,9 @@
     {
       "name": "Modal",
       "category": "ORGANISMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1650&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -213,12 +219,12 @@
     {
       "name": "RadioCard",
       "category": "MOLECULES",
-      "design": "",
-      "development": "To-do",
-      "figma": "",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "design": "Done",
+      "development": "Completed",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1644&t=Mt63ncyvMqR38Jl0-1",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-radiocard--all-states",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/a3b743e011ce30357cf48d43fd83c5526188d2a1/reports/RadioCard/release-review.md",
       "astroLink": "",
       "composes": []
     },
@@ -226,12 +232,12 @@
       "name": "SearchBar",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1645",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-searchbar--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/6df21f0ef4120bfddede90c2e296da2d55e37249/reports/SearchBar/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/searchbar/",
       "composes": [
         "Button"
       ]
@@ -239,9 +245,9 @@
     {
       "name": "SideBar",
       "category": "ORGANISMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1651&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -251,9 +257,9 @@
     {
       "name": "Stepper",
       "category": "MOLECULES",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1646&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",
@@ -263,9 +269,9 @@
     {
       "name": "Table",
       "category": "ORGANISMS",
-      "design": "",
+      "design": "Done",
       "development": "To-do",
-      "figma": "",
+      "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1652&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "",
       "releaseVerdict": "",
       "releaseReview": "",

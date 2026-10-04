@@ -315,7 +315,7 @@ function parseComponent(row) {
 				doc = null;
 			}
 		}
-		return { name: ifaceName, extends: m[2]?.trim() || null, line: startLine, props: out };
+		return { name: ifaceName, extends: m[2]?.trim().replace(/\s+/g, ' ').replace(/<\s+/g, '<').replace(/,?\s*>$/, '>') || null, line: startLine, props: out };
 	};
 	const props = [];
 	let propsExtends = null;
@@ -535,6 +535,8 @@ const OMIT_USAGE_SECTIONS = {
 	File: ['Where it goes', 'Composition'],
 	// SearchBar composes Button (composesFacts states it on the Code tab); its intent has no placement or pairs_with, so the empty notices are left out.
 	SearchBar: ['Where it goes', 'Composition'],
+	// RadioCard composes nothing (pairs_with is empty), so the empty Composition notice is left out; its placement is not empty, so 'Where it goes' stays.
+	RadioCard: ['Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -765,7 +767,9 @@ function dropdownNotes(cp, fig, review) {
 	// A component the intent points at that is not built.
 	const target = cfgD.notBuiltName;
 	const pointer = (cp.intent?.dont_use_when ?? []).find((x) => x.instead?.includes(target));
-	if (pointer && !has(`src/components/${target}/${target}.tsx`) && from(cfgD.notBuilt))
+	// Folder names are matched without regard to case: the intent says "Radiocard", the folder is RadioCard.
+	const builtNames = git('ls-tree', '--name-only', SHA, 'src/components/').split('\n').filter(Boolean).map((x) => x.replace(/\/$/, '').split('/').pop());
+	if (pointer && !builtNames.some((n) => n.toLowerCase() === target.toLowerCase()) && from(cfgD.notBuilt))
 		out.usage.push(`**Not built.** The first "when not to use it" item names ${c(target)} as an alternative. There is no ${c(`src/components/${target}/`)} in the repository at ${c(SHORT)}, so that alternative does not exist yet; the other alternative on that line, ButtonGroup with ${c('type="segmented"')}, is built.\n\n${from(cfgD.notBuilt)}`);
 
 	// The menu shadow.
@@ -929,7 +933,74 @@ function searchBarNotes(cp, fig, review) {
 	return out;
 }
 
+// RadioCard: the designer's open items, each quoted as written from the release review's numbered findings. props = the
+// props Figma doesn't have and that state is controlled (finding 3, Code tab); stack = the radiogroup role that lives in
+// the Group story, not the component (finding 5, Code tab); usage = the five-option boundary shared with Dropdown
+// (finding 4, under "When not to use it"); design = the 76px card against Figma's 74px (finding 1), the colour drift
+// (finding 2) and the focus ring Figma doesn't draw (finding 6). Each is only written when the code bears it out.
+const RADIOCARD_NOTES = { height: 1, drift: 2, props: 3, boundary: 4, group: 5, focus: 6 };
+
+function radioCardNotes(cp, fig, review) {
+	const cfgR = RADIOCARD_NOTES;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const css = `${cp.dir}/${cp.name}.css`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const out = { props: null, stack: null, usage: [], design: [] };
+	const q = (n) => {
+		const l = reviewFinding(review, n);
+		return l ? `> ${t(plain(l))}` : null;
+	};
+	const from = (n) => (q(n) ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(n)}` : null);
+	const tl = cp.tsx.split('\n');
+	const lineOfTsx = (re) => tl.findIndex((l) => re.test(l)) + 1;
+	const sl = show(storyFile).split('\n');
+
+	// Props that are not Figma properties; state is controlled.
+	const a = sl.findIndex((l) => /^\/\/ Not Figma properties/.test(l));
+	const b = sl.findIndex((l, i) => i >= a && /focus-border ring\.\s*$/.test(l));
+	const stateProp = cp.props.find((p) => p.name === 'state');
+	const noopL = lineOfTsx(/onChange=\{onChange \?\? \(\(\) => \{\}\)\}/);
+	if (a >= 0 && b >= 0 && stateProp && noopL && from(cfgR.props))
+		out.props = [
+			`**Props that are not Figma properties.** The stories' header comment says: "${t(sl.slice(a, b + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' '))}" ([${c(`${cp.name}.stories.tsx:${a + 1}-${b + 1}`)}](${blob(storyFile, `${a + 1}-L${b + 1}`)})). ${c('state')} is controlled: ${c('checked')} is ${c('state === "selected"')} and, when ${c('onChange')} is omitted, a no-op handler is supplied ([${c(`${cp.name}.tsx:${noopL}`)}](${blob(file, noopL)})).`,
+			from(cfgR.props),
+		].join('\n\n');
+
+	// The radiogroup role is in the Group story, not in the component.
+	const groupStory = cp.storyDefs.find((x) => x.exportName === 'Group');
+	if (!/radiogroup/.test(cp.tsx) && groupStory && /role="radiogroup"/.test(groupStory.body) && from(cfgR.group)) {
+		const gl = sl.findIndex((l) => /role="radiogroup"/.test(l)) + 1;
+		out.stack = `**The group role is not part of the component.** ${c(`${cp.name}.tsx`)} never sets ${c('role="radiogroup"')}; the ${c('Group')} story does, around the cards ([${c(`${cp.name}.stories.tsx:${gl}`)}](${blob(storyFile, gl)})).\n\n${from(cfgR.group)}`;
+	}
+
+	// The boundary at five options, claimed by both RadioCard and Dropdown.
+	const dd = has('src/components/Dropdown/Dropdown.intent.json') ? JSON.parse(show('src/components/Dropdown/Dropdown.intent.json')) : null;
+	const ddFive = dd?.use_when?.find((x) => /five or more/.test(x));
+	const rcFive = cp.intent?.use_when?.find((x) => /two to five/.test(x));
+	if (ddFive && rcFive && from(cfgR.boundary))
+		out.usage.push(`**Both Dropdown and RadioCard claim five options.** RadioCard's first "when to use" item says "${t(rcFive)}" and Dropdown's first says "${t(ddFive)}" ([Dropdown](/core/components/dropdown/)).\n\n${from(cfgR.boundary)}`);
+
+	// Card height: border-box with a 1px border and 16px padding.
+	const box = cp.findDecl('.hz-radiocard', 'box-sizing');
+	const pad = cp.findDecl('.hz-radiocard', 'padding');
+	const border = cp.findDecl('.hz-radiocard', 'border');
+	if (box && pad && border && /border-box/.test(box.text) && from(cfgR.height))
+		out.design.push(`**Card height.** ${c(`${cp.name}.css`)} sets [${c(box.text)}](${blob(css, box.line)}), [${c(border.text)}](${blob(css, border.line)}) and [${c(pad.text)}](${blob(css, pad.line)}) on the card. Figma's frames (${fig.variantMatrix.properties[0].values.map((v) => c(v.node)).join(', ')}) are 74px high.\n\n${from(cfgR.height)}`);
+
+	// Colour drift of the selected blue.
+	const bv = fig?.boundVariables ?? {};
+	if (bv['--color-primary-default'] && cp.tokensRead.includes('--color-primary-default') && from(cfgR.drift))
+		out.design.push(`**Colour drift.** The Figma variable ${c('--color-primary-default')} (${c(bv['--color-primary-default'])}) holds a different value from the token build; see the table above. ${c(`${cp.name}.css`)} reads it for the selected border, the radio border and the dot.\n\n${from(cfgR.drift)}`);
+
+	// The focus ring.
+	const focus = cp.findDecl('.hz-radiocard:has(.hz-radiocard__input:focus-visible)', 'outline');
+	if (focus && from(cfgR.focus))
+		out.design.push(`**Focus is not drawn in Figma.** The stylesheet has a keyboard-focus rule at [${c(`${cp.name}.css:${focus.line}`)}](${blob(css, focus.line)}): ${c(focus.text)}. Figma draws no focus, hover or pressed state.\n\n${from(cfgR.focus)}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'RadioCard') return radioCardNotes(cp, fig, review);
 	if (cp.name === 'SearchBar') return searchBarNotes(cp, fig, review);
 	if (cp.name === 'File') return fileNotes(cp, fig, review);
 	if (cp.name === 'Dropdown') return dropdownNotes(cp, fig, review);
