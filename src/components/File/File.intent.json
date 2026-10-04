@@ -1,0 +1,80 @@
+{
+  "use_when": [
+    "Use type dropzone where people add files: attachments in messages and support requests, room photos and verification documents in the back office.",
+    "Use type item for each file once it is added, in a list under the drop zone, with its name, type and size.",
+    "Show state uploading with the progress while a file is sending, and state error with the reason when a file is refused.",
+    "Put the accepted types and the size limit in the Hint, such as \"PDF, JPG or PNG · 10 MB each\".",
+    "Say what went wrong and how to fix it in the error, such as \"Too large: the limit is 10 MB\".",
+    "Keep the whole drop zone clickable, so \"browse\" works without dragging, on touch screens too."
+  ],
+  "dont_use_when": [
+    {
+      "when": "To show a document people download but never upload, such as a receipt or invoice: use a Link or a table row.",
+      "instead": "Link, table row"
+    },
+    {
+      "when": "For a profile photo: use Avatar with its own upload action.",
+      "instead": "Avatar"
+    },
+    {
+      "when": "Do not hide the limits: never leave the Hint empty.",
+      "instead": ""
+    }
+  ],
+  "variant_intent": {
+    "dropzone": "where people add files: attachments in messages and support requests, room photos and verification documents in the back office.",
+    "item": "for each file once it is added, in a list under the drop zone, with its name, type and size."
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-bg-surface",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-primary-default",
+    "--color-primary-light",
+    "--color-status-error",
+    "--color-text-disabled",
+    "--color-text-link",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-lg",
+    "--fontsize-md",
+    "--fontsize-sm",
+    "--fontsize-xs",
+    "--lineheight-lg",
+    "--lineheight-md",
+    "--lineheight-sm",
+    "--lineheight-xs",
+    "--radius-xs",
+    "--spacing-md",
+    "--spacing-xl",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The dropzone is a <label> wrapping a native <input type=\"file\"> (visually the whole zone), so clicking anywhere on it, or Tab then Enter/Space, opens the browser's file picker and works on touch without dragging.",
+      "source": "src/components/File/File.tsx:121"
+    },
+    {
+      "fact": "The file input is described by the hint text (aria-describedby), so accepted types and size limit are announced with it.",
+      "source": "src/components/File/File.tsx:137"
+    },
+    {
+      "fact": "The input is natively disabled when disabled is set, and the dropzone shows a focus outline on keyboard focus.",
+      "source": "src/components/File/File.tsx:136"
+    },
+    {
+      "fact": "The item's meta line has role=\"alert\" in state error, so the reason is announced.",
+      "source": "src/components/File/File.tsx:72"
+    },
+    {
+      "fact": "The item's type badge is aria-hidden, and its Remove/Cancel action is a native <button type=\"button\">.",
+      "source": "src/components/File/File.tsx:67"
+    }
+  ]
+}
