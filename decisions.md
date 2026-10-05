@@ -193,3 +193,25 @@ The `2px` focus offset is not drawn in Figma: the engineer added the keyboard fo
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Header.css`. Quote this ruling in the report. When a size token for any of these values appears, the ruling no longer covers that value: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The font weights 400, 500 and 600, which are unitless numbers and need no ruling. The widths 1280, 390 and 1220 that Figma draws for the bars: the code sets the bar width to 100% and only the story decorators apply them. The primary colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. Any state Figma does not draw.
+
+
+## 2026-10-05 · Stepper sizes with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Stepper for literal px values. Figma (component set 215:73, step part 215:15) draws the step circle 20px, the tick 12px, the connector line 32px wide, the counter buttons 28px square, the counter icons 14px, the value column 20px wide and the quantity row 280px wide, and binds no variable to any of them. There are no size tokens, and the nearest spacing-scale values are spacing tokens, not sizes.
+
+**Ruling.** These literals in `src/components/Stepper/Stepper.css` are accepted, because they are what the Figma node specifies, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `20px` | `width`, `height` | `.hz-stepper__circle` | 53, 54 |
+| `12px` | `width`, `height` | `.hz-stepper__tick` | 66, 67 |
+| `32px` | `width` | `.hz-stepper__connector` | 83 |
+| `280px` | `width` | `.hz-stepper--quantity` | 97 |
+| `28px` | `width`, `height` | `.hz-stepper__button` | 118, 119 |
+| `14px` | `width`, `height` | `.hz-stepper__icon` | 138, 139 |
+| `20px` | `width` | `.hz-stepper__value` | 143 |
+| `2px` | `outline-offset` | `.hz-stepper__button:focus-visible` | 44 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Stepper.css`. Quote this ruling in the report. When a size token with the same value appears, the ruling no longer covers it: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The selected colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The inline SVG tick and plus/minus icons, which approximate Figma's image assets. Any state Figma does not draw (hover, pressed).
