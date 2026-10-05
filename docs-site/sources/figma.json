@@ -2686,6 +2686,306 @@
           ]
         }
       }
+    },
+    "Calendar": {
+      "readAt": "2026-10-05",
+      "page": {
+        "id": "57:1647",
+        "name": "Calendar"
+      },
+      "node": {
+        "id": "236:261",
+        "name": "❖ calendar"
+      },
+      "component": {
+        "id": "235:392",
+        "name": "calendar"
+      },
+      "registryLink": {
+        "node": "57:1647",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1647), not the component set 235:392."
+      },
+      "internal": [
+        {
+          "id": "234:29",
+          "name": "_calendar-day",
+          "description": "Internal part of calendar type=picker (not for direct use). One day: empty (padding before or after the month), past, available (day + nightly price), today (outlined), unavailable (struck through), start and end of the stay (solid blue) and in-range (the nights between, light blue).",
+          "states": [
+            {
+              "value": "state=empty",
+              "node": "234:5"
+            },
+            {
+              "value": "state=past",
+              "node": "234:8"
+            },
+            {
+              "value": "state=available",
+              "node": "234:11"
+            },
+            {
+              "value": "state=today",
+              "node": "234:14"
+            },
+            {
+              "value": "state=unavailable",
+              "node": "234:17"
+            },
+            {
+              "value": "state=start",
+              "node": "234:20"
+            },
+            {
+              "value": "state=in-range",
+              "node": "234:23"
+            },
+            {
+              "value": "state=end",
+              "node": "234:26"
+            }
+          ]
+        },
+        {
+          "id": "234:65",
+          "name": "_calendar-occupancy-day",
+          "description": "Internal part of calendar type=occupancy (not for direct use). One day of the back office occupancy grid: empty, normal (green %), high (red %, above 95%), soldout (navy) or over (navy with an 'over' tag: sold more rooms than exist).",
+          "states": [
+            {
+              "value": "state=empty",
+              "node": "234:30"
+            },
+            {
+              "value": "state=normal",
+              "node": "234:37"
+            },
+            {
+              "value": "state=high",
+              "node": "234:44"
+            },
+            {
+              "value": "state=soldout",
+              "node": "234:51"
+            },
+            {
+              "value": "state=over",
+              "node": "234:58"
+            }
+          ]
+        }
+      ],
+      "description": "A month calendar. type picker (default, 536 wide): the guest date picker, with the Month name, previous and next buttons, weekday row and a grid of _calendar-day parts (empty, past, available with nightly price, today, unavailable, start, in-range, end). Place two side by side on web. type occupancy (1170 wide): the back office month grid of _calendar-occupancy-day parts showing date, rooms sold and percentage (normal green, high red above 95%, soldout navy, over with a tag). Change each day's state and text from its layer.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "picker",
+                "node": "235:2"
+              },
+              {
+                "value": "occupancy",
+                "node": "235:137"
+              }
+            ]
+          }
+        ],
+        "cells": 2,
+        "note": "The component set (235:392) publishes two variants, type=picker (235:2, 536x340) and type=occupancy (235:137, 1170x645). Month (the picker's month title text) is a text property of the set, not a variant. The day and occupancy-day parts are separate component sets with their own state variants: _calendar-day (234:29) has 8 (234:5 to 234:26, each 64x40) and _calendar-occupancy-day (234:65) has 5 (234:30 to 234:58, each 158x90); they are listed in the two state tables below. The canvas also holds a two-month specimen, 'Web: two months' (236:265 and 236:400, 536x340 each), and the specimen board (233:1147). Figma draws no hover, pressed, disabled or focus state."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The calendar component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-secondary": "#4d5361",
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-default": "#d7dee7",
+        "--color-text-primary": "#161925",
+        "--fontSize-xl": "14",
+        "--fontWeight-semibold": "Semi Bold",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-xl": "20",
+        "--fontSize-sm": "11",
+        "--fontWeight-medium": "Medium",
+        "--lineHeight-sm": "16",
+        "--spacing-sm": "8",
+        "--color-text-disabled": "#d1d5db",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-lg": "20",
+        "--color-bg-surface": "#f2f3f5",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--color-primary-default": "#3b71f2",
+        "--color-text-inverse": "#f9fafb",
+        "--color-text-inverse-secondary": "#d1d5db",
+        "--color-primary-light": "#eff3ff",
+        "--spacing-md": "12",
+        "--spacing-xl": "20",
+        "--spacing-xs": "4",
+        "--color-status-success": "#229c4a",
+        "--color-status-error": "#ea3d3d",
+        "--color-bg-inverse": "#161925",
+        "--color-status-error-bg": "#fff1f1"
+      },
+      "unboundValues": [
+        {
+          "layer": "Weekdays and Week rows, type=picker (235:11, 235:27)",
+          "property": "width of each day column",
+          "value": "64px",
+          "css": {
+            "selector": ".hz-calendar--picker .hz-calendar__week",
+            "property": "grid-template-columns"
+          }
+        },
+        {
+          "layer": "_calendar-day, every state (234:5 to 234:26)",
+          "property": "height",
+          "value": "40px",
+          "css": {
+            "selector": ".hz-calendar-day",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "_calendar-day, every state (234:5 to 234:26)",
+          "property": "width",
+          "value": "64px",
+          "codeNote": "Not set on the day: the 64px comes from the grid column above"
+        },
+        {
+          "layer": "Header, type=picker (235:3)",
+          "property": "width",
+          "value": "496px",
+          "codeNote": "Not set: the header stretches to the width of the seven columns and six gaps"
+        },
+        {
+          "layer": "Previous (235:4) and Next (235:8), type=picker",
+          "property": "width",
+          "value": "28px",
+          "css": {
+            "selector": ".hz-calendar__nav",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Previous (235:4) and Next (235:8), type=picker",
+          "property": "height",
+          "value": "28px",
+          "css": {
+            "selector": ".hz-calendar__nav",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Icon in Previous (235:5) and Next (235:9), type=picker",
+          "property": "width and height",
+          "value": "14px",
+          "css": {
+            "selector": ".hz-calendar__nav-icon",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Weekdays and Week rows, type=occupancy (235:138)",
+          "property": "width of each day column",
+          "value": "158px",
+          "css": {
+            "selector": ".hz-calendar--occupancy .hz-calendar__week",
+            "property": "grid-template-columns"
+          }
+        },
+        {
+          "layer": "Weekdays, type=occupancy (235:138)",
+          "property": "padding top and bottom (typed, not bound)",
+          "value": "12px",
+          "css": {
+            "selector": ".hz-calendar--occupancy .hz-calendar__weekdays",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "Weekday labels, type=occupancy (235:139 and the other six)",
+          "property": "padding left (typed, not bound)",
+          "value": "8px",
+          "css": {
+            "selector": ".hz-calendar--occupancy .hz-calendar__weekday",
+            "property": "padding-inline-start"
+          }
+        },
+        {
+          "layer": "_calendar-occupancy-day, every state (234:30 to 234:58)",
+          "property": "height",
+          "value": "90px",
+          "css": {
+            "selector": ".hz-calendar-occupancy-day",
+            "property": "aspect-ratio"
+          }
+        },
+        {
+          "layer": "Over tag, state=over (234:61)",
+          "property": "padding (6px sides, 2px top and bottom)",
+          "value": "6px 2px",
+          "css": {
+            "selector": ".hz-calendar-occupancy-day__tag",
+            "property": "padding"
+          }
+        },
+        {
+          "layer": "Border, calendar and occupancy day",
+          "property": "colour (bound in Figma to the variable color/border/subtle, which is not named like a --color-... token; the code reads --color-border-subtle)",
+          "value": "#eef1f5",
+          "css": {
+            "selector": ".hz-calendar",
+            "property": "border"
+          }
+        }
+      ],
+      "usage": {
+        "node": "236:573",
+        "use_when_heading": "Use a calendar",
+        "use_when_node": "236:576",
+        "use_when": [
+          "Use type picker for guests to choose check in and check out, with the nightly price under each day; show two months side by side on web and one on mobile.",
+          "Use type occupancy in the back office to see how full each day of a month is: rooms sold, the percentage, and sold-out days in navy.",
+          "Mark a stay with start and end on the check in and check out days, and in-range on the nights between."
+        ],
+        "use_when_nodes": {
+          "group": "236:576",
+          "items": [
+            "236:578",
+            "236:579",
+            "236:580"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a calendar",
+        "dont_use_when_node": "236:581",
+        "dont_use_when": [
+          "For a single known date such as a date of birth: use a date field.",
+          "To pick a time range for a report, such as the last 7 days: use Buttongroup type segmented.",
+          "To list bookings or events by day: use a Table."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice_nodes": {
+          "group": "236:586",
+          "items": [
+            "236:588",
+            "236:589",
+            "236:590"
+          ]
+        },
+        "best_practice": [
+          "Grey out past days and strike through days that can't be booked, so people never pick a date that fails later.",
+          "Keep the price short with no currency on each day, and show the currency once nearby.",
+          "In occupancy, explain the colours under the grid, such as \"Navy is sold out. Red percentages are above 95%.\""
+        ]
+      }
     }
   }
 }

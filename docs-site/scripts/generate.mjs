@@ -236,7 +236,19 @@ const NATIVE_STATE = {
 
 // Stories that are single matrix cells, where the args alone don't tell them from the examples (Dropdown: LabelHidden
 // and LabelAndValue also set size). A component listed here has as rows only the stories whose export name matches.
-const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/ };
+// Calendar: Picker and Occupancy are the two cells of the type matrix; PickerTwoMonths, PickerUncontrolled and PickerControlled
+// also set (or leave) type=picker but are examples, and the Day* and OccupancyDay* stories are the internal parts' state stories.
+const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/, Calendar: /^(Picker|Occupancy)$/ };
+
+// Components that render parts of their own (files in their own folder, not other Horizon components, so the registry's
+// Composes column is empty): the Figma part, the code file and its state union, and the prefix of the story that shows each state.
+const PARTS = {
+	Calendar: [
+		{ figma: '_calendar-day', code: 'CalendarDay', union: 'CalendarDayState', storyPrefix: 'Day', wrapper: 'Part' },
+		{ figma: '_calendar-occupancy-day', code: 'CalendarOccupancyDay', union: 'CalendarOccupancyDayState', storyPrefix: 'OccupancyDay', wrapper: 'OccPart' },
+	],
+};
+const pascal = (v) => v.split('-').map((x) => x[0].toUpperCase() + x.slice(1)).join('');
 
 // A component whose Figma matrix is two boolean properties on one component (not a variant set, and no union type in
 // the code). The listed code props are the booleans; a single-cell story is one that sets all of them in its args.
@@ -364,7 +376,7 @@ function parseComponent(row) {
 		unionAlias = alias ? { name: `${name}Props`, text: alias[1].replace(/\s+/g, ' ').trim(), line: lineOf(new RegExp(`export type ${name}Props\\b`)), members: ifaces.map((i) => i.name), baseName, baseLine: base?.line ?? null } : null;
 	}
 	// Defaults from the destructured signature, per function: the exported component, or the internal functions that take one of the props interfaces.
-	const sigs = [...tsx.matchAll(/function (\w+)\(\{([\s\S]*?)\}\s*:\s*(\w+)\)/g)];
+	const sigs = [...tsx.matchAll(/function (\w+)\(\{((?:(?!\bfunction\b)[\s\S])*?)\}\s*:\s*(\w+)\)/g)];
 	const exportSig = tsx.match(new RegExp(`export function ${name}\\(\\{([\\s\\S]*?)\\}\\s*:`));
 	const exportDefaults = {};
 	if (exportSig) for (const m of exportSig[1].matchAll(/(\w+)\s*=\s*("(?:[^"\\]|\\.)*"|[^,\n]+)/g)) exportDefaults[m[1]] = m[2].trim();
@@ -457,7 +469,47 @@ function parseComponent(row) {
 		});
 	const since = tags.find((tag) => has('src/index.ts', tag) && new RegExp(`export \\{[^}]*\\b${name}\\b`).test(show('src/index.ts', tag)));
 
-	return { nativeState, row, name, dir, tsx, css, intent, intentPath, unions, unionOf, ifaces, unionAlias, props, propsExtends, propsLine, tokensRead, findDecl, storyDefs, sbDocs, log, since: since?.replace(/^v/, '') ?? null, unionProp };
+	// Parts of its own (see PARTS): each file read at the SHA, with its state union, props and defaults, where Calendar imports and renders it, and whether the package root exports it.
+	const parts = (PARTS[name] ?? []).map((pc) => {
+		const file = `${dir}/${pc.code}.tsx`;
+		if (!has(file)) die(`${file} doesn't exist at ${SHORT}, but ${name} renders ${pc.code}.`);
+		const src = show(file);
+		const L = src.split('\n');
+		const lineIn = (re, from = 0) => {
+			const i = L.findIndex((l, k) => k >= from && re.test(l));
+			return i < 0 ? 0 : i + 1;
+		};
+		const um = src.match(new RegExp(`export type ${pc.union}\\s*=\\s*([^;]+);`));
+		const values = um ? [...um[1].matchAll(/"([^"]+)"/g)].map((x) => x[1]) : [];
+		const ifaceLine = lineIn(new RegExp(`export interface ${pc.code}Props\\b`));
+		const im = src.match(new RegExp(`export interface ${pc.code}Props[^{]*\\{([\\s\\S]*?)\\n\\}`));
+		const sig = src.match(new RegExp(`export function ${pc.code}\\(\\{([\\s\\S]*?)\\}\\s*:`));
+		const defaults = {};
+		if (sig) for (const m of sig[1].matchAll(/(\w+)\s*=\s*("(?:[^"\\]|\\.)*"|[^,\n]+)/g)) defaults[m[1]] = m[2].trim();
+		const pprops = [];
+		let doc = null;
+		for (const raw of (im?.[1] ?? '').split('\n')) {
+			const l = raw.trim();
+			const dm = l.match(/^\/\*\*\s*(.*?)\s*\*\/$/);
+			if (dm) {
+				doc = dm[1];
+				continue;
+			}
+			const pm = l.match(/^(\w+)(\?)?:\s*([^;]+);/);
+			if (pm) {
+				pprops.push({ name: pm[1], type: pm[3].trim(), doc, default: defaults[pm[1]] ?? null, line: lineIn(new RegExp(`^\\s*${pm[1]}\\??:`), ifaceLine) });
+				doc = null;
+			}
+		}
+		const tl = tsx.split('\n');
+		const importLine = tl.findIndex((l) => new RegExp(`^import \\{ ${pc.code} \\} from "\\./${pc.code}"`).test(l)) + 1;
+		const renderLines = tl.map((l, i) => (new RegExp(`<${pc.code}\\b`).test(l) ? i + 1 : 0)).filter(Boolean);
+		const noteLine = lineIn(/^\/\*\* Internal part of/);
+		const exported = new RegExp(`\\b${pc.code}\\b`).test(indexTs);
+		return { ...pc, file, src, values, unionLine: lineIn(new RegExp(`export type ${pc.union}\\b`)), ifaceLine, props: pprops, importLine, renderLines, noteLine, note: noteLine ? L[noteLine - 1].replace(/^\/\*\*\s*|\s*\*\/$/g, '') : null, exported };
+	});
+
+	return { parts, nativeState, row, name, dir, tsx, css, intent, intentPath, unions, unionOf, ifaces, unionAlias, props, propsExtends, propsLine, tokensRead, findDecl, storyDefs, sbDocs, log, since: since?.replace(/^v/, '') ?? null, unionProp };
 }
 
 const comps = paged.map(parseComponent);
@@ -539,6 +591,9 @@ const OMIT_USAGE_SECTIONS = {
 	RadioCard: ['Composition'],
 	// Header composes Logo, Link, Button, Avatar and SearchBar (composesFacts states each on the Code tab); its intent has no placement or pairs_with, so the empty notices are left out.
 	Header: ['Where it goes', 'Composition'],
+	// Calendar's registry Composes column is empty and its intent has no placement or pairs_with, so the empty notices are left out.
+	// It does render two parts of its own (CalendarDay, CalendarOccupancyDay); the Code tab's "Parts it renders" says how.
+	Calendar: ['Where it goes', 'Composition'],
 };
 
 // Components that are the bare control: Figma's Usage lines that assume a label, helper text or a clickable row
@@ -735,6 +790,12 @@ function reviewFinding(review, n) {
 	if (!m) return null;
 	const sec = mdSection(show(m[2], m[1]), '## Findings outside the gates');
 	return sec?.split('\n').find((l) => l.startsWith(`${n}. `))?.replace(/^\d+\.\s*/, '') ?? null;
+}
+
+// The text of the release review at its reviewed commit, or null.
+function reviewMd(review) {
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	return m ? show(m[2], m[1]) : null;
 }
 
 // Dropdown: the designer's open items, each quoted as written from the release review's numbered findings and from
@@ -1094,7 +1155,139 @@ function headerNotes(cp, fig, review) {
 	return out;
 }
 
+// Calendar: the designer's and the human's open items, each quoted as written from the release review's numbered findings, its
+// gate G7, the QA report, decisions.md (the column width ruling and its "Not ruled" paragraph) and the stories' header comment.
+// props = the props Figma doesn't define (finding 5, Code tab); variants = the 12 of 14 variant_intent keys that are states of
+// the internal parts (finding 4); promise = VERSIONING.md not listing Calendar (gate G7, finding 1); design = the ruling table, the
+// occupancy sample data, the states Figma doesn't draw (finding 7), the occupancy month title (finding 7) and the primary colour
+// (finding 6). Each is only written when the code, the stylesheet and the review bear it out.
+const CALENDAR_NOTES = { props: 5, variants: 4, versioning: 1, drift: 6, states: 7, ruling: '2026-10-05 · Calendar column widths with no token' };
+
+function calendarNotes(cp, fig, review) {
+	const cfgC = CALENDAR_NOTES;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const css = `${cp.dir}/${cp.name}.css`;
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const out = { props: null, stack: null, usage: [], variants: [], promise: [], design: [] };
+	const q = (n) => {
+		const l = reviewFinding(review, n);
+		return l ? `> ${t(plain(l))}` : null;
+	};
+	const from = (n) => (q(n) ? `From the [release review](${review.url}), under "Findings outside the gates", as written:\n\n${q(n)}` : null);
+	const tl = cp.tsx.split('\n');
+	const lineOfTsx = (re, fromLine = 0) => {
+		const i = tl.findIndex((l, k) => k >= fromLine && re.test(l));
+		return i < 0 ? 0 : i + 1;
+	};
+	const cl = cp.css.split('\n');
+	const lineOfCss = (re, fromLine = 0) => {
+		const i = cl.findIndex((l, k) => k >= fromLine && re.test(l));
+		return i < 0 ? 0 : i + 1;
+	};
+	const tsxLink = (a, b) => `[${c(`${cp.name}.tsx:${a}${b && b > a ? `-${b}` : ''}`)}](${blob(file, b && b > a ? `${a}-L${b}` : a)})`;
+	const cssLink = (a, b) => `[${c(`${cp.name}.css:${a}${b && b > a ? `-${b}` : ''}`)}](${blob(css, b && b > a ? `${a}-L${b}` : a)})`;
+	const sl = show(storyFile).split('\n');
+	const storyLink = (a, b) => `[${c(`${cp.name}.stories.tsx:${a}${b && b > a ? `-${b}` : ''}`)}](${blob(storyFile, b && b > a ? `${a}-L${b}` : a)})`;
+	const hdrFrom = sl.findIndex((l) => /^\/\/ Figma properties:/.test(l));
+	const hdrTo = sl.findIndex((l, i) => i >= hdrFrom && /^\/\/ Figma draws no hover/.test(l));
+
+	// The props Figma doesn't define.
+	const extra = ['value', 'defaultValue', 'onChange', 'visibleMonth', 'defaultVisibleMonth', 'onVisibleMonthChange', 'today', 'prices', 'isDateUnavailable', 'occupancy'].map((n) => cp.props.find((p) => p.name === n));
+	if (hdrFrom >= 0 && hdrTo >= 0 && extra.every(Boolean) && from(cfgC.props))
+		out.props = [
+			`**Props that are not Figma properties.** The stories' header comment says: "${t(sl.slice(hdrFrom, hdrTo + 1).map((l) => l.replace(/^\/\/\s?/, '')).join(' '))}" (${storyLink(hdrFrom + 1, hdrTo + 1)}). The ten that are not Figma properties are declared at ${extra.map((p) => `[${c(p.name)}](${blob(file, p.line)})`).join(', ')}.`,
+			from(cfgC.props),
+		].join('\n\n');
+
+	// 12 of the 14 variant_intent keys are states of the internal parts.
+	const keys = Object.keys(cp.intent?.variant_intent ?? {});
+	const own = cp.unions.find((u) => u.name === 'CalendarType');
+	const partKeys = own ? keys.filter((k) => !own.values.includes(k)) : [];
+	const stateNote = sl.slice(hdrFrom, hdrTo + 1).join(' ').match(/Day states are derived from these, never set by hand\./)?.[0];
+	if (own && partKeys.length && partKeys.every((k) => cp.parts.some((pt) => pt.values.includes(k))) && from(cfgC.variants))
+		out.variants.push(
+			`**${partKeys.length} of these ${keys.length} keys are states of internal parts, not values of a ${c('Calendar')} prop.** ${own.values.map(c).join(' and ')} are the values of ${c('type')} ([${c(own.name)}](${blob(file, own.line)})), the only variant union ${c('Calendar')} takes. The other ${partKeys.length} are the states of ${cp.parts.map((pt) => `[${c(pt.code)}](${blob(pt.file, pt.unionLine)})`).join(' and ')}, which ${cp.name} renders and the package root does not export (see "Parts it renders" on the Code tab), so a reader of this page cannot set them on ${c('Calendar')}.${stateNote ? ` The stories' header comment says: "${t(stateNote)}" (${storyLink(hdrFrom + 1, hdrTo + 1)}).` : ''} ${c('empty')} is a state of both parts and is one key.\n\n${from(cfgC.variants)}\n\nThe release review's "Check 5 reading" explains why the keys are read this way, and ends: "A human may confirm the reading." ([release review](${review.url}))`,
+		);
+
+	// VERSIONING.md does not list Calendar.
+	const promiseHeading = `## What ${pkg.version} commits you to`;
+	const promise = mdSection(versioning, promiseHeading);
+	const g7 = reviewMd(review)?.split('\n').find((l) => /^\| G7 \|/.test(l))?.split('|').slice(1, -1).map((x) => x.trim());
+	if (promise && !new RegExp(`\\b${cp.name}\\b`).test(promise) && g7 && from(cfgC.versioning))
+		out.promise.push(
+			`**${c('VERSIONING.md')} does not list ${cp.name}.** The "${t(promiseHeading.slice(3))}" section quoted above names the components that version contains, and ${cp.name} is not among them; ${c('package.json')} is at ${t(pkg.version)} and ${cp.name} is not in a published version yet. Nothing above is promised for ${cp.name} until a version that contains it ships. From the [release review](${review.url}), gate G7, as written:\n\n> ${t(plain(g7[3]))}\n\n${from(cfgC.versioning)}`,
+		);
+
+	// The ruling: the two column widths with no token, quoted.
+	const rb = decisions ? mdSection(decisions, `## ${cfgC.ruling}`) : null;
+	const tableLines = rb ? rb.split('\n').filter((l) => /^\|/.test(l)) : [];
+	const rulingSentence = rb?.match(/\*\*Ruling\.\*\*\s*([^\n]+)/)?.[1];
+	const hitPara = rb?.split('\n').find((l) => /^\*\*For an agent that hits it\./.test(l));
+	const w64 = lineOfCss(/grid-template-columns:\s*repeat\(7, 64px\)/);
+	const w158 = lineOfCss(/grid-template-columns:\s*repeat\(7, 158px\)/);
+	if (tableLines.length > 2 && rulingSentence && w64 && w158) {
+		const rows = tableLines.map((l, i) => (i === 1 ? '> |---|---|---|---|' : `> | ${l.split('|').slice(1, -1).map((x) => (i === 0 ? t(plain(x.trim())) : c(plain(x.trim())))).join(' | ')} |`));
+		out.design.push(
+			`**Column widths with no token.** The ruling "${t(cfgC.ruling)}" in [decisions.md](${blob('decisions.md')}) says, as written: "${t(plain(rulingSentence.replace(/:$/, '.')))}"\n\n${rows.join('\n')}\n\nThe two declarations are at ${cssLink(w64)} and ${cssLink(w158)}.${hitPara ? ` The ruling goes on: "${t(plain(hitPara.replace(/^\*\*For an agent that hits it\.\*\*\s*/, '')))}"` : ''}`,
+		);
+	}
+
+	// The Figma occupancy sample data, reproduced by the stories.
+	const nr = rulingsFor(cp.name).find((r) => r.title.includes(cfgC.ruling.replace(/^[\d-]+ · /, '')))?.notRuled;
+	const inconsistent = nr?.match(/The inconsistent occupancy sample data[\s\S]*?for the designer\./)?.[0];
+	const drawnStart = sl.findIndex((l) => /^const OCCUPANCY_DRAWN/.test(l));
+	const drawnEnd = sl.findIndex((l, i) => i > drawnStart && /^\];/.test(l));
+	const highLine = sl.findIndex((l) => /Figma draws 30 August as/.test(l)) + 1;
+	const qaPath = `reports/${cp.name}/qa-report.md`;
+	const qaOcc = has(qaPath) ? show(qaPath).split('\n').find((l) => /^- Figma's occupancy data is inconsistent/.test(l)) : null;
+	if (inconsistent && drawnStart >= 0 && drawnEnd > drawnStart && highLine) {
+		const pairs = [...sl.slice(drawnStart, drawnEnd).join(' ').matchAll(/\[(\d+),\s*(\d+)\]/g)].map((m) => [Number(m[1]), Number(m[2])]);
+		const total = Number(sl.slice(drawnStart, drawnEnd + 12).join(' ').match(/total:\s*(\d+)/)?.[1]);
+		const all = pairs.map(([sold, pct], i) => ({ day: i + 1, sold, pct, calc: Math.round((sold / total) * 100) }));
+		// The days the ruling names: the 30th (48 of 48, 99%), 47 of 48 as 97% and as 98%, and 35 of 48 as 72%.
+		const named = [15, 19, 22, 30].map((d) => all[d - 1]);
+		if (pairs.length === 31 && total && named[3].sold === 48 && named[3].pct === 99 && named[0].sold === 47 && named[0].pct === 97 && named[2].sold === 47 && named[2].pct === 98 && named[1].sold === 35 && named[1].pct === 72)
+			out.design.push(
+				`**The occupancy sample data in Figma is inconsistent, and the stories reproduce it.** From the ruling's "Not ruled" paragraph, as written: "${t(plain(inconsistent))}" The drawn pairs are ${c('OCCUPANCY_DRAWN')} (${storyLink(drawnStart + 1, drawnEnd + 1)}), kept as Figma draws them, with an explicit ${c('percent')} on every day and ${c('state: "high"')} forced on 30 August (${storyLink(highLine, highLine + 1)}: "${t(sl[highLine - 1].replace(/^\s*\/\/\s?/, ''))}").\n\n| Day (August 2026) | Figma draws | Why it is inconsistent |\n|---|---|---|\n${[named[3], named[0], named[2], named[1]].map((x) => `| ${x.day} | ${c(`${x.sold} of ${total}, ${x.pct}%`)}${x.day === 30 ? ', high (red) style' : ''} | ${x.day === 30 ? `${c(`${total} of ${total}`)} is sold out, which Figma draws in navy, and ${x.pct}% is not 100%` : x.sold === 47 ? `${c(`47 of ${total}`)} is drawn as 97% on the 15th and as 98% on the 22nd` : `${c(`35 of ${total}`)} is drawn as 72%`} |`).join('\n')}\n\n${c('Calendar')} prints ${c('percent')} when it is given and rounds ${c('sold / total')} otherwise ([${c(`${cp.name}.tsx:${lineOfTsx(/entry\.percent \?\? Math\.round/)}`)}](${blob(file, lineOfTsx(/entry\.percent \?\? Math\.round/))})).${qaOcc ? `\n\nFrom the [QA report](${blob(qaPath)}), as written:\n\n> ${t(plain(qaOcc.replace(/^- /, '')))}` : ''}\n\n${from(cfgC.drift) ?? ''}`.replace(/\n\n$/, ''),
+			);
+	}
+
+	// States Figma doesn't draw: hover, pressed, disabled. The focus ring and the pointer cursor are engineer additions.
+	const focusL = lineOfCss(/^\.hz-calendar__nav:focus-visible,/);
+	const ptrL = lineOfCss(/cursor:\s*pointer;/, lineOfCss(/\[role="gridcell"\]:not/));
+	const nopeL = lineOfCss(/cursor:\s*not-allowed;/);
+	const qaStates = has(qaPath) ? show(qaPath).split('\n').find((l) => /^- Figma draws no month title/.test(l)) : null;
+	if (focusL && ptrL && nopeL && from(cfgC.states))
+		out.design.push(
+			`**States Figma doesn't draw.** The component description (node ${c(fig.component.id)}) and the matrices above cover ${c('type')} and the two parts' states only. Figma draws no hover, pressed or disabled state. The stylesheet adds a keyboard-focus ring on the navigation buttons and the picker days (${cssLink(focusL, focusL + 4)}), a pointer cursor on days you can pick (${cssLink(ptrL - 1, ptrL)}) and ${c('cursor: not-allowed')} on ${c('aria-disabled')} days (${cssLink(nopeL - 1, nopeL)}); past and unavailable days are ${c('aria-disabled')}, which is how the code marks a day that can't be picked, not a disabled state Figma draws.${qaStates ? `\n\nFrom the [QA report](${blob(qaPath)}), as written:\n\n> ${t(plain(qaStates.replace(/^- /, '')))}` : ''}\n\n${from(cfgC.states)}`,
+		);
+
+	// The occupancy type has no month title.
+	const monthDocL = cp.props.find((p) => p.name === 'month')?.line;
+	const ariaL = lineOfTsx(/aria-label=\{rest\["aria-label"\] \?\? `Occupancy, \$\{title\}`\}/);
+	if (monthDocL && ariaL && qaStates)
+		out.design.push(
+			`**The occupancy type has no month title.** Figma draws a month title only on the picker (the ${c('Month')} text property of node ${c('235:7')}). ${c('month')} is documented as "picker only" ([${c(`${cp.name}.tsx:${monthDocL - 1}`)}](${blob(file, monthDocL - 1)})), and the occupancy grid renders no title element: it is named by ${c('aria-label')} (the prop, falling back to ${t('"Occupancy, <month>"')}) at ${tsxLink(ariaL)}. So a visible month name for the occupancy grid is for the page that uses it to supply. The release review's finding 7, quoted above under "States Figma doesn't draw", says the same.`,
+		);
+
+	// The primary colour.
+	const bv = fig?.boundVariables ?? {};
+	const builtPrimary = light.get('--color-primary-default');
+	const primaryL = lineOfCss(/background:\s*var\(--color-primary-default\)/);
+	// Other colour variables bound in Figma that differ from the build and that Calendar.css reads (the review and the ruling name only the primary colour).
+	const otherDrift = Object.entries(bv)
+		.filter(([v, val]) => /^#/.test(val) && v !== '--color-primary-default' && cp.tokensRead.includes(v.toLowerCase()) && light.get(v.toLowerCase()) && light.get(v.toLowerCase()).toLowerCase() !== String(val).toLowerCase())
+		.map(([v, val]) => ({ v, figVal: val, built: light.get(v.toLowerCase()), lines: cl.map((l, i) => (new RegExp(`var\\(${v.toLowerCase()}\\)`).test(l) && !/^\s*\/\*/.test(l) ? i + 1 : 0)).filter(Boolean) }));
+	const primarySent = nr?.match(/The primary colour[^:]*:[^.]*\./)?.[0];
+	if (bv['--color-primary-default'] && builtPrimary && primaryL && cp.tokensRead.includes('--color-primary-default') && primarySent && from(cfgC.drift))
+		out.design.push(
+			`**Colour drift.** ${c('--color-primary-default')} is ${c(bv['--color-primary-default'])} in Figma and ${c(builtPrimary)} in the token build at ${c(SHORT)} (see the table above). ${c(`${cp.name}.css`)} reads it for the check in and check out days (${cssLink(primaryL)}) and the outline on today, so the shipped calendar renders them ${c(builtPrimary)}. The ruling's "Not ruled" paragraph says, as written: "${t(plain(primarySent))}" The release review's finding 6, quoted above under the occupancy sample data, names the same drift.${otherDrift.length ? ` The table above shows ${otherDrift.length > 1 ? 'more variables' : 'one more variable'} that differ${otherDrift.length > 1 ? '' : 's'} and ${otherDrift.length > 1 ? 'that ' + cp.name + '.css reads' : cp.name + '.css reads'}: ${otherDrift.map((r) => `${c(r.v)} is ${c(r.figVal)} in Figma and ${c(r.built)} in the build, read at ${r.lines.map((l) => cssLink(l)).join(', ')}`).join('; ')}. Neither the ruling nor the release review names ${otherDrift.length > 1 ? 'them' : 'it'}; it is listed here because the table shows it, for the designer.` : ''}`,
+		);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'Calendar') return calendarNotes(cp, fig, review);
 	if (cp.name === 'Header') return headerNotes(cp, fig, review);
 	if (cp.name === 'RadioCard') return radioCardNotes(cp, fig, review);
 	if (cp.name === 'SearchBar') return searchBarNotes(cp, fig, review);
@@ -1148,6 +1341,78 @@ function composesFacts(cp) {
 		if (!imp || !use) continue;
 		const target = paged.some((r) => r.name === n) ? `[${n}](/core/components/${slugOf(n)}/)` : c(n);
 		out.push(`${c(`${cp.name}.tsx`)} is built from ${target}: it imports it ([${c(`${cp.name}.tsx:${imp}`)}](${blob(file, imp)})) and renders ${c(`<${n}>`)} ([${c(`${cp.name}.tsx:${use}`)}](${blob(file, use)})). The registry's Composes column for ${cp.name} lists ${n}.`);
+	}
+	return out;
+}
+
+// The parts a component renders from its own folder (PARTS), stated from the code: where the component imports and renders each, what the part's
+// own comment says about it, and whether the package root exports it. The registry's Composes column names other Horizon components, so it is empty here.
+function partsFacts(cp, fig) {
+	if (!cp.parts.length) return [];
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const out = ['## Parts it renders'];
+	const il = indexTs.split('\n');
+	const a = il.findIndex((l) => new RegExp(`export \\{ ${cp.name} \\}`).test(l)) + 1;
+	let b = a;
+	il.forEach((l, i) => {
+		if (i + 1 >= a && l.includes(`from "./components/${cp.name}/${cp.name}"`)) b = i + 1;
+	});
+	const rootNames = [...il.slice(a - 1, b).join(' ').matchAll(/\b(Calendar\w*)\b/g)].map((m) => m[1]).filter((n, i, arr) => arr.indexOf(n) === i && n.startsWith(cp.name));
+	const qaPath = `reports/${cp.name}/qa-report.md`;
+	const qa = has(qaPath) ? show(qaPath).split('\n').find((l) => /^- Composes nothing/.test(l)) : null;
+	const named = cp.parts.map((pt) => {
+		const fi = fig?.internal?.find((x) => x.name === pt.figma);
+		return `[${c(pt.code)}](${blob(pt.file)})${fi ? ` (Figma ${c(pt.figma)}, node ${c(fi.id)})` : ''}`;
+	});
+	out.push(
+		`${c(`${cp.name}.tsx`)} renders ${cp.parts.length} part${cp.parts.length > 1 ? 's' : ''} of its own, each a file in ${c(cp.dir)}: ${named.join(' and ')}. They are not other Horizon components, so the registry's Composes column for ${cp.name} ${(cp.row.composes ?? []).length ? `lists ${cp.row.composes.join(', ')}` : 'is empty'}${qa ? `; the QA report says, as written: "${t(plain(qa.replace(/^- /, '')))}" ([QA report](${blob(qaPath)}))` : ''}. ${c(`${cp.name}.intent.json`)} has ${c('placement')} and ${c('pairs_with')} as ${!(cp.intent?.placement?.length) && !(cp.intent?.pairs_with?.length) ? 'empty lists, so the Usage tab leaves out "Where it goes" and "Composition"; this section is where the composition is stated' : 'lists'}.`,
+	);
+	for (const pt of cp.parts) {
+		const rl = pt.renderLines.map((n) => `[${c(`${cp.name}.tsx:${n}`)}](${blob(file, n)})`).join(', ');
+		out.push(`### ${pt.code}`);
+		out.push(
+			`${c(cp.name + '.tsx')} imports it ([${c(`${cp.name}.tsx:${pt.importLine}`)}](${blob(file, pt.importLine)})) and renders ${c(`<${pt.code}>`)} at ${rl}. Its own comment says, as written: "${t(pt.note ?? '')}" ([${c(`${pt.code}.tsx:${pt.noteLine}`)}](${blob(pt.file, pt.noteLine)})).${pt.exported ? ` The package root exports ${c(pt.code)} ([${c('src/index.ts')}](${blob('src/index.ts')})).` : ` The package root does not export it: ${c('src/index.ts')} exports only ${rootNames.map(c).join(', ')} from ${c(cp.name)} ([${c(`src/index.ts:${a}-${b}`)}](${blob('src/index.ts', `${a}-L${b}`)})), so ${c(pt.code)} and ${c(pt.union)} are not importable from ${c(pkg.name)}.`}`,
+		);
+		out.push(`[${c(pt.union)}](${blob(pt.file, pt.unionLine)}): ${pt.values.map(c).join(', ')}`);
+		out.push(
+			`The parts' props are listed because the stories and the Design tab's state tables use them; ${c(pt.code)} is not for direct use.\n\n| Prop | Type | Default | Description |\n|---|---|---|---|\n` +
+				pt.props.map((p) => `| [${c(p.name)}](${blob(pt.file, p.line)}) | ${c(p.type)} | ${p.default ? c(p.default) : '—'} | ${p.doc ? t(p.doc) : '—'} |`).join('\n'),
+		);
+	}
+	return out;
+}
+
+// One state table per part: Figma's state variants (figma.json) against the part's union in the code and the story that shows each state.
+function partStateTables(cp, fig, storyBase) {
+	const out = [];
+	const storyFile = `${cp.dir}/${cp.name}.stories.tsx`;
+	const sl = show(storyFile).split('\n');
+	for (const pt of cp.parts) {
+		const fi = fig?.internal?.find((x) => x.name === pt.figma);
+		out.push(`### ${pt.figma} states`);
+		if (!fi?.states?.length) {
+			out.push(notice(`No state variants for ${pt.figma} in sources/figma.json.`));
+			continue;
+		}
+		const states = fi.states.map((x) => ({ state: x.value.replace(/^state=/, ''), node: x.node }));
+		const same = states.length === pt.values.length && states.every((x) => pt.values.includes(x.state));
+		const wrapL = sl.findIndex((l) => new RegExp(`^const ${pt.wrapper} =`).test(l)) + 1;
+		const width = wrapL ? sl[wrapL - 1].match(/width:\s*(\d+)/)?.[1] : null;
+		const rows = states.map((x) => {
+			const sd = cp.storyDefs.find((d) => d.exportName === pt.storyPrefix + pascal(x.state));
+			return { ...x, sd };
+		});
+		out.push(
+			`${c(pt.figma)} (node ${c(fi.id)}) publishes ${states.length} ${c('state')} variants. ${same ? `They are the same ${states.length} values as [${c(pt.union)}](${blob(pt.file, pt.unionLine)}) in the code.` : `[${c(pt.union)}](${blob(pt.file, pt.unionLine)}) has ${pt.values.map(c).join(', ')}, which differs from Figma's list.`} ${c(cp.name)} derives each day's state from its props; the ${c(pt.code)} part is not exported, so ${c('state')} is not something you set on ${c(cp.name)}.`,
+		);
+		out.push(
+			'| Figma variant | Figma node | Story |\n|---|---|---|\n' +
+				rows.map((r) => `| ${c(`state=${r.state}`)} | ${c(r.node)} | ${r.sd?.sb ? `[${t(r.sd.exportName)}](${storyBase + r.sd.sb.id})` : '*no story*'} |`).join('\n'),
+		);
+		const missing = rows.filter((r) => !r.sd?.sb);
+		out.push(
+			`Each story renders ${c(`<${pt.code}>`)} on its own${wrapL && width ? `, inside a ${width}px-wide wrapper (${c(`${cp.name}.stories.tsx:${wrapL}`)}, [link](${blob(storyFile, wrapL)}))` : ''}, not through ${c(cp.name)}.${missing.length ? ` ${missing.length} of the ${rows.length} states have no story in the deployed Storybook (marked *no story* above): ${missing.map((r) => c(r.state)).join(', ')}.` : ''}`,
+		);
 	}
 	return out;
 }
@@ -1292,7 +1557,7 @@ function componentPage(cp) {
 	} else {
 		const prop = cp.unionProp?.name ?? fig?.variantMatrix?.properties?.[0]?.name ?? 'variant';
 		// A two-property matrix: name the property each value belongs to, from the union types in the code.
-		const propOf = (k) => (grid ? (grid.props.find((g) => g.union?.values.includes(k))?.name ?? prop) : isMultiMatrix(fig) ? (cp.props.find((x) => cp.unionOf(x.type)?.values.includes(k))?.name ?? prop) : prop);
+		const propOf = (k) => (cp.parts.length && !(cp.unionProp && cp.unionOf(cp.unionProp.type)?.values.includes(k)) ? `state (${cp.parts.filter((pt) => pt.values.includes(k)).map((pt) => pt.code).join(' and ')}, internal)` : grid ? (grid.props.find((g) => g.union?.values.includes(k))?.name ?? prop) : isMultiMatrix(fig) ? (cp.props.find((x) => cp.unionOf(x.type)?.values.includes(k))?.name ?? prop) : prop);
 		usage.push(
 			'| Property | Value | What it is for |\n|---|---|---|\n' +
 				Object.entries(intent.variant_intent)
@@ -1326,6 +1591,7 @@ function componentPage(cp) {
 	const promise = mdSection(versioning, promiseHeading);
 	if (promise) usage.push(`From [Versioning](/get-started/versioning/) (${c('VERSIONING.md')} at ${c(SHORT)}):\n\n> ${t(plain(promise)).replace(/\n/g, '\n> ')}`);
 	else usage.push(notice(`VERSIONING.md at ${SHORT} has no "${promiseHeading.slice(3)}" section.`));
+	for (const n of rn.promise ?? []) usage.push(n);
 
 	// ----- Examples -----
 	const examples = [];
@@ -1350,6 +1616,8 @@ function componentPage(cp) {
 		examples.push(
 			`<StoryFrame title="${attr(`${name} · ${s.sb.name} (light)`)}" src="${attr(`${cfg.storybookUrl}/iframe.html?id=${s.sb.id}&viewMode=story`)}" href="${attr(storyBase + s.sb.id)}" />`,
 		);
+		const partOfStory = cp.parts.find((pt) => cp.storyDefs.some((d) => d.exportName === s.exportName) && fig?.internal?.find((x) => x.name === pt.figma)?.states?.some((x) => s.exportName === pt.storyPrefix + pascal(x.value.replace(/^state=/, ''))));
+		if (partOfStory) examples.push(`**Internal part.** This story renders ${c(partOfStory.code)} on its own. ${partOfStory.exported ? '' : `The package root does not export it, so this is not code you can write against ${c(pkg.name)}; the Code tab's "Parts it renders" says why.`}`);
 		const caveat = STORY_CAVEATS[name]?.[s.exportName];
 		const line = caveat != null ? fig?.usage?.best_practice?.[caveat.bestPractice] : null;
 		const lineNode = caveat != null ? fig?.usage?.best_practice_nodes?.items?.[caveat.bestPractice] : null;
@@ -1403,6 +1671,7 @@ function componentPage(cp) {
 	if (hrefN) code.push(hrefN.code);
 	if (rn.props) code.push(rn.props);
 	if (rn.stack) code.push(rn.stack);
+	for (const n of partsFacts(cp, fig)) code.push(n);
 
 	{
 		const d = SOURCE_DIFFS[name];
@@ -1448,7 +1717,8 @@ function componentPage(cp) {
 		const frameHref = fig.registryLink?.kind === 'canvas' ? `${figma.file.url}?node-id=${fig.node.id.replace(':', '-')}` : row.figma;
 		design.push(`<FigmaFrame title="${attr(`${name} · Figma node ${fig.node.id}`)}" src="${attr(figmaEmbed)}" href="${attr(frameHref)}" />`);
 		design.push(`${fig.page ? `Page ${c(fig.page.name)} (${c(fig.page.id)}), ${fig.component ? `documentation frame ${c(fig.node.name)} (${c(fig.node.id)}), ${fig.component.kind === 'component' ? 'component' : 'component set'} ${c(fig.component.name)} (${c(fig.component.id)})` : `component set ${c(fig.node.name)} (${c(fig.node.id)})`}` : `Documentation frame ${c(fig.node.name)} (${c(fig.node.id)})${fig.component ? `, component ${c(fig.component.name)} (${c(fig.component.id)})` : ''}; the page it sits on wasn't identified in the Figma read`}. The file is shared with the team only, so the frame and the link ask anyone outside it to sign in.`);
-		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)})`).join(', ')}, which Figma describes as: "${fig.internal.map((x) => t(x.description)).join(' ')}"${fig.internal.some((x) => x.states?.length) ? ` Its Figma variants: ${fig.internal.flatMap((x) => x.states ?? []).map((st) => `${c(st.value)} (${c(st.node)})`).join(', ')}.` : ''}`);
+		// One sentence per part, so a page with two parts doesn't run their descriptions and variants together.
+		if (fig.internal?.length) design.push(`The page also holds ${fig.internal.map((x) => `${c(x.name)} (${c(x.id)}), which Figma describes as: "${t(x.description)}"${x.states?.length ? ` Its Figma variants: ${x.states.map((st) => `${c(st.value)} (${c(st.node)})`).join(', ')}.` : ''}`).join(' It also holds ')}`);
 		if (fig.figlog) design.push(`The page's FigLog status reads **${t(fig.figlog.status)}**.`);
 	}
 
@@ -1543,6 +1813,7 @@ function componentPage(cp) {
 		}
 		}
 	} else design.push(notice(`No variant matrix for ${name} in sources/figma.json.`));
+	for (const n of partStateTables(cp, fig, storyBase)) design.push(n);
 
 	{
 		const hov = hoverFacts(cp, fig);
@@ -1725,7 +1996,8 @@ for (const cp of comps) write(`core/components/${slugOf(cp.name)}.mdx`, componen
 		body.push(`Commits to ${c('src/')} or ${c('package.json')} between ${c(lastTag)} and ${c(SHORT)}, not in a published version yet:`, '');
 		for (const l of unreleased) {
 			const [hash, short, date, subject] = l.split('\t');
-			const files = git('show', '--name-only', '--format=', hash).split('\n').filter((f) => f.startsWith('src/') || f === 'package.json');
+			// A merge commit lists no files with `git show`; compare it to its first parent so it names what it brought in.
+			const files = git('diff', '--name-only', `${hash}^1`, hash, '--', 'src', 'package.json').split('\n').filter(Boolean);
 			body.push(`- [${c(short)}](${commitUrl(hash)}) ${date}: ${t(subject)} (${files.map(c).join(', ')})`);
 		}
 	}

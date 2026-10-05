@@ -1,6 +1,6 @@
 {
   "readAt": "2026-10-05",
-  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-05 by the doc-generator session (re-read for the 0.2.1 staging run after publish: Stepper is Completed with Release Verdict Cleared and no Astro Link; Calendar is Completed with no review or verdict, so it has no page and is not in 0.2.1); the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-05 by the doc-generator session (re-read for the Calendar run: Calendar is Completed with Release Verdict Cleared and no Astro Link; Stepper is Completed with Release Verdict Cleared and no Astro Link; every other cleared component is Released with its page); the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
   "components": [
     {
       "name": "Avatar",
@@ -59,8 +59,8 @@
       "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1647&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-calendar--picker",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/a5cfe4395ce7c81279e3750802169f2e4e6941a5/reports/Calendar/release-review.md",
       "astroLink": "",
       "composes": []
     },
