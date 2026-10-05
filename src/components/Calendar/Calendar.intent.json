@@ -1,0 +1,126 @@
+{
+  "use_when": [
+    "Use type picker for guests to choose check in and check out, with the nightly price under each day; show two months side by side on web and one on mobile.",
+    "Use type occupancy in the back office to see how full each day of a month is: rooms sold, the percentage, and sold-out days in navy.",
+    "Mark a stay with start and end on the check in and check out days, and in-range on the nights between.",
+    "Grey out past days and strike through days that can't be booked, so people never pick a date that fails later.",
+    "Keep the price short with no currency on each day, and show the currency once nearby.",
+    "In occupancy, explain the colours under the grid, such as \"Navy is sold out. Red percentages are above 95%.\""
+  ],
+  "dont_use_when": [
+    {
+      "when": "For a single known date such as a date of birth: use a date field.",
+      "instead": "date field"
+    },
+    {
+      "when": "To pick a time range for a report, such as the last 7 days: use Buttongroup type segmented.",
+      "instead": "Buttongroup"
+    },
+    {
+      "when": "To list bookings or events by day: use a Table.",
+      "instead": "Table"
+    }
+  ],
+  "variant_intent": {
+    "picker": "for guests to choose check in and check out, with the nightly price under each day; show two months side by side on web and one on mobile.",
+    "occupancy": "in the back office to see how full each day of a month is: rooms sold, the percentage, and sold-out days in navy.",
+    "empty": "",
+    "past": "Grey out past days",
+    "available": "",
+    "today": "",
+    "unavailable": "strike through days that can't be booked",
+    "start": "on the check in day of a stay.",
+    "in-range": "on the nights between check in and check out.",
+    "end": "on the check out day of a stay.",
+    "normal": "",
+    "high": "Red percentages are above 95%.",
+    "soldout": "sold-out days in navy.",
+    "over": ""
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-bg-inverse",
+    "--color-bg-surface",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-border-subtle",
+    "--color-primary-default",
+    "--color-primary-light",
+    "--color-status-error",
+    "--color-status-error-bg",
+    "--color-status-success",
+    "--color-text-disabled",
+    "--color-text-inverse",
+    "--color-text-inverse-secondary",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-lg",
+    "--fontsize-sm",
+    "--fontsize-xl",
+    "--fontsize-xs",
+    "--lineheight-lg",
+    "--lineheight-sm",
+    "--lineheight-xl",
+    "--lineheight-xs",
+    "--radius-xs",
+    "--spacing-md",
+    "--spacing-sm",
+    "--spacing-xl",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The picker is a role=\"group\" named by the month title (aria-labelledby), wrapping a role=\"grid\" with columnheader weekdays, rows and gridcell days.",
+      "source": "src/components/Calendar/Calendar.tsx:260"
+    },
+    {
+      "fact": "The month title is an aria-live=\"polite\" region, so a month change is announced.",
+      "source": "src/components/Calendar/Calendar.tsx:274"
+    },
+    {
+      "fact": "The previous and next month controls are native <button type=\"button\"> named \"Previous month\" and \"Next month\"; their chevron icons are aria-hidden.",
+      "source": "src/components/Calendar/Calendar.tsx:266"
+    },
+    {
+      "fact": "The chevron icon is hidden from assistive technology (aria-hidden).",
+      "source": "src/components/Calendar/Calendar.tsx:70"
+    },
+    {
+      "fact": "Each picker day is a gridcell with aria-selected for start, end and in-range, aria-disabled for past and unavailable days, aria-current=\"date\" for today, and an aria-label of the long date, with the price and check in or check out when they apply.",
+      "source": "src/components/Calendar/Calendar.tsx:311"
+    },
+    {
+      "fact": "Empty cells outside the month are aria-hidden.",
+      "source": "src/components/Calendar/Calendar.tsx:298"
+    },
+    {
+      "fact": "Only one picker day is in the tab order (tabIndex 0: the focused day, else the check in day, else today, else the 1st); the others have tabIndex -1.",
+      "source": "src/components/Calendar/Calendar.tsx:310"
+    },
+    {
+      "fact": "Keyboard: arrow keys move by day and week, Home and End to the start and end of the week, PageUp and PageDown change the month (with Shift, the year), Enter or Space picks the day.",
+      "source": "src/components/Calendar/Calendar.tsx:228"
+    },
+    {
+      "fact": "The month navigation buttons and the picker days show a focus-visible ring in the focus border colour.",
+      "source": "src/components/Calendar/Calendar.css:90"
+    },
+    {
+      "fact": "The occupancy type is a role=\"grid\" named by aria-label (the aria-label prop, falling back to \"Occupancy, <month>\"), with columnheader weekdays and gridcell days.",
+      "source": "src/components/Calendar/Calendar.tsx:148"
+    },
+    {
+      "fact": "The occupancy divider is aria-hidden.",
+      "source": "src/components/Calendar/Calendar.tsx:160"
+    },
+    {
+      "fact": "Empty occupancy cells outside the month are aria-hidden.",
+      "source": "src/components/Calendar/Calendar.tsx:165"
+    }
+  ]
+}
