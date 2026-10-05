@@ -26,7 +26,7 @@ export function Save() {
 
 ## Components
 
-0.2.0 ships sixteen components: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Toggle. Each page on the docs site shows its props, variants and when to use it. See [VERSIONING.md](VERSIONING.md) for what each version commits you to and [CHANGELOG.md](CHANGELOG.md) for what changed.
+0.2.1 ships seventeen components: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Stepper, Toggle. Each page on the docs site shows its props, variants and when to use it. See [VERSIONING.md](VERSIONING.md) for what each version commits you to and [CHANGELOG.md](CHANGELOG.md) for what changed.
 
 ## Links
 
