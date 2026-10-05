@@ -152,3 +152,44 @@ Rulings on findings that aren't defects. Only a human writes here. Each ruling s
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `File.css`. Quote this ruling in the report. When a size token for 32px appears, the ruling no longer covers it: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The `disabled` prop's `0.6` opacity, which Figma does not draw: it is unitless, and whether it should exist is for the designer. The primary and error colours, which use bound tokens (`#2b5ad6`, `#d02727`) and differ from the `#3b71f2` and `#ea3d3d` Figma shows: that is accepted pipeline drift, not a gate finding. Any state Figma does not draw.
+
+
+## 2026-10-04 · RadioCard radio and dot sizes with no token
+
+**Finding.** Release review gate 2 (Tokens) failed RadioCard for four literal px values. Figma (component set 212:21; radio 212:3, 212:9, 212:16; dot 212:10) draws the radio circle 18px wide and 18px high and the selected dot 8px wide and 8px high, and binds no variable to either. There are no size tokens. 18px exists only as `--fontsize-2xl` and `--lineheight-md`, which are typography. 8px is `--spacing-sm`, but it is a spacing token and a dot diameter is a size, so it is not used.
+
+**Ruling.** These literals in `src/components/RadioCard/RadioCard.css` are accepted, because they are what the Figma node specifies, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `18px` | `width` | `.hz-radiocard__radio` | 47 |
+| `18px` | `height` | `.hz-radiocard__radio` | 48 |
+| `8px` | `width` | `.hz-radiocard--selected .hz-radiocard__radio::after` | 60 |
+| `8px` | `height` | `.hz-radiocard--selected .hz-radiocard__radio::after` | 61 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `RadioCard.css`. Quote this ruling in the report. When a size token for 18px or 8px appears, the ruling no longer covers it: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The selected colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The 76px card height against Figma's 74px (stroke counted outside the frame). Any state Figma does not draw (hover, pressed).
+
+## 2026-10-04 · Header sizes with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Header for literal px values. Figma draws the three header bars at fixed heights (component set 208:43: web 208:7 is 64px high, app 208:29 is 52px, backoffice 208:36 is 56px), a 72px column on each side of the app title, a nested web Button 80px wide, a nested backoffice Search field 260px wide, and a 20px back icon. The spacing scale (4, 8, 12, 16, 20, 24px) and the token set have nothing that matches 64, 56, 52, 72, 80 or 260, and there are no size tokens. The bars use `box-sizing: border-box`, so the 1px bottom border sits inside the drawn height as in Figma. The 20px back icon equals `--spacing-xl`, but that is a spacing token, not an icon size.
+
+**Ruling.** These literals in `src/components/Header/Header.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `64px` | `height` (web bar) | `.hz-header--web` | 16 |
+| `56px` | `height` (backoffice bar) | `.hz-header--backoffice` | 21 |
+| `52px` | `height` (app bar) | `.hz-header--app` | 26 |
+| `80px` | `width` (nested web Button) | `.hz-header .hz-header__button` | 62 |
+| `260px` | `width` (nested backoffice Search field) | `.hz-header .hz-header__search` | 66 |
+| `72px` | `width` (app side column) | `.hz-header__side` | 74 |
+| `20px` | `width`, `height` (back icon) | `.hz-header__back-icon` | 94, 95 |
+| `2px` | `outline-offset` (keyboard focus ring on the back and action buttons) | `.hz-header__back:focus-visible, .hz-header__action:focus-visible` | 137 |
+
+The `2px` focus offset is not drawn in Figma: the engineer added the keyboard focus ring, which Figma does not specify. It is accepted at the value `--border-width-md` resolves to, until the value is bound to that token. A fix that swaps it for the token (commit `7f1a9f2` on `build/header-focus-token`) was made but not shipped, so the literal remains on `main`.
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Header.css`. Quote this ruling in the report. When a size token for any of these values appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The font weights 400, 500 and 600, which are unitless numbers and need no ruling. The widths 1280, 390 and 1220 that Figma draws for the bars: the code sets the bar width to 100% and only the story decorators apply them. The primary colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. Any state Figma does not draw.
