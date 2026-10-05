@@ -2,6 +2,28 @@
 
 All notable changes to `@layerbasesystemic/horizon-design-system`. Versioning rules are in [VERSIONING.md](VERSIONING.md).
 
+## 0.2.1
+
+### Added
+
+One component, Stepper, exported from the package root with its props types (`StepperProps`, `StepperType`, `StepperState`, `StepperStep`, `StepperStepState`) and styled by `styles.css`.
+
+### Changed
+
+Nothing.
+
+### Fixed
+
+Nothing.
+
+### Deprecated
+
+Nothing.
+
+### Removed
+
+Nothing. No export, prop, class or token from 0.2.0 was removed or renamed.
+
 ## 0.2.0
 
 ### Added
