@@ -1469,15 +1469,23 @@ function componentPage(cp) {
 					rowP.values
 						.map((rv) => {
 							const cells = colP.values.map((cv) => {
-								const gv = (g, x) => (g.native ? x.nativeState : x.argValues[g.code]);
-								const s = cp.storyDefs.find((x) => x.isRow && gv(rowP, x) === rv && gv(colP, x) === cv);
+								// A story that leaves a union prop unset gets the code's default for it (Stepper: ProgressFiveSteps sets type but not state).
+								const gv = (g, x) => {
+									if (g.native) return x.nativeState;
+									const set = x.argValues[g.code];
+									if (set !== undefined || !g.union) return set;
+									const d = cp.props.find((q) => q.name === g.code)?.default;
+									return d ? d.replace(/^["']|["']$/g, '') : undefined;
+								};
+								// Every row story that fits the cell is linked, not only the first (Stepper: three progress stories share one cell).
+								const ss = cp.storyDefs.filter((x) => x.isRow && x.sb && gv(rowP, x) === rv && gv(colP, x) === cv);
 								const node = grid.nodes[`${rowP.name}=${rv}, ${colP.name}=${cv}`];
 								if (grid.sparse && !node) {
 									unpublished.push(`${rowP.name}=${rv}, ${colP.name}=${cv}`);
 									return '*not published in Figma*';
 								}
-								if (!s?.sb) noStory.push({ key: `${rowP.name}=${rv}, ${colP.name}=${cv}`, node });
-								return `${s?.sb ? `[${t(s.exportName)}](${storyBase + s.sb.id})` : '*no story*'}<br/>${node ? c(node) : '—'}`;
+								if (!ss.length) noStory.push({ key: `${rowP.name}=${rv}, ${colP.name}=${cv}`, node });
+								return `${ss.length ? ss.map((s) => `[${t(s.exportName)}](${storyBase + s.sb.id})`).join(', ') : '*no story*'}<br/>${node ? c(node) : '—'}`;
 							});
 							return `| ${c(rv)} | ${cells.join(' | ')} |`;
 						})

@@ -64,6 +64,7 @@ export default defineConfig({
 								{ label: 'ProgressBar', slug: 'core/components/progressbar' },
 								{ label: 'RadioCard', slug: 'core/components/radiocard' },
 								{ label: 'SearchBar', slug: 'core/components/searchbar' },
+								{ label: 'Stepper', slug: 'core/components/stepper' },
 								{ label: 'Toggle', slug: 'core/components/toggle' },
 								// </generated:components>
 							],

@@ -3,6 +3,10 @@ title: Upgrading
 description: What changes between versions, and what to do about it.
 ---
 
+## To 0.2.1
+
+0.2.1 adds one component, Stepper (types `StepperProps`, `StepperType`, `StepperState`, `StepperStep` and `StepperStepState`), and removes nothing: no export, prop, class or token from 0.2.0 was removed or renamed. There is nothing to change in your code to upgrade. See the [changelog](/get-started/changelog/).
+
 ## To 0.2.0
 
 0.2.0 adds fifteen components (Avatar, Breadcrumbs, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Toggle) and removes nothing: no export, prop, class or token from 0.1.0 was removed or renamed. See the [changelog](/get-started/changelog/).

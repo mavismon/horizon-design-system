@@ -2428,6 +2428,264 @@
           "Hide the back chevron (ShowBack off) only on the top-level tabs of the app, such as Explore or Trips."
         ]
       }
+    },
+    "Stepper": {
+      "readAt": "2026-10-05",
+      "page": {
+        "id": "57:1646",
+        "name": "Stepper"
+      },
+      "node": {
+        "id": "216:19",
+        "name": "❖ stepper"
+      },
+      "component": {
+        "id": "215:73",
+        "name": "stepper"
+      },
+      "registryLink": {
+        "node": "57:1646",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1646), not the component set 215:73."
+      },
+      "internal": [
+        {
+          "id": "215:15",
+          "name": "_stepper-step",
+          "description": "Internal part of stepper type=progress (not for direct use). One step: done (blue tick), current (blue number, bold label) or upcoming (outline).",
+          "states": [
+            {
+              "value": "state=done",
+              "node": "215:2"
+            },
+            {
+              "value": "state=current",
+              "node": "215:7"
+            },
+            {
+              "value": "state=upcoming",
+              "node": "215:11"
+            }
+          ]
+        }
+      ],
+      "description": "Two kinds of stepper. type progress (default): the steps of a flow such as booking, 3 to 5 steps (ShowStep4, ShowStep5). Each step is a _stepper-step instance: done (blue tick), current (blue number, bold label) or upcoming (outline); set each step's Label, Number and state from the layers, and colour the connecting lines blue up to the current step. type quantity: a − value + counter with a Label (ShowLabel); state default, at-min (− disabled) or at-max (+ disabled); edit the Value layer for the number.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "progress"
+              },
+              {
+                "value": "quantity"
+              }
+            ]
+          },
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "default"
+              },
+              {
+                "value": "at-min"
+              },
+              {
+                "value": "at-max"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "type=progress, state=default": "215:16",
+          "type=quantity, state=default": "215:43",
+          "type=quantity, state=at-min": "215:53",
+          "type=quantity, state=at-max": "215:63"
+        },
+        "cells": 4,
+        "note": "The component set (215:73) publishes 4 variants, not the 6 that type x state would give: progress has only default; quantity has default, at-min and at-max. ShowLabel (quantity) and ShowStep4, ShowStep5 (progress) are boolean properties of the set, not variants. The step part _stepper-step (215:15) has its own state variants done (215:2), current (215:7) and upcoming (215:11). Figma draws no hover, pressed or focus state."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The stepper component set renders every cell once, in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-inverse": "#f9fafb",
+        "--radius-full": "999",
+        "--color-primary-default": "#3b71f2",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-lg": "20",
+        "--spacing-sm": "8",
+        "--fontSize-sm": "11",
+        "--fontWeight-semibold": "Semi Bold",
+        "--lineHeight-sm": "16",
+        "--color-text-primary": "#161925",
+        "--color-border-default": "#d7dee7",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-strong": "#c8d2dd",
+        "--spacing-md": "12",
+        "--radius-xs": "2",
+        "--fontWeight-medium": "Medium",
+        "--color-text-disabled": "#d1d5db",
+        "--color-state-disabled-bg": "#e5e7ed"
+      },
+      "unboundValues": [
+        {
+          "layer": "Circle, every step state (215:3, 215:8, 215:12)",
+          "property": "width",
+          "value": "20px",
+          "css": {
+            "selector": ".hz-stepper__circle",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Circle, every step state (215:3, 215:8, 215:12)",
+          "property": "height",
+          "value": "20px",
+          "css": {
+            "selector": ".hz-stepper__circle",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Tick, state=done (215:4)",
+          "property": "width",
+          "value": "12px",
+          "css": {
+            "selector": ".hz-stepper__tick",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Tick, state=done (215:4)",
+          "property": "height",
+          "value": "12px",
+          "css": {
+            "selector": ".hz-stepper__tick",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Connector lines, type=progress (215:22, 215:28, 215:33, 215:38)",
+          "property": "width",
+          "value": "32px",
+          "css": {
+            "selector": ".hz-stepper__connector",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Stepper, type=quantity (215:43, 215:53, 215:63)",
+          "property": "width (a fixed 280 in Figma; the code caps it with max-width 100%)",
+          "value": "280px",
+          "css": {
+            "selector": ".hz-stepper--quantity",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Minus and Plus buttons, type=quantity (215:46, 215:50 and the same layers in the other two states)",
+          "property": "width",
+          "value": "28px",
+          "css": {
+            "selector": ".hz-stepper__button",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Minus and Plus buttons, type=quantity (215:46, 215:50 and the same layers in the other two states)",
+          "property": "height",
+          "value": "28px",
+          "css": {
+            "selector": ".hz-stepper__button",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Minus and Plus icons, type=quantity (215:47, 215:51 and the same layers in the other two states)",
+          "property": "width",
+          "value": "14px",
+          "css": {
+            "selector": ".hz-stepper__icon",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Minus and Plus icons, type=quantity (215:47, 215:51 and the same layers in the other two states)",
+          "property": "height",
+          "value": "14px",
+          "css": {
+            "selector": ".hz-stepper__icon",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Value, type=quantity (215:49, 215:59, 215:69)",
+          "property": "width",
+          "value": "20px",
+          "css": {
+            "selector": ".hz-stepper__value",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Disabled button, state=at-min Minus (215:56) and state=at-max Plus (215:70)",
+          "property": "border colour (bound in Figma to the variable color/border/subtle, which is not named like a --color-... token; the code reads --color-border-subtle)",
+          "value": "#eef1f5",
+          "css": {
+            "selector": ".hz-stepper__button:disabled",
+            "property": "border-color"
+          }
+        }
+      ],
+      "usage": {
+        "node": "216:84",
+        "use_when_heading": "Use a stepper",
+        "use_when_node": "216:87",
+        "use_when": [
+          "Use type progress at the top of a flow with three to five steps, such as booking: Dates and guests, Your details, Extras, Payment, Confirm.",
+          "Use type quantity to set a small number with − and +, such as Adults, Children and Rooms in the guests picker and filters.",
+          "Use state at-min when the value is at its lowest (0 children, 1 adult) and at-max at its highest, so the button can't go further."
+        ],
+        "use_when_nodes": {
+          "group": "216:87",
+          "items": [
+            "216:89",
+            "216:90",
+            "216:91"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a stepper",
+        "dont_use_when_node": "216:92",
+        "dont_use_when": [
+          "For a flow of one or two steps: a page title is enough.",
+          "For a number that can be large or exact, such as a price: use a text field.",
+          "To show how far something has loaded: use Progressbar."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Keep step labels to one to three words, and let people go back to a done step by clicking it.",
+          "Mark every step before the current one as done; never skip ahead past an upcoming step.",
+          "Give each counter a clear label, and say the limits nearby when they aren't obvious, such as \"Up to 8 guests\"."
+        ],
+        "best_practice_nodes": {
+          "group": "216:97",
+          "items": [
+            "216:99",
+            "216:100",
+            "216:101"
+          ]
+        }
+      }
     }
   }
 }

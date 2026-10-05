@@ -33,6 +33,12 @@ Changing any of these in a way that breaks existing use is a breaking change:
 
 Something is deprecated in one release before it's removed in a later breaking release. The [changelog](/get-started/changelog/) names the replacement.
 
+## What 0.2.1 commits you to
+
+0.2.1 adds one component, [Stepper](/core/components/stepper/), on top of 0.2.0. It contains seventeen components, each exported from the package root with its props type: [Avatar](/core/components/avatar/), [Breadcrumbs](/core/components/breadcrumbs/), [Button](/core/components/button/), [ButtonGroup](/core/components/buttongroup/), [Checkbox](/core/components/checkbox/), [Chip](/core/components/chip/), [Dropdown](/core/components/dropdown/), [File](/core/components/file/), [Header](/core/components/header/), [Image](/core/components/image/), [Link](/core/components/link/), [Logo](/core/components/logo/), [ProgressBar](/core/components/progressbar/), [RadioCard](/core/components/radiocard/), [SearchBar](/core/components/searchbar/), [Stepper](/core/components/stepper/), [Toggle](/core/components/toggle/). It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Stepper is a pure addition, so it's a patch on 0.x (see the table above). Any change that breaks those on 0.x bumps the version to 0.3.0.
+
+The 0.2.0 commitments below still hold in full: nothing from 0.2.0 was changed, removed or renamed.
+
 ## What 0.2.0 commits you to
 
 0.2.0 contains sixteen components, each exported from the package root with its props type: [Avatar](/core/components/avatar/), [Breadcrumbs](/core/components/breadcrumbs/), [Button](/core/components/button/), [ButtonGroup](/core/components/buttongroup/), [Checkbox](/core/components/checkbox/), [Chip](/core/components/chip/), [Dropdown](/core/components/dropdown/), [File](/core/components/file/), [Header](/core/components/header/), [Image](/core/components/image/), [Link](/core/components/link/), [Logo](/core/components/logo/), [ProgressBar](/core/components/progressbar/), [RadioCard](/core/components/radiocard/), [SearchBar](/core/components/searchbar/), [Toggle](/core/components/toggle/). It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Any change that breaks those on 0.x bumps the version to 0.3.0.
