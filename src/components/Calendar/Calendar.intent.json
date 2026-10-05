@@ -115,8 +115,12 @@
       "source": "src/components/Calendar/Calendar.tsx:148"
     },
     {
-      "fact": "The occupancy divider is aria-hidden, and empty occupancy cells are aria-hidden.",
+      "fact": "The occupancy divider is aria-hidden.",
       "source": "src/components/Calendar/Calendar.tsx:160"
+    },
+    {
+      "fact": "Empty occupancy cells outside the month are aria-hidden.",
+      "source": "src/components/Calendar/Calendar.tsx:165"
     }
   ]
 }
