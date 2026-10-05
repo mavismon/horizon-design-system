@@ -1,0 +1,280 @@
+/* Calendar: type picker (guest date-range picker) and type occupancy (back office month grid). */
+.hz-calendar {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: max-content;
+  border: var(--border-width-sm) solid var(--color-border-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+/* ---------- picker ---------- */
+/* Figma draws the 1px stroke inside the frame, so the border is taken out of the padding. */
+.hz-calendar--picker {
+  gap: var(--spacing-md);
+  padding: calc(var(--spacing-xl) - var(--border-width-sm));
+}
+
+.hz-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fontsize-xl);
+  line-height: var(--lineheight-xl);
+}
+
+/* The nav button is two icon-widths square (the 14px icon is 1em of the 14px font), as in Figma. */
+.hz-calendar__nav {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 2em;
+  height: 2em;
+  margin: 0;
+  padding: 0;
+  border: var(--border-width-sm) solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.hz-calendar__nav-icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
+.hz-calendar__title {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hz-calendar__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.hz-calendar--picker .hz-calendar__weekdays,
+.hz-calendar--picker .hz-calendar__week {
+  display: grid;
+  grid-template-columns: repeat(7, 64px);
+  gap: var(--spacing-sm);
+}
+
+.hz-calendar--picker .hz-calendar__weekday {
+  text-align: center;
+}
+
+.hz-calendar__weekday {
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.hz-calendar__days {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.hz-calendar__nav:focus-visible,
+.hz-calendar-day:focus-visible {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: var(--border-width-md);
+}
+
+/* ---------- _calendar-day ---------- */
+.hz-calendar-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  aspect-ratio: 8 / 5; /* 64 x 40 at the Figma column width */
+  border-radius: var(--radius-xs);
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.hz-calendar-day__number {
+  color: var(--color-text-primary);
+}
+
+.hz-calendar-day__price {
+  font-size: var(--fontsize-xs);
+  line-height: var(--lineheight-xs);
+  color: var(--color-text-secondary);
+}
+
+.hz-calendar-day--past {
+  background: var(--color-bg-surface);
+}
+
+.hz-calendar-day--past .hz-calendar-day__number {
+  color: var(--color-text-disabled);
+}
+
+.hz-calendar-day--available,
+.hz-calendar-day--unavailable,
+.hz-calendar-day--today {
+  background: var(--color-bg-elevated);
+}
+
+.hz-calendar-day--today {
+  border: var(--border-width-sm) solid var(--color-primary-default);
+}
+
+.hz-calendar-day--today .hz-calendar-day__number {
+  font-weight: 600;
+}
+
+.hz-calendar-day--unavailable .hz-calendar-day__number {
+  color: var(--color-text-disabled);
+  text-decoration: line-through;
+}
+
+.hz-calendar-day--start,
+.hz-calendar-day--end {
+  background: var(--color-primary-default);
+}
+
+.hz-calendar-day--start .hz-calendar-day__number,
+.hz-calendar-day--end .hz-calendar-day__number {
+  color: var(--color-text-inverse);
+  font-weight: 600;
+}
+
+.hz-calendar-day--start .hz-calendar-day__price,
+.hz-calendar-day--end .hz-calendar-day__price {
+  color: var(--color-text-inverse-secondary);
+}
+
+.hz-calendar-day--in-range {
+  background: var(--color-primary-light);
+}
+
+/* Days you can pick get a pointer; past and unavailable days are aria-disabled. */
+.hz-calendar-day[role="gridcell"]:not([aria-disabled="true"], [aria-hidden="true"]) {
+  cursor: pointer;
+}
+
+.hz-calendar-day[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/* ---------- occupancy ---------- */
+/* Stroke inside the frame: the border comes out of the side and bottom padding, and out of the weekday row's top padding. */
+.hz-calendar--occupancy {
+  gap: var(--spacing-sm);
+  padding: 0 calc(var(--spacing-sm) - var(--border-width-sm)) calc(var(--spacing-sm) - var(--border-width-sm));
+}
+
+.hz-calendar--occupancy .hz-calendar__weekdays,
+.hz-calendar--occupancy .hz-calendar__week {
+  display: grid;
+  grid-template-columns: repeat(7, 158px);
+  gap: var(--spacing-sm);
+}
+
+.hz-calendar--occupancy .hz-calendar__weekdays {
+  padding-block: calc(var(--spacing-md) - var(--border-width-sm)) var(--spacing-md);
+}
+
+.hz-calendar--occupancy .hz-calendar__weekday {
+  padding-inline-start: var(--spacing-sm);
+}
+
+.hz-calendar__divider {
+  height: var(--border-width-sm);
+  background: var(--color-border-subtle);
+}
+
+/* ---------- _calendar-occupancy-day ---------- */
+.hz-calendar-occupancy-day {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  box-sizing: border-box;
+  aspect-ratio: 158 / 90;
+  /* the stroke sits inside the Figma frame, so the content keeps the full 12px inset */
+  padding: calc(var(--spacing-md) - var(--border-width-sm));
+  border: var(--border-width-sm) solid var(--color-border-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  white-space: nowrap;
+}
+
+.hz-calendar-occupancy-day--empty {
+  background: var(--color-bg-surface);
+}
+
+.hz-calendar-occupancy-day--soldout,
+.hz-calendar-occupancy-day--over {
+  background: var(--color-bg-inverse);
+}
+
+.hz-calendar-occupancy-day__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+}
+
+.hz-calendar-occupancy-day__number {
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.hz-calendar-occupancy-day__sold {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.hz-calendar-occupancy-day__percent {
+  font-weight: 500;
+  color: var(--color-status-success);
+}
+
+.hz-calendar-occupancy-day--high .hz-calendar-occupancy-day__percent {
+  color: var(--color-status-error);
+}
+
+.hz-calendar-occupancy-day--soldout .hz-calendar-occupancy-day__number,
+.hz-calendar-occupancy-day--over .hz-calendar-occupancy-day__number,
+.hz-calendar-occupancy-day--soldout .hz-calendar-occupancy-day__percent,
+.hz-calendar-occupancy-day--over .hz-calendar-occupancy-day__percent {
+  color: var(--color-text-inverse);
+}
+
+.hz-calendar-occupancy-day--soldout .hz-calendar-occupancy-day__sold,
+.hz-calendar-occupancy-day--over .hz-calendar-occupancy-day__sold {
+  color: var(--color-text-inverse-secondary);
+}
+
+/* "over" tag: 6px by 2px padding in Figma, written as fractions of the 4px spacing step */
+.hz-calendar-occupancy-day__tag {
+  padding: calc(var(--spacing-xs) / 2) calc(var(--spacing-xs) * 1.5);
+  border-radius: var(--radius-xs);
+  background: var(--color-status-error-bg);
+  font-size: var(--fontsize-xs);
+  line-height: var(--lineheight-xs);
+  font-weight: 500;
+  color: var(--color-status-error);
+}
