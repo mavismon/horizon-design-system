@@ -3,7 +3,7 @@ title: The knowledge skill
 description: What an agent can read about Horizon today.
 ---
 
-## Not in 0.1.0
+## Not in 0.2.0
 
 No knowledge skill ships inside `@layerbasesystemic/horizon-design-system`. The package's `files` list is `dist` only, and nothing in it is a skill an agent loads.
 

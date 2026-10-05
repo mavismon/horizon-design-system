@@ -33,8 +33,14 @@ Changing any of these in a way that breaks existing use is a breaking change:
 
 Something is deprecated in one release before it's removed in a later breaking release. The [changelog](/get-started/changelog/) names the replacement.
 
-## What 0.1.0 commits you to
+## What 0.2.0 commits you to
 
-0.1.0 contains one component, [Button](/core/components/button/), with the props, `state` values and `hz-button` classes it ships with, and the tokens in `tokens.css`. Any change that breaks those bumps the version to 0.2.0.
+0.2.0 contains sixteen components, each exported from the package root with its props type: [Avatar](/core/components/avatar/), [Breadcrumbs](/core/components/breadcrumbs/), [Button](/core/components/button/), [ButtonGroup](/core/components/buttongroup/), [Checkbox](/core/components/checkbox/), [Chip](/core/components/chip/), [Dropdown](/core/components/dropdown/), [File](/core/components/file/), [Header](/core/components/header/), [Image](/core/components/image/), [Link](/core/components/link/), [Logo](/core/components/logo/), [ProgressBar](/core/components/progressbar/), [RadioCard](/core/components/radiocard/), [SearchBar](/core/components/searchbar/), [Toggle](/core/components/toggle/). It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Any change that breaks those on 0.x bumps the version to 0.3.0.
+
+`Header` takes a few props that are not Figma properties: `buttonText`, `avatarSrc`, `avatarAlt`, `searchPlaceholder`, `link1Href`, `link2Href`, `link3Href`, `onButtonClick`, `onBackClick`, `onActionClick` and `onSearch`. They are public from 0.2.0 and a breaking change to them follows the same rule.
+
+## What 0.1.0 committed you to
+
+0.1.0 contained one component, [Button](/core/components/button/), with the props, `state` values and `hz-button` classes it ships with, and the tokens in `tokens.css`. 0.2.0 keeps all of them: Button's props and `hz-button` classes are unchanged, and no token was removed or renamed.
 
 *Written from `VERSIONING.md` in the repository.*

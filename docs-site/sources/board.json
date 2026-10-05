@@ -1,6 +1,6 @@
 {
-  "readAt": "2026-10-04",
-  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-04 by the doc-generator session; the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
+  "readAt": "2026-10-05",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-05 by the doc-generator session; the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
   "components": [
     {
       "name": "Avatar",
@@ -32,7 +32,7 @@
       "design": "Done",
       "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=19-31&m=dev",
-      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-button--default",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/f569313d69d444f2733df0f7464243798abdf806/reports/Button/release-review.md",
       "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/button/",
@@ -108,7 +108,7 @@
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1641&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-dropdown--md-closed",
       "releaseVerdict": "Cleared",
-      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/eb7adcdaa1626b154435b47400174490706c2fed/reports/Dropdown/release-review.md",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/cafa38ec225a12ac17644695eff445a3f6c3ed3b/reports/Dropdown/release-review.md",
       "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/dropdown/",
       "composes": []
     },
@@ -120,7 +120,7 @@
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1642&t=bEurJxon3J2egqXY-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-file--all-variants",
       "releaseVerdict": "Cleared",
-      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/af4bc0f980df25322b5dc4bcfdbd6cfcbea52968/reports/File/release-review.md",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/170cc4536a3319a9161f524fc2b3436a7d35b33c/reports/File/release-review.md",
       "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/file/",
       "composes": [
         "ProgressBar"
@@ -142,12 +142,12 @@
       "name": "Header",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1643&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-header--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/20bfa3c3bd9349e183a4e293256084965dd14447/reports/Header/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/header/",
       "composes": [
         "Logo",
         "Link",
