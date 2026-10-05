@@ -1,0 +1,88 @@
+{
+  "use_when": [
+    "Use type progress at the top of a flow with three to five steps, such as booking: Dates and guests, Your details, Extras, Payment, Confirm.",
+    "Use type quantity to set a small number with − and +, such as Adults, Children and Rooms in the guests picker and filters.",
+    "Use state at-min when the value is at its lowest (0 children, 1 adult) and at-max at its highest, so the button can't go further."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For a flow of one or two steps: a page title is enough.",
+      "instead": ""
+    },
+    {
+      "when": "For a number that can be large or exact, such as a price: use a text field.",
+      "instead": ""
+    },
+    {
+      "when": "To show how far something has loaded: use Progressbar.",
+      "instead": "ProgressBar"
+    }
+  ],
+  "variant_intent": {
+    "progress": "the steps of a flow such as booking, 3 to 5 steps",
+    "quantity": "a − value + counter with a Label",
+    "default": "",
+    "at-min": "− disabled",
+    "at-max": "+ disabled",
+    "done": "blue tick",
+    "current": "blue number, bold label",
+    "upcoming": "outline"
+  },
+  "placement": [],
+  "pairs_with": [],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-border-strong",
+    "--color-border-subtle",
+    "--color-primary-default",
+    "--color-state-disabled-bg",
+    "--color-text-disabled",
+    "--color-text-inverse",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-lg",
+    "--fontsize-sm",
+    "--lineheight-lg",
+    "--lineheight-sm",
+    "--radius-full",
+    "--radius-sm",
+    "--radius-xs",
+    "--spacing-md",
+    "--spacing-sm"
+  ],
+  "a11y": [
+    {
+      "fact": "type quantity is a role=\"group\" named by the label, with native <button> controls for − and +.",
+      "source": "src/components/Stepper/Stepper.tsx:91"
+    },
+    {
+      "fact": "The − and + buttons have their own accessible names (\"Decrease <label>\", \"Increase <label>\") because their icons are decorative.",
+      "source": "src/components/Stepper/Stepper.tsx:101"
+    },
+    {
+      "fact": "state at-min and at-max set the real disabled attribute on the − or + button, so it can't be focused or activated.",
+      "source": "src/components/Stepper/Stepper.tsx:102"
+    },
+    {
+      "fact": "The counter value is an <output> with aria-live=\"polite\", so a change is announced.",
+      "source": "src/components/Stepper/Stepper.tsx:107"
+    },
+    {
+      "fact": "type progress is an ordered list, and the current step carries aria-current=\"step\".",
+      "source": "src/components/Stepper/Stepper.tsx:143"
+    },
+    {
+      "fact": "Connector lines and step circles are decorative (aria-hidden); the step label carries the name.",
+      "source": "src/components/Stepper/Stepper.tsx:145"
+    },
+    {
+      "fact": "A done step is a native <button> only when onStepClick is passed; otherwise it is plain text. Both buttons show the focus-border ring on :focus-visible.",
+      "source": "src/components/Stepper/Stepper.tsx:147"
+    }
+  ]
+}
