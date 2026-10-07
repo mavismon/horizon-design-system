@@ -17,4 +17,5 @@
 @import "./components/Stepper/Stepper.css";
 @import "./components/Card/Card.css";
 @import "./components/Calendar/Calendar.css";
+@import "./components/Modal/Modal.css";
 @import "./components/Form/Form.css";

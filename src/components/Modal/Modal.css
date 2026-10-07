@@ -1,0 +1,187 @@
+/* The dialog element is a transparent shell; the panel carries every visual. Its padding is 0 so
+   a click whose target is the dialog itself is a click on the backdrop. */
+.hz-modal {
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-primary);
+  overflow: visible;
+}
+
+/* Drawn in place, as in the Figma component set. */
+.hz-modal--inline {
+  position: static;
+  display: block;
+  width: fit-content;
+}
+
+.hz-modal--screen:modal {
+  max-height: 100%;
+}
+
+.hz-modal--screen:modal.hz-modal--dialog {
+  margin: auto;
+}
+
+/* The sheet sits at the bottom, full width. */
+.hz-modal--screen:modal.hz-modal--sheet {
+  width: 100%;
+  margin: auto 0 0;
+}
+
+.hz-modal::backdrop {
+  background: color-mix(in srgb, var(--color-bg-overlay) 40%, transparent);
+}
+
+.hz-modal__panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  background: var(--color-bg-elevated);
+  box-shadow: var(--elevation-lg);
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+.hz-modal--dialog .hz-modal__panel {
+  width: 520px;
+  max-width: 100%;
+  padding: var(--spacing-2xl);
+  border-radius: var(--radius-xs);
+}
+
+.hz-modal--sheet .hz-modal__panel {
+  width: 390px;
+  max-width: 100%;
+  padding: 10px var(--spacing-2xl) var(--spacing-2xl);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.hz-modal--screen.hz-modal--sheet .hz-modal__panel {
+  width: 100%;
+}
+
+/* A tall panel scrolls instead of running off the screen. */
+.hz-modal--screen:modal .hz-modal__panel {
+  max-height: calc(100dvh - var(--spacing-2xl) * 2);
+  overflow-y: auto;
+}
+
+.hz-modal__handle-row {
+  display: flex;
+  justify-content: center;
+}
+
+.hz-modal__handle {
+  display: block;
+  width: 48px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-border-default);
+}
+
+.hz-modal__header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.hz-modal__text {
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 0;
+  word-break: break-word;
+}
+
+.hz-modal__title,
+.hz-modal__message,
+.hz-modal__note {
+  margin: 0;
+}
+
+.hz-modal__title {
+  color: var(--color-text-primary);
+  font-size: var(--fontsize-2xl);
+  line-height: var(--lineheight-2xl);
+  font-weight: 600;
+}
+
+.hz-modal__message {
+  color: var(--color-text-secondary);
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 400;
+}
+
+.hz-modal__close {
+  display: block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.hz-modal__close svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hz-modal__close:focus-visible {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: var(--border-width-md);
+}
+
+.hz-modal__rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin: 0;
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+}
+
+.hz-modal__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: 10px var(--spacing-md);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-surface);
+}
+
+.hz-modal__row-label {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+.hz-modal__row-value {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-align: right;
+}
+
+.hz-modal__row-value--error {
+  color: var(--color-status-error);
+}
+
+.hz-modal__note {
+  color: var(--color-text-secondary);
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  font-weight: 400;
+  word-break: break-word;
+}
