@@ -1,0 +1,97 @@
+{
+  "use_when": [
+    "Use type dialog to confirm an action before it happens, such as \"Remove Luis Correia?\", or for a short task that must finish before going back, such as an invite.",
+    "Use tone destructive when the action deletes or can't be undone; show what changes in the content rows, such as \"Can be undone: No\".",
+    "Use type sheet on mobile for filters, pickers and short choices that slide up from the bottom.",
+    "Ask a question in the title and name the thing, such as \"Remove Luis Correia?\", and put the result of the action on the main button, such as \"Remove admin\", not \"OK\".",
+    "Always give a way out: Cancel, the close ×, the Escape key and a click on the backdrop.",
+    "Place the dialog in the centre on a color/bg/overlay backdrop; place the sheet at the bottom, full width."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For information people should read while they keep working: show it on the page, or in a toast.",
+      "instead": ""
+    },
+    {
+      "when": "For long forms or anything with more than one step: use a page with Stepper.",
+      "instead": "Stepper"
+    },
+    {
+      "when": "Open a modal from another modal.",
+      "instead": ""
+    }
+  ],
+  "variant_intent": {
+    "dialog": "confirm an action before it happens, such as \"Remove Luis Correia?\", or for a short task that must finish before going back, such as an invite",
+    "sheet": "on mobile for filters, pickers and short choices that slide up from the bottom",
+    "default": "",
+    "destructive": "when the action deletes or can't be undone; show what changes in the content rows, such as \"Can be undone: No\""
+  },
+  "placement": [
+    "Centred on a color/bg/overlay backdrop (the OnOverlay story); on screen, opened from a Button as a native modal dialog (the Open* stories)."
+  ],
+  "pairs_with": [
+    "Button"
+  ],
+  "required_tokens": [
+    "--border-width-md",
+    "--color-bg-elevated",
+    "--color-bg-overlay",
+    "--color-bg-surface",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-status-error",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--elevation-lg",
+    "--fontfamily-body",
+    "--fontsize-2xl",
+    "--fontsize-lg",
+    "--fontsize-sm",
+    "--lineheight-2xl",
+    "--lineheight-lg",
+    "--lineheight-sm",
+    "--radius-full",
+    "--radius-lg",
+    "--radius-xs",
+    "--spacing-2xl",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-sm",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The root is a native <dialog>, so it has the dialog role; on screen it is opened with showModal(), which makes the rest of the page inert, keeps focus inside and returns it to the opener on close.",
+      "source": "src/components/Modal/Modal.tsx:115"
+    },
+    {
+      "fact": "The dialog is named by its title (aria-labelledby) and described by its message (aria-describedby, only when a message exists).",
+      "source": "src/components/Modal/Modal.tsx:130"
+    },
+    {
+      "fact": "Escape is cancelled and handed to onClose, so the owner decides when the dialog closes.",
+      "source": "src/components/Modal/Modal.tsx:132"
+    },
+    {
+      "fact": "A click on the backdrop calls onClose; the dialog has no padding and the panel fills it, so only a press and release that both land on the backdrop count.",
+      "source": "src/components/Modal/Modal.tsx:145"
+    },
+    {
+      "fact": "The close × is a native <button> with an accessible name (closeLabel, default \"Close\"); its icon is aria-hidden.",
+      "source": "src/components/Modal/Modal.tsx:170"
+    },
+    {
+      "fact": "The sheet grab handle is decorative and hidden from assistive technology.",
+      "source": "src/components/Modal/Modal.tsx:154"
+    },
+    {
+      "fact": "The Content rows are a description list (<dl>, <dt>, <dd>), so each label stays paired with its value.",
+      "source": "src/components/Modal/Modal.tsx:179"
+    },
+    {
+      "fact": "The actions are Horizon's ButtonGroup of native buttons; the first calls onAction, the second calls onClose.",
+      "source": "src/components/Modal/Modal.tsx:192"
+    }
+  ]
+}
