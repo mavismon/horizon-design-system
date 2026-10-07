@@ -230,3 +230,20 @@ The `2px` focus offset is not drawn in Figma: the engineer added the keyboard fo
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Calendar.css`. Quote this ruling in the report. When a size token for 64px or 158px appears, the ruling no longer covers that value: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The `aspect-ratio` values 8/5 and 158/90, the `2em` navigation button, the `1em` icon, and the calc over spacing tokens for the "over" tag padding: none is a px literal, so they need no ruling, and whether they should be tokens is for the designer. The font weights 400, 500 and 600, which are unitless numbers. The primary colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The inconsistent occupancy sample data in Figma (the 30th shown as 48 of 48, 99%, in the high style; 47 of 48 shown as 97% and as 98%; 35 of 48 shown as 72%): the stories reproduce the drawn values and that is for the designer. Any state Figma does not draw.
+
+## 2026-10-07 · Card widths with no token, and the accepted tag offset
+
+**Finding.** Release review gate 2 (Tokens) failed Card for two literal px values. Figma (component 238:24; listing 238:7, stat 238:20) draws the listing card 284px wide and the stat tile 234px wide, and binds no variable to either. There are no size tokens, and the spacing scale has nothing that matches 284 or 234. The widths set the card's footprint and have no content or intrinsic size that could supply the number, so no equivalent technique avoids the literals. Both rules also carry `max-width: 100%`, so a card still shrinks to fit a narrow container. Separately, QA found the listing tag (Figma 238:10) draws an 11px offset and 9px / 3px padding, all unbound. There are no tokens for those values either, and the built tag uses the nearest tokens.
+
+**Ruling.** These literals in `src/components/Card/Card.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `284px` | `width` | `.hz-card--listing` | 27 |
+| `234px` | `width` | `.hz-card--stat` | 34 |
+
+The tag in `Card.css` stays on the nearest tokens: offset `--spacing-md` (12px), padding `--spacing-xs` block and `--spacing-sm` inline (4px / 8px), 24px tall. Figma 238:10 reads 11px offset, 3px / 9px padding and 22px tall. This deviation is accepted as a design decision (2026-10-07), the Figma node was not changed, and the QA report (`reports/Card/qa-report.md`, round 2) records it.
+
+**For an agent that hits it.** Gate 2 passes for exactly these two values on exactly these properties in `Card.css`. The tag is not a gate item, since it uses tokens throughout: do not count it against a verdict, and quote this ruling when you report it. When a size token for 284px or 234px appears, the ruling no longer covers that value: use the token. If the designer later binds the tag to tokens in Figma, the tag part of this ruling no longer applies and the tag must be re-tested against the node.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The tag's size, colours or font, which match Figma. The intent file's `pairs_with: ["Image"]` and its "make the whole listing card clickable" line, which the review raised as warnings.
