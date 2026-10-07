@@ -55,3 +55,17 @@ export { Textfield } from "./components/Form/Textfield";
 export type { TextfieldProps, TextfieldState } from "./components/Form/Textfield";
 export { SideBar } from "./components/SideBar/SideBar";
 export type { SideBarProps, SideBarItem, SideBarItemState } from "./components/SideBar/SideBar";
+export { Table } from "./components/Table/Table";
+export type {
+  TableProps,
+  TableColumn,
+  TableRowData,
+  TableCellType,
+  TableCellValue,
+  TableTag,
+  TableAction,
+  TableTone,
+  TableRowState,
+  TableSort,
+  TableSortDirection,
+} from "./components/Table/Table";

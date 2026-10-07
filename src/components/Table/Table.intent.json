@@ -1,0 +1,95 @@
+{
+  "use_when": [
+    "To list records people scan, compare and act on in the back office, such as rate seasons, admins, invites or documents.",
+    "Put the name of each record in the first column (primary), the status in a tag, and row actions such as \"Edit\" or \"Resend · Revoke\" in the last column.",
+    "Turn on the checkbox column when people act on several rows at once, and show the selected rows in light blue."
+  ],
+  "dont_use_when": [
+    {
+      "when": "On the guest website or app for browsing stays: use Card type listing.",
+      "instead": "Card"
+    },
+    {
+      "when": "For two or three facts about one thing, such as in a dialog: use detail rows.",
+      "instead": ""
+    },
+    {
+      "when": "Put long text or paragraphs in a cell: link to a detail page instead.",
+      "instead": ""
+    }
+  ],
+  "variant_intent": {
+    "success": "Live, On file (the success tag tone).",
+    "neutral": "Past, Draft (the neutral tag tone).",
+    "error": "Expired, Missing (the error tag tone).",
+    "warning": "Expiring soon (the warning tag tone).",
+    "info": "Upcoming (the info tag tone)."
+  },
+  "placement": [
+    "Under header type=backoffice, to the right of the SideBar (the BackOfficePage story)."
+  ],
+  "pairs_with": [
+    "SideBar",
+    "Header"
+  ],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-bg-surface",
+    "--color-border-focus",
+    "--color-border-subtle",
+    "--color-primary-default",
+    "--color-primary-light",
+    "--color-state-disabled-bg",
+    "--color-status-error",
+    "--color-status-error-bg",
+    "--color-status-success",
+    "--color-status-success-bg",
+    "--color-status-warning",
+    "--color-status-warning-bg",
+    "--color-text-disabled",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-md",
+    "--fontsize-sm",
+    "--lineheight-md",
+    "--lineheight-sm",
+    "--radius-xs",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-sm",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "A native <table> with an accessible name from tableLabel (default \"Data table\"), so a screen reader announces rows and columns.",
+      "source": "src/components/Table/Table.tsx:253"
+    },
+    {
+      "fact": "Column headers are <th scope=\"col\"> and the primary cell of each row is <th scope=\"row\">, so each cell is read with its column and row name.",
+      "source": "src/components/Table/Table.tsx:277"
+    },
+    {
+      "fact": "A sortable header is a native <button> and its <th> carries aria-sort (none, ascending or descending); the arrow is hidden from assistive technology.",
+      "source": "src/components/Table/Table.tsx:279"
+    },
+    {
+      "fact": "The row and header checkboxes are Horizon's Checkbox, a native input, labelled \"Select <row name>\" and \"Select all rows\"; selection is the checked state, not colour alone.",
+      "source": "src/components/Table/Table.tsx:266"
+    },
+    {
+      "fact": "Action cells are Horizon's Link, a native <a href>, and Previous / Next are Horizon's Button, native <button> elements that take the disabled attribute.",
+      "source": "src/components/Table/Table.tsx:353"
+    },
+    {
+      "fact": "The footer summary is an aria-live=\"polite\" region and Previous / Next sit in a <nav> named \"Pagination\".",
+      "source": "src/components/Table/Table.tsx:350"
+    },
+    {
+      "fact": "A keyboard focus ring (color/border/focus, 2px) is drawn on the checkboxes, the sort button and the action links.",
+      "source": "src/components/Table/Table.css:189"
+    }
+  ]
+}

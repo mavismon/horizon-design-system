@@ -1,0 +1,194 @@
+/* Raw values that remain (no size tokens): header row 44 and body row 48 (Figma _table-cell/_table-row),
+   the 80 wide Previous / Next buttons, the tag's 3px vertical padding, and the 10px sort arrow. Each is
+   the value drawn in Figma (nodes 250:92, 250:91, 248:36, 248:18). Column widths come from the
+   `width` prop, defaulting to the Figma widths per cell type (see Table.tsx). Deviations from the
+   design are marked inline: focus rings and the disabled Previous / Next are not drawn in Figma. */
+.hz-table {
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
+  border: var(--border-width-sm) solid var(--color-border-subtle);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+.hz-table__scroll {
+  overflow-x: auto;
+}
+
+.hz-table__table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.hz-table__row {
+  background: var(--color-bg-elevated);
+}
+
+.hz-table__row--header {
+  background: var(--color-bg-surface);
+}
+
+.hz-table__row:not(.hz-table__row--header):hover,
+.hz-table__row--hover {
+  background: var(--color-bg-surface);
+}
+
+.hz-table__row--selected,
+.hz-table__row--selected:hover {
+  background: var(--color-primary-light);
+}
+
+.hz-table__cell {
+  box-sizing: border-box;
+  height: 48px;
+  padding: 0 var(--spacing-lg);
+  border-bottom: var(--border-width-sm) solid var(--color-border-subtle);
+  text-align: left;
+  vertical-align: middle;
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.hz-table__cell--header {
+  height: 44px;
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hz-table__cell--checkbox .hz-checkbox {
+  display: flex;
+}
+
+.hz-table__cell--primary {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.hz-table__truncate {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Sort header: Figma draws the label and a 10px arrow, gap spacing/xs. */
+.hz-table__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.hz-table__sort-icon {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+}
+
+.hz-table__sort-icon path {
+  stroke: currentColor;
+  stroke-width: var(--border-width-sm);
+}
+
+.hz-table__sort-icon--ascending {
+  transform: rotate(180deg);
+}
+
+/* Tag: 22px high, radius/xs, 11px Medium (node 248:18). */
+.hz-table__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px var(--spacing-sm);
+  border-radius: var(--radius-xs);
+  font-size: var(--fontsize-sm);
+  line-height: var(--lineheight-sm);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hz-table__tag--success {
+  background: var(--color-status-success-bg);
+  color: var(--color-status-success);
+}
+
+.hz-table__tag--neutral {
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+}
+
+.hz-table__tag--error {
+  background: var(--color-status-error-bg);
+  color: var(--color-status-error);
+}
+
+.hz-table__tag--warning {
+  background: var(--color-status-warning-bg);
+  color: var(--color-status-warning);
+}
+
+.hz-table__tag--info {
+  background: var(--color-primary-light);
+  color: var(--color-primary-default);
+}
+
+.hz-table__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* Footer: Summary left, Previous / Next right (node 250:211). */
+.hz-table__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.hz-table__summary {
+  margin: 0;
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.hz-table__pagination {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.hz-table .hz-table__page-button {
+  width: 80px;
+}
+
+/* Not drawn in Figma: disabled Previous / Next (first or last page). */
+.hz-table .hz-table__page-button:disabled {
+  border-color: var(--color-state-disabled-bg);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* Not drawn in Figma: keyboard focus rings on the parts that have none of their own. */
+.hz-table .hz-checkbox__input:focus-visible,
+.hz-table .hz-table__sort:focus-visible,
+.hz-table .hz-table__action:focus-visible {
+  outline: var(--border-width-md) solid var(--color-border-focus);
+  outline-offset: 2px;
+}
