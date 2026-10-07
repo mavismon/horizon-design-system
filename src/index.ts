@@ -38,6 +38,8 @@ export { Header } from "./components/Header/Header";
 export type { HeaderProps, HeaderType } from "./components/Header/Header";
 export { Stepper } from "./components/Stepper/Stepper";
 export type { StepperProps, StepperType, StepperState, StepperStep, StepperStepState } from "./components/Stepper/Stepper";
+export { Card } from "./components/Card/Card";
+export type { CardProps, CardType } from "./components/Card/Card";
 export { Calendar } from "./components/Calendar/Calendar";
 export type {
   CalendarProps,
