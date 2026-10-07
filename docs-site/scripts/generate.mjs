@@ -1450,7 +1450,150 @@ function modalNotes(cp, fig, review) {
 	return out;
 }
 
+// SideBar: the warnings of the release review that the page must show, each quoted as written ("Warnings", numbered, with the
+// sub-bullets under the intent-file warning) and checked against the code at the pinned commit; a note is only written when the code
+// bears it out. usage = the empty "instead", the bug-note line, what is not built and the placement repeat; variants = the empty default
+// and the extra "active" key; a11y = the focus ring and what was never tested; composition = Logo and Link; promise = VERSIONING.md and
+// CHANGELOG.md do not name SideBar; design = the unconfirmed divider alpha, the hover label, the ring and the font.
+const SIDEBAR_NOTES = {
+	divider: /^\*\*Divider alpha 12% is unconfirmed/,
+	hover: /^\*\*Hover label colour deviates from Figma/,
+	ring: /^\*\*Focus ring contrast is low/,
+	untested: /^\*\*QA gaps, not credited/,
+	font: /^\*\*Inter is not loaded in Storybook/,
+	composes: /^\*\*`Composes` verified in code/,
+	versioning: /^\*\*G7 standing note/,
+	strict: /^\*\*C5 strict reading/,
+	subBug: /^`use_when\[1\]`/,
+	subInstead: /^`dont_use_when\[1\]` and `\[2\]` have empty `instead`/,
+	subDefault: /^`variant_intent\.default` is `""`/,
+	subPairs: /^`pairs_with: \["Header"\]`/,
+	subPlacement: /^`placement` has one entry/,
+};
+
+function sideBarNotes(cp, fig, review) {
+	const out = { usage: [], variants: [], a11y: [], composition: [], promise: [], design: [] };
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	if (!m) return out;
+	const md = show(m[2], m[1]);
+	const wsec = (mdSection(md, '## Warnings') ?? '').split('\n');
+	const warnings = wsec.filter((l) => /^\d+\.\s/.test(l)).map((l) => l.replace(/^\d+\.\s+/, ''));
+	const subs = wsec.filter((l) => /^\s+-\s/.test(l)).map((l) => l.replace(/^\s+-\s+/, ''));
+	const find = (re) => warnings.find((w) => re.test(w));
+	const sub = (re) => subs.find((w) => re.test(w));
+	const quote = (w) => `From the [release review](${review.url}), under "Warnings", as written:\n\n> ${t(plain(w))}`;
+	const name = cp.name;
+	const tsxFile = `${cp.dir}/${name}.tsx`;
+	const cssFile = `${cp.dir}/${name}.css`;
+	const tl = cp.tsx.split('\n');
+	const cl = cp.css.split('\n');
+	const tLine = (re) => tl.findIndex((l) => re.test(l)) + 1;
+	const cLine = (re) => cl.findIndex((l) => re.test(l)) + 1;
+	const tlink = (n) => `[${c(`${name}.tsx:${n}`)}](${blob(tsxFile, n)})`;
+	const clink = (a, b) => `[${c(`${name}.css:${a}${b ? `-${b}` : ''}`)}](${blob(cssFile, b ? `${a}-L${b}` : a)})`;
+	const intent = cp.intent ?? {};
+	const fromRuling = (re) => {
+		const ruling = (decisions ? mdSection(decisions, '## 2026-10-07 · SideBar sizes with no token, and the accepted divider and hover label') : null) ?? '';
+		return ruling.split('\n').find((l) => re.test(l));
+	};
+
+	// Empty "instead".
+	const dont = intent.dont_use_when ?? [];
+	const empties = dont.map((x, i) => (x.instead ? null : i + 1)).filter(Boolean);
+	const sI = sub(SIDEBAR_NOTES.subInstead);
+	if (empties.length && sI)
+		out.usage.push(`**Open item: no alternative named for item${empties.length > 1 ? 's' : ''} ${empties.join(' and ')}.** ${empties.length > 1 ? 'Those items have' : 'That item has'} an empty ${c('instead')} in ${c(`${name}.intent.json`)}. The Figma page names no alternative: it says "put them in the page, under the title" and "group them, or move rare ones into Settings", and neither names a Horizon component. This page shows "The Figma page names no alternative" and does not fill the gap. Item ${empties[empties.length - 1]} also says "group them", but ${name} has no group or submenu (see below).\n\n${quote(sI)}`);
+
+	// The bug-note line, verbatim, from Figma.
+	const bugIdx = (intent.use_when ?? []).findIndex((x) => /always marks Dashboard active/.test(x));
+	const sB = sub(SIDEBAR_NOTES.subBug);
+	if (bugIdx >= 0 && sB) {
+		const notRuled = fromRuling(/^\*\*Not ruled\.\*\*/);
+		const bugSentence = plain(notRuled ?? '').match(/The Usage line[\s\S]*?design rule\./)?.[0] ?? null;
+		out.usage.push(`**Item ${bugIdx + 1} is Figma's own wording, and it reads as a bug note about the app, not a design rule.** It is shown above verbatim: "${t(intent.use_when[bugIdx])}" The rule in it is to mark the page you are on, and only that one. The clause after the colon describes a fault in an application, not in this component, and this page does not rewrite it. The decisions ruling lists it under "Not ruled" as a bug note. In the code, ${c('current')} is a boolean on each item (${tlink(tLine(/current\?: boolean/))}); nothing in ${c(`${name}.tsx`)} checks that only one item is current.\n\n${quote(sB)}${bugSentence ? `\n\nFrom the 2026-10-07 ruling in [decisions.md](${blob('decisions.md')}), under "Not ruled", as written:\n\n> ${t(bugSentence)}` : ''}`);
+	}
+
+	// Placement repeats the first use_when.
+	const sP = sub(SIDEBAR_NOTES.subPlacement);
+	if (sP && (intent.placement ?? []).length === 1)
+		out.usage.push(`**Placement repeats the first use line.** ${c('placement')} in ${c(`${name}.intent.json`)} has one entry, which restates item 1 of ${c('use_when')} with the story named. It adds no separate placement rule.\n\n${quote(sP)}`);
+
+	// What Figma doesn't draw and the code doesn't build, each checked in the code.
+	const nb = [];
+	const hrefL = tLine(/item\.href \?\? "#"/);
+	if (!/collaps|toggle|isOpen|expanded/i.test(cp.tsx)) nb.push('a collapse state or toggle');
+	if (!/@media|@container/.test(cp.css)) nb.push('a small-screen layout');
+	if (!/onKeyDown|ArrowDown|ArrowUp|key ===|\.key\b/.test(cp.tsx)) nb.push('arrow-key navigation (Tab, Shift+Tab and Enter work because each item is a native link)');
+	if (!/submenu|role="group"|<ul[\s\S]*<ul/i.test(cp.tsx)) nb.push('groups or submenus (the Figma Usage line says to group when there are more than 12 items)');
+	if (!/disabled|aria-disabled/.test(cp.tsx + cp.css)) nb.push('disabled items (the Figma best practice says to hide items the role cannot open instead)');
+	if (!/skip/i.test(cp.tsx)) nb.push('a skip link');
+	if (hrefL) nb.push(`a per-item destination: ${c('href')} is optional and falls back to ${c('"#"')} (${tlink(hrefL)}), so an item with no ${c('href')} goes nowhere`);
+	if (!/\.slice\(0,\s*12\)|length\s*>\s*12|length\s*<=\s*12/.test(cp.tsx)) nb.push('the cap of 12 items: any length of ' + c('items') + ' is rendered');
+	if (!/findIndex|filter\([^)]*current|some\([^)]*current/.test(cp.tsx)) nb.push('the rule that only one item is active: every item with ' + c('current') + ' set is marked');
+	if (nb.length) {
+		const ruled = fromRuling(/^\*\*Not ruled\.\*\*/);
+		out.usage.push(`### Not built\n\nFigma draws none of these, and ${c(`${name}.tsx`)} and ${c(`${name}.css`)} at ${c(SHORT)} build none of them:\n\n${nb.map((x) => `- ${x}`).join('\n')}\n\nThe 2026-10-07 ruling names the first six as "Anything Figma does not draw and the component does not build" and leaves them to a human.${ruled ? ` It reads, as written: "${t(plain(ruled.replace(/^\s*>\s*/, '')).match(/Anything Figma does not draw[^.]*\./)?.[0] ?? '')}"` : ''}`);
+	}
+
+	// variant_intent: the empty default, and the "active" key beyond the union.
+	const sD = sub(SIDEBAR_NOTES.subDefault);
+	if (sD && intent.variant_intent && intent.variant_intent.default === '')
+		out.variants.push(`**Open item: nothing for ${c('default')}.** ${c('variant_intent.default')} is empty in ${c(`${name}.intent.json`)} because Figma publishes no description of the default item. ${c('hover')} and ${c('active')} say what they look like ("lighter", "the current page"), not when to choose them. This page does not write one.\n\n${quote(sD)}`);
+	const unionL = tLine(/export type SideBarItemState/);
+	const curL = tLine(/current\?: boolean/);
+	const w9 = find(SIDEBAR_NOTES.strict);
+	if (w9 && unionL && curL && intent.variant_intent && 'active' in intent.variant_intent && cp.unionOf('SideBarItemState') && !cp.unionOf('SideBarItemState').values.includes('active'))
+		out.variants.push(`**${c('active')} is not a value of the code's union.** ${c('SideBarItemState')} is ${c(`${cp.unionOf('SideBarItemState').values.map((v) => `"${v}"`).join(' | ')}`)} (${tlink(unionL)}). Figma's ${c('state=active')} is carried by the boolean ${c('current')} on an item (${tlink(curL)}), which also sets ${c('aria-current="page"')}. ${c('variant_intent')} has the key ${c('active')} because Figma publishes that state, so the table above has one key more than the union. The review records this as a judgement call a human can overrule.\n\n${quote(w9)}`);
+
+	// Accessibility: the focus ring (an open problem) and what was never tested.
+	const ringA = cLine(/:focus-visible \{/);
+	const w3 = find(SIDEBAR_NOTES.ring);
+	const items = [];
+	if (w3 && ringA && /outline:.*--color-border-focus/.test(cl[ringA]))
+		items.push(`**Open accessibility problem: the focus ring has low contrast.** The keyboard focus ring (${clink(ringA, ringA + 3)}: a 2px ${c('--color-border-focus')} outline, drawn inside the row) is not in Figma. The engineer added it. It is true that it exists, and the last fact above says so, but it does not meet the 3:1 minimum of WCAG 2.1 success criterion 1.4.11 on the two surfaces a focused item sits on. The reviewer computed 2.16:1 on the panel and 1.60:1 on the active fill, and the figures were checked again for this page against the built token values (#1d44ba on #161925, #1d44ba on #162d69); only on the hover fill does it reach 7.76:1. This is not a feature and no ruling covers it: the ruling's "Not ruled" line says its contrast was never checked. It is owned first by the designer, for a ring colour that works on the inverse panel, and then by the engineer.\n\n${quote(w3)}`);
+	const w4 = find(SIDEBAR_NOTES.untested);
+	if (w4)
+		items.push(`**Not tested.** Real Tab order, a real mouse hover, screen-reader output and the dark theme were never tested by anyone: QA had no real input, and the release review had no browser or input device. The facts above cite the code that should produce them; they are not evidence of the behaviour.\n\n${quote(w4)}`);
+	if (items.length) out.a11y.push(`### Open items\n\nThey are open items, not waived.\n\n${items.join('\n\n')}`);
+
+	// Composition.
+	const w7 = find(SIDEBAR_NOTES.composes);
+	const impLink = tLine(/import \{ Link \}/);
+	const impLogo = tLine(/import \{ Logo \}/);
+	const useLink = tLine(/<Link$|<Link\b/);
+	const useLogo = tLine(/<Logo\b/);
+	const stories = has(`${cp.dir}/${name}.stories.tsx`) ? show(`${cp.dir}/${name}.stories.tsx`) : '';
+	const hdrL = stories.split('\n').findIndex((l) => /<Header\b/.test(l)) + 1;
+	const sPw = sub(SIDEBAR_NOTES.subPairs);
+	if (w7 && impLink && impLogo && useLink && useLogo)
+		out.composition.push(`**From the code.** ${c(`${name}.tsx`)} is built from [Logo](/core/components/logo/) and [Link](/core/components/link/): it imports them (${tlink(impLogo)}, ${tlink(impLink)}), renders ${c('<Logo type="mark" alt="">')} in the header (${tlink(useLogo)}) and one ${c('<Link>')} per item (${tlink(useLink)}), and the registry's Composes column records both. ${c('pairs_with')} lists ${(intent.pairs_with ?? []).map((x) => c(x)).join(', ')}, which is a pairing and not a part: the ${c('BackOfficePage')} story places ${c('<Header type="backoffice">')} to the right of the sidebar${hdrL ? ` ([${c(`${name}.stories.tsx:${hdrL}`)}](${blob(`${cp.dir}/${name}.stories.tsx`, hdrL)}))` : ''}.\n\n${quote(w7)}${sPw ? `\n\n${quote(sPw)}` : ''}`);
+
+	// VERSIONING.md and CHANGELOG.md.
+	const w8 = find(SIDEBAR_NOTES.versioning);
+	const clog = has('CHANGELOG.md') ? show('CHANGELOG.md') : '';
+	if (w8 && !/\bSide ?Bar\b/i.test(versioning ?? '') && !/\bSide ?Bar\b/i.test(clog))
+		out.promise.push(`**${name} is not in this commitment.** Neither ${c('VERSIONING.md')} nor ${c('CHANGELOG.md')} at ${c(SHORT)} names ${name}, and ${name} is in no published version. A human updates them before a version containing ${name} ships.\n\n${quote(w8)}`);
+
+	// Design: the unconfirmed divider alpha, the hover label, the ring and the font.
+	const dL = cLine(/color-mix\(in srgb, var\(--color-text-inverse\) 12%/);
+	const w1 = find(SIDEBAR_NOTES.divider);
+	const alphaPara = fromRuling(/^\s*>?\s*The 12% is the engineer's estimate/);
+	if (w1 && dL)
+		out.design.push(`**Divider alpha: unconfirmed.** The divider is ${c('color-mix(in srgb, var(--color-text-inverse) 12%, transparent)')} (${clink(dL)}). Figma node ${c('246:45')} fills it with ${c('color/text/inverse')} at an opacity the design tools do not expose, so the 12% is an engineer's estimate and is not shown here as matching Figma. The user accepted it as a design decision. From the 2026-10-07 ruling in [decisions.md](${blob('decisions.md')}), as written:\n\n> ${alphaPara ? t(plain(alphaPara.replace(/^\s*>\s*/, ''))) : ''}\n\n${quote(w1)}`);
+	const hL = cLine(/color: var\(--color-bg-inverse\);/);
+	const w2 = find(SIDEBAR_NOTES.hover);
+	const hoverPara = fromRuling(/^\s*>?\s*The hover label colour stays/);
+	if (w2 && hL && hoverPara)
+		out.design.push(`**Hover label: the build differs from Figma.** Figma ${c('246:6')} fills the hovered row with ${c('color/text/inverse')} (#f9fafb) and ${c('246:7')} colours its label ${c('color/text/inverse')} too, so as designed the label is invisible. The build sets ${c('color: var(--color-bg-inverse)')} (#161925) at ${clink(hL)}, 16.75:1 on the fill. The user accepted that as a design decision and Figma was not changed, so the node still draws the invisible label. From the 2026-10-07 ruling in [decisions.md](${blob('decisions.md')}), as written:\n\n> ${t(plain(hoverPara.replace(/^\s*>\s*/, '')))}\n\n${quote(w2)}`);
+	if (w3 && ringA)
+		out.design.push(`**Focus ring: not in Figma.** Figma draws no focus state. The ring at ${clink(ringA, ringA + 3)} was added by the engineer and its contrast is an open accessibility problem, described on the Usage tab under Accessibility. The owner is the designer first, then the engineer.`);
+	const w5 = find(SIDEBAR_NOTES.font);
+	if (w5) out.design.push(`**Font.** ${quote(w5)}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'SideBar') return sideBarNotes(cp, fig, review);
 	if (cp.name === 'Modal') return modalNotes(cp, fig, review);
 	if (cp.name === 'Card') return cardNotes(cp, fig, review);
 	if (cp.name === 'Calendar') return calendarNotes(cp, fig, review);
@@ -1657,9 +1800,9 @@ function componentPage(cp) {
 	if (!intent) usage.push(notice(`No ${intentPath} at ${SHORT}.`));
 	else if (!intent.use_when?.length) usage.push(notice(`No usage region in Figma for ${name} (use_when is empty in ${intentPath}).`));
 	else {
-		// Where the intent also carries Figma's Best Practice lines in use_when (Card and Modal items 4 to 6), they are listed once, under Best practice.
+		// Where the intent also carries Figma's Best Practice lines in use_when (Card, Modal and SideBar items 4 to 6), they are listed once, under Best practice.
 		const bp = new Set(fig?.usage?.best_practice ?? []);
-		const shown = name === 'Card' || name === 'Modal' ? intent.use_when.filter((x) => !bp.has(x)) : intent.use_when;
+		const shown = name === 'Card' || name === 'Modal' || name === 'SideBar' ? intent.use_when.filter((x) => !bp.has(x)) : intent.use_when;
 		usage.push(shown.map((x) => `- ${t(x)}`).join('\n'));
 		if (shown.length < intent.use_when.length)
 			usage.push(`${intent.use_when.length - shown.length} more lines in ${c('use_when')} in ${c(intentPath)} (items ${shown.length + 1} to ${intent.use_when.length}) are Figma's Best Practice lines, word for word. They are listed once, under "Best practice" below.`);
@@ -1703,7 +1846,7 @@ function componentPage(cp) {
 	usage.push('## Best practice');
 	if (fig?.usage?.best_practice?.length)
 		usage.push(
-			`From the Figma documentation page (usage node ${c(fig.usage.node)}), as written. ${name === 'Modal' ? `${c(`${name}.intent.json`)} carries these same lines as items ${(intent?.use_when ?? []).length - fig.usage.best_practice.length + 1} to ${(intent?.use_when ?? []).length} of ${c('use_when')}, word for word; they are listed here once.` : `These items aren't carried into ${c(`${name}.intent.json`)}, which has no field for them.`}\n\n` +
+			`From the Figma documentation page (usage node ${c(fig.usage.node)}), as written. ${name === 'Modal' || name === 'SideBar' ? `${c(`${name}.intent.json`)} carries these same lines as items ${(intent?.use_when ?? []).length - fig.usage.best_practice.length + 1} to ${(intent?.use_when ?? []).length} of ${c('use_when')}, word for word; they are listed here once.` : `These items aren't carried into ${c(`${name}.intent.json`)}, which has no field for them.`}\n\n` +
 				fig.usage.best_practice.map((x) => `- ${t(x)}`).join('\n'),
 		);
 	else usage.push(notice(`No best-practice items for ${name} in sources/figma.json (no usage region was read), and ${name}.intent.json has no field for them.`));

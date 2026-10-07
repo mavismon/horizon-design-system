@@ -3628,6 +3628,192 @@
           ]
         }
       }
+    },
+    "SideBar": {
+      "readAt": "2026-10-07",
+      "page": {
+        "id": "57:1651",
+        "name": "Sidebar"
+      },
+      "node": {
+        "id": "247:18",
+        "name": "❖ sidebar"
+      },
+      "component": {
+        "id": "246:11",
+        "name": "sidebar",
+        "kind": "component"
+      },
+      "registryLink": {
+        "node": "57:1651",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1651), not the component 246:11."
+      },
+      "internal": [
+        {
+          "id": "246:10",
+          "name": "_sidebar-item",
+          "description": "Internal part of sidebar (not for direct use). One nav item: default, hover (lighter) or active (the current page).",
+          "states": [
+            {
+              "value": "state=default",
+              "node": "246:4"
+            },
+            {
+              "value": "state=hover",
+              "node": "246:6"
+            },
+            {
+              "value": "state=active",
+              "node": "246:8"
+            }
+          ]
+        }
+      ],
+      "description": "The back office navigation, on the left of every page (220 wide, full height). Logo mark and Title at the top, then up to 12 nav items (_sidebar-item: default, hover, active; mark the current page active and edit labels from the layers), and the organisation footer (Organisation, Detail; ShowFooter). Pair with header type=backoffice to its right.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "state",
+            "values": [
+              {
+                "value": "default",
+                "node": "246:4"
+              },
+              {
+                "value": "hover",
+                "node": "246:6"
+              },
+              {
+                "value": "active",
+                "node": "246:8"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "state=default": "246:4",
+          "state=hover": "246:6",
+          "state=active": "246:8"
+        },
+        "cells": 3,
+        "note": "The matrix is the item part _sidebar-item (set 246:10): state default (246:4), hover (246:6) and active (246:8), each 196x32. The sidebar itself (component 246:11, 220x1000) is not a variant set: it has 12 nav item instances, a divider and a footer, and the boolean property ShowFooter (true or false, specimen board 233:14320). Figma draws no focus, pressed, disabled, collapsed or small-screen state. The canvas also holds the example 'back office page' (247:21: sidebar, header type=backoffice and a calendar), and the documentation frame for the item part is 233:14406. In the stories the item state is not a single story argument: it is set through the items array. ItemHover pins state hover on the Reservations item, and Default (Dashboard) and CurrentPage (Calendar) carry state active through the current boolean, so a row below that reads 'no story' means no story sets a state arg, not that the state has no story."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The sidebar documentation frame renders every instance in one theme. It has no separate light and dark frames. The panel is the inverse (dark) surface, color/bg/inverse #161925."
+      },
+      "boundVariables": {
+        "--color-text-inverse": "#f9fafb",
+        "--fontSize-2xl": "18",
+        "--fontWeight-bold": "Bold",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-2xl": "26",
+        "--spacing-md": "12",
+        "--fontSize-lg": "13",
+        "--fontWeight-medium": "Medium",
+        "--lineHeight-lg": "20",
+        "--radius-xs": "2",
+        "--color-primary-foreground": "#162d69",
+        "--color-text-inverse-secondary": "#d1d5db",
+        "--fontWeight-regular": "Regular",
+        "--spacing-xs": "4",
+        "--fontSize-sm": "11",
+        "--lineHeight-sm": "16",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--spacing-lg": "16",
+        "--spacing-xl": "20",
+        "--color-bg-inverse": "#161925"
+      },
+      "unboundValues": [
+        {
+          "layer": "sidebar (246:11)",
+          "property": "width",
+          "value": "220px",
+          "css": {
+            "selector": ".hz-sidebar",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "sidebar (246:11)",
+          "property": "height",
+          "value": "1000px",
+          "css": {
+            "selector": ".hz-sidebar",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "item, every state (246:4, 246:6, 246:8)",
+          "property": "height",
+          "value": "32px",
+          "css": {
+            "selector": ".hz-sidebar",
+            "property": "--hz-sidebar-item-height"
+          }
+        },
+        {
+          "layer": "Footer (246:46), between Organisation and Detail",
+          "property": "gap",
+          "value": "2px",
+          "css": {
+            "selector": ".hz-sidebar__footer",
+            "property": "gap"
+          }
+        },
+        {
+          "layer": "Divider (246:45)",
+          "property": "fill opacity",
+          "value": "color/text/inverse at a partial opacity the design tools do not expose",
+          "css": {
+            "selector": ".hz-sidebar__divider",
+            "property": "background"
+          }
+        }
+      ],
+      "usage": {
+        "node": "247:520",
+        "use_when_heading": "Use the sidebar",
+        "use_when_node": "247:523",
+        "use_when": [
+          "On every back office page, fixed on the left at full height, with header type=backoffice to its right.",
+          "Mark the page you are on as active, and only that one: the app currently always marks Dashboard active, which needs fixing.",
+          "Keep the item order the same on every page, so people find things by position."
+        ],
+        "use_when_nodes": {
+          "group": "247:523",
+          "items": [
+            "247:525",
+            "247:526",
+            "247:527"
+          ]
+        },
+        "dont_use_when_heading": "Do not use the sidebar",
+        "dont_use_when_node": "247:528",
+        "dont_use_when": [
+          "On the guest website or app: use header type=web or type=app instead.",
+          "For actions such as \"Export\" or \"Add rate\": put them in the page, under the title.",
+          "For more than 12 items: group them, or move rare ones into Settings."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Use short labels of one to three words, such as \"Team and roles\".",
+          "Show which organisation and how many properties the admin is looking at in the footer.",
+          "Hide items the person's role can't open, instead of showing them disabled."
+        ],
+        "best_practice_nodes": {
+          "group": "247:533",
+          "items": [
+            "247:535",
+            "247:536",
+            "247:537"
+          ]
+        }
+      }
     }
   }
 }
