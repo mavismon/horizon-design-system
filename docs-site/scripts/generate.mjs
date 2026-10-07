@@ -2454,8 +2454,8 @@ for (const cp of comps) write(`core/components/${slugOf(cp.name)}.mdx`, componen
 		body.push(pub ? `Published to npm as ${c(`${pkg.name}@${v}`)}, tag ${c(tag)}.` : `Tagged ${c(tag)}. Not found on npm.`);
 		const tagPkg = JSON.parse(show('package.json', tag));
 		const tagIndex = show('src/index.ts', tag);
-		const compsAt = [...tagIndex.matchAll(/export \{([^}]+)\}/g)].flatMap((m) => m[1].split(',').map((x) => x.trim()));
-		const typesAt = [...tagIndex.matchAll(/export type \{([^}]+)\}/g)].flatMap((m) => m[1].split(',').map((x) => x.trim()));
+		const compsAt = [...tagIndex.matchAll(/export \{([^}]+)\}/g)].flatMap((m) => m[1].split(',').map((x) => x.trim()).filter(Boolean));
+		const typesAt = [...tagIndex.matchAll(/export type \{([^}]+)\}/g)].flatMap((m) => m[1].split(',').map((x) => x.trim()).filter(Boolean));
 		body.push('', '### Contents', '');
 		body.push(`- Components: ${compsAt.map((n) => (comps.some((cp) => cp.name === n) ? `[${n}](/core/components/${slugOf(n)}/)` : c(n))).join(', ') || 'none'}`);
 		if (typesAt.length) body.push(`- Types: ${typesAt.map(c).join(', ')}`);

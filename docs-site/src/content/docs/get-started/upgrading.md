@@ -3,6 +3,12 @@ title: Upgrading
 description: What changes between versions, and what to do about it.
 ---
 
+## To 0.3.0
+
+0.3.0 adds six components, Calendar, Card, Form, Modal, SideBar and Table (types `CalendarProps`, `CalendarType`, `CalendarDateRange`, `CalendarOccupancyEntry`, `CardProps`, `CardType`, `FormProps`, `FormType`, `ModalProps`, `ModalType`, `ModalTone`, `ModalRow`, `SideBarProps`, `SideBarItem`, `SideBarItemState`, and the `Table` types listed in the changelog), plus `Textfield` (`TextfieldProps`, `TextfieldState`), the input Form is built from, now exported from the package root. It removes nothing: no export, prop, class or token from 0.2.1 was removed or renamed, so there is nothing to change in your code to upgrade. See the [changelog](/get-started/changelog/).
+
+One thing is not automatic. On 0.x a caret range never crosses a minor version, so `^0.2.1` stays on 0.2.x and will not install 0.3.0 even though 0.3.0 breaks nothing. To upgrade, change the range to `^0.3.0` (or install `@layerbasesystemic/horizon-design-system@0.3.0`). See [Versioning](/get-started/versioning/).
+
 ## To 0.2.1
 
 0.2.1 adds one component, Stepper (types `StepperProps`, `StepperType`, `StepperState`, `StepperStep` and `StepperStepState`), and removes nothing: no export, prop, class or token from 0.2.0 was removed or renamed. There is nothing to change in your code to upgrade. See the [changelog](/get-started/changelog/).
