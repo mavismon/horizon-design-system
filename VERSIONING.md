@@ -30,6 +30,17 @@ Changing any of these in a way that breaks existing use is a breaking change:
 
 Something is deprecated in one release before it's removed in a later breaking release. The changelog names the replacement.
 
+## Unreleased on `main`
+
+`main` exports five components that no published version contains yet: Card, Calendar, Modal, Form and Textfield, each from the package root with its props type (Form also exports `FormType`, Modal also exports `ModalType`, `ModalTone` and `ModalRow`, and Textfield also exports `TextfieldState`). The latest published version, 0.2.1, has none of them, so installing it gets none of them.
+
+Nothing here is a commitment until a version ships. Whichever version carries them, they are pure additions, so on 0.x they are a patch (see the table above), and from then on their props, prop values and defaults, `hz-` class names and exports are public like every other component's.
+
+Two things about this group are worth knowing before it ships:
+
+- **Form and Modal** each passed release review with their literal widths and sizes covered by a ruling in `decisions.md`, because no size tokens exist for them. Those literals are accepted until the designer adds matching tokens, so a later change to Form's or Modal's sizes to use tokens would be a patch, not a breaking change, as long as the rendered sizes stay the same.
+- **Textfield** is exported from the package root, so it becomes public with its props type and `hz-textfield` classes. It lives inside Form's folder and no decision has recorded that it should be public. The maintainers should either confirm it or stop exporting it before the version that carries it ships. Removing an export after it ships is a breaking change.
+
 ## What 0.2.1 commits you to
 
 0.2.1 adds one component, Stepper, on top of 0.2.0. It contains seventeen components, each exported from the package root with its props type: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Stepper, Toggle. It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Stepper is a pure addition, so it's a patch on 0.x (see the table above). Any change that breaks those on 0.x bumps the version to 0.3.0.
