@@ -43,8 +43,8 @@ A header strip: the component's status and the version it shipped in, then links
 | Tab | Source | Contents |
 |---|---|---|
 | Usage | `[Name].intent.json` | When to use, where it goes, when not to (with each alternative), best practice, what each variant is for, accessibility facts linked to their source lines, composition, what this version promises. |
-| Examples | README, Storybook | The README usage example, then every story that isn't a variant-matrix row, embedded live from Storybook in light and in dark. |
-| Code | The component's types | The import, props with defaults and doc comments, union types, the tokens it needs with their light and dark values, and Storybook's own props table embedded. |
+| Examples | Storybook | Every story that isn't a variant-matrix row, embedded live from Storybook. Dark embeds appear only once the Storybook has a theme switch. |
+| Code | The component's types | The import, props with defaults and doc comments, union types, the tokens it needs with their light and dark values, and Storybook's own props table embedded when the Storybook publishes one. |
 | Design | Figma, stories | The Figma node embedded, the variant matrix with every matrix story linked, both themes, every value Figma never bound, and the design gaps recorded against it. |
 | Changelog | git | `git log` for the component and its subcomponents, each commit marked with the version it shipped in. |
 
@@ -72,7 +72,7 @@ Every guide (Designing, Developing, Versioning, Upgrading, Skills, Theming and H
 
 ## Missing source
 
-Keep the section in place with a notice naming exactly what's missing, for example "No usage region in Figma for Button". **Never invent** a sentence to fill it.
+Leave the section out. The generator drops the block, and any heading left with nothing under it, so a page never shows an empty section or a "Missing source" notice. **Never invent** a sentence to fill the gap. Gaps that a source itself records stay on the page, because they are content: "Open item" notes, "Figma doesn't say", "Not in Figma", the design gaps recorded against the component and the warnings quoted from the release review.
 
 ## Steps
 
@@ -84,7 +84,8 @@ Keep the section in place with a notice naming exactly what's missing, for examp
 6. **Push `astro`**, which triggers the production deployment. Confirm in Vercel that the deployment's target is `production`, not a preview.
 7. **Verify live:**
    - Fetch every page of the live site. Each one returns 200.
-   - Each component page has all five tabs, each with content (a missing-source notice counts as content).
+   - Each component page has all five tabs, each with real content, and no empty headings. Nothing fills an empty tab, so check it.
+   - No page contains "Missing source" or "From the README".
    - Every header link returns 200. The one exception: a Figma link to a team-only file may answer 403.
 8. **Only then write each component's `Astro Link`** to the registry. If any check in step 7 fails, write nothing, and report what failed.
 
@@ -94,10 +95,9 @@ Keep the section in place with a notice naming exactly what's missing, for examp
 
 ## Known gaps today
 
-- `docs-site/scripts/generate.mjs` doesn't exist yet, and `docs-site/` still holds Starlight's template pages.
-- The repo has no `README.md`, so the home hero line and the Examples tab's README usage example have no source.
-- No component has an intent file yet (see `component-intent`), so every Usage tab would show a missing-source notice.
-- The Storybook has no theme switch, so dark-mode story embeds have no source.
+- The Storybook has no theme switch, so dark-mode story embeds have no source and are left out.
+- The deployed Storybook publishes no docs (autodocs) page, so the Code tab has no embedded props table.
+- Some components carry no placement, doc comments or union types. Those sections are left out of the page.
 
 ## Never
 
