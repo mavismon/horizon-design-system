@@ -70,6 +70,7 @@ export default defineConfig({
 								{ label: 'SearchBar', slug: 'core/components/searchbar' },
 								{ label: 'SideBar', slug: 'core/components/sidebar' },
 								{ label: 'Stepper', slug: 'core/components/stepper' },
+								{ label: 'Table', slug: 'core/components/table' },
 								{ label: 'Toggle', slug: 'core/components/toggle' },
 								// </generated:components>
 							],

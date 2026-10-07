@@ -1592,7 +1592,130 @@ function sideBarNotes(cp, fig, review) {
 	return out;
 }
 
+// Table: the warnings of the release review that the page must show, each quoted as written (the numbered list under
+// "Warnings") and checked against the code at the pinned commit; a note is only written when the code bears it out.
+// usage = the empty "instead" entries and the placement repeat; a11y = the warning tag contrast, the focus ring and what was never tested;
+// composition = Checkbox, Link and Button; promise = VERSIONING.md and CHANGELOG.md do not name Table;
+// design = the warning tag colours, the items Figma doesn't draw, the tag tones with no pixel spec and the missing descending story.
+const TABLE_NOTES = {
+	contrast: /^\*\*Warning tag contrast about 2:1/,
+	added: /^\*\*Added by the engineer, not in Figma/,
+	tagSpec: /^\*\*Neutral, error, warning and info tag colours have no pixel spec/,
+	dark: /^\*\*Dark theme unverified/,
+	intent: /^\*\*Intent file\./,
+	descStory: /^\*\*No story for descending sort/,
+	versioning: /^\*\*G7 standing note/,
+};
+
+function tableNotes(cp, fig, review) {
+	const out = { usage: [], variants: [], a11y: [], composition: [], promise: [], design: [] };
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	if (!m) return out;
+	const md = show(m[2], m[1]);
+	const warnings = (mdSection(md, '## Warnings') ?? '').split('\n').filter((l) => /^\d+\.\s/.test(l)).map((l) => l.replace(/^\d+\.\s+/, ''));
+	const find = (re) => warnings.find((w) => re.test(w));
+	const quote = (w) => `From the [release review](${review.url}), under "Warnings", as written:\n\n> ${t(plain(w))}`;
+	const name = cp.name;
+	const tsxFile = `${cp.dir}/${name}.tsx`;
+	const cssFile = `${cp.dir}/${name}.css`;
+	const tl = cp.tsx.split('\n');
+	const cl = cp.css.split('\n');
+	const tLine = (re) => tl.findIndex((l) => re.test(l)) + 1;
+	const cLine = (re) => cl.findIndex((l) => re.test(l)) + 1;
+	const tlink = (n) => `[${c(`${name}.tsx:${n}`)}](${blob(tsxFile, n)})`;
+	const clink = (a, b) => `[${c(`${name}.css:${a}${b ? `-${b}` : ''}`)}](${blob(cssFile, b ? `${a}-L${b}` : a)})`;
+	const intent = cp.intent ?? {};
+	const storyFile = `${cp.dir}/${name}.stories.tsx`;
+	const stories = has(storyFile) ? show(storyFile) : '';
+
+	// WCAG contrast of two #rrggbb colours.
+	const lum = (hex) => {
+		const v = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4));
+		return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+	};
+	const ratio = (a, b) => {
+		const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+		return (x + 0.05) / (y + 0.05);
+	};
+
+	// Usage: the "instead" entries that are empty (review warning 5, "Intent file").
+	const w5 = find(TABLE_NOTES.intent);
+	const dont = intent.dont_use_when ?? [];
+	const empties = dont.map((x, i) => (x.instead ? null : i + 1)).filter(Boolean);
+	if (w5 && empties.length)
+		out.usage.push(`**Open item: no alternative named for item${empties.length > 1 ? 's' : ''} ${empties.join(' and ')}.** ${empties.length > 1 ? 'Those items have' : 'That item has'} an empty ${c('instead')} in ${c(`${name}.intent.json`)}. The Figma page names no Horizon component for them: "use detail rows" and "link to a detail page instead" are not components of this system. This page shows "The Figma page names no alternative" and does not fill the gap. The release review also records that some accessibility facts bundle a second claim at another line; each is true and implemented.\n\n${quote(w5)}`);
+
+	// Usage: what Figma doesn't draw and the code adds (review warning 2).
+	const w2 = find(TABLE_NOTES.added);
+	const focusL = cLine(/\.hz-table \.hz-checkbox__input:focus-visible/);
+	const disL = cLine(/\.hz-table__page-button:disabled/);
+	const ascL = cLine(/\.hz-table__sort-icon--ascending/);
+	const sortL = tLine(/direction === "ascending" && "hz-table__sort-icon--ascending"/);
+	const added = [];
+	if (sortL) added.push(`the descending sort arrow: ${c('TableSortDirection')} has ${c('"ascending" | "descending"')} (${tlink(tLine(/export type TableSortDirection/))}) and the arrow turns for ascending (${tlink(sortL)}, ${ascL ? clink(ascL, ascL + 2) : ''})`);
+	if (focusL) added.push(`the keyboard focus ring on the checkboxes, the sort button and the action links (${clink(focusL - 1, focusL + 4)})`);
+	if (disL) added.push(`disabled Previous and Next: the ${c('previousDisabled')} and ${c('nextDisabled')} props and the ${c(':disabled')} rule (${clink(disL, disL + 4)})`);
+	if (w2 && added.length)
+		out.usage.push(`### Added by the engineer, not in Figma\n\nFigma draws none of these, and ${c(`${name}.tsx`)} and ${c(`${name}.css`)} at ${c(SHORT)} build them anyway. The designer still has to confirm them.\n\n${added.map((x) => `- ${x}`).join('\n')}\n\n${quote(w2)}`);
+
+	// Variants: the tags with no pixel spec (review warning 3).
+	const w3 = find(TABLE_NOTES.tagSpec);
+	if (w3)
+		out.variants.push(`**Four of the five tones have no pixel spec in Figma.** The table in Figma draws only the success tag. The tag set (${c('248:18')}) holds all five tones as 38x22 swatches. ${c('neutral')}, ${c('error')}, ${c('warning')} and ${c('info')} have no further colour or pixel specification in the Figma Table frame; QA passed them on geometry and token consistency.\n\n${quote(w3)}`);
+
+	// Accessibility: the warning tag contrast, the ring and the dark theme.
+	const items = [];
+	const w1 = find(TABLE_NOTES.contrast);
+	const wBg = light.get('--color-status-warning-bg');
+	const wFg = light.get('--color-status-warning');
+	const wTagL = cLine(/^\.hz-table__tag--warning/);
+	if (w1 && wBg && wFg && wTagL && /^#[0-9a-f]{6}$/i.test(wBg + '') && /^#[0-9a-f]{6}$/i.test(wFg + '')) {
+		const r = ratio(wBg, wFg);
+		const dBg = dark.get('--color-status-warning-bg');
+		const dFg = dark.get('--color-status-warning');
+		items.push(`**Open accessibility problem: the warning tag's text contrast is about 2:1.** The warning tone sets ${c('--color-status-warning')} text on ${c('--color-status-warning-bg')} (${clink(wTagL, wTagL + 3)}), 11px text. In the token build at ${c(SHORT)} that is ${c(wFg)} on ${c(wBg)}, which is ${r.toFixed(2)}:1 by the WCAG formula, below the 4.5:1 minimum of WCAG 2.1 success criterion 1.4.3 for text this size.${dBg && dFg && /^#[0-9a-f]{6}$/i.test(dBg) && /^#[0-9a-f]{6}$/i.test(dFg) ? ` In the dark token values it is ${c(dFg)} on ${c(dBg)}, ${ratio(dBg, dFg).toFixed(2)}:1.` : ''} The ruling's "Not ruled" line names it, so it is not waived. Figma's Table frame draws no warning tag, so there is no design to compare it with. It is owned by the designer or the token owner, and changing the colour would touch other components.\n\n${quote(w1)}`);
+	}
+	if (w2 && focusL)
+		items.push(`**Not in Figma: the keyboard focus ring.** The ring (${clink(focusL - 1, focusL + 4)}: a ${c('2px')} ${c('--color-border-focus')} outline at a ${c('2px')} offset) was added by the engineer. The last fact above says it exists. Its contrast was not measured by the review, and the designer has not confirmed it.`);
+	const w4 = find(TABLE_NOTES.dark);
+	if (w4)
+		items.push(`**Dark theme: not verified.** Tokens do not switch under ${c('prefers-color-scheme: dark')}, so the dark values on the Code tab are what the token build declares, and the review did not verify them on a rendered table. The review calls this library-wide, not a Table finding.\n\n${quote(w4)}`);
+	const notChecked = (mdSection(md, '## Not checked') ?? '').split('\n').find((l) => /^- No browser or real input/.test(l));
+	if (notChecked)
+		items.push(`**Not tested.** Real Tab order, the focus ring on screen, real hover, screen-reader output and the dark theme were not exercised. The facts above cite the code that should produce them; they are not evidence of the behaviour.\n\nFrom the [release review](${review.url}), under "Not checked", as written:\n\n> ${t(plain(notChecked.replace(/^-\s+/, '')))}`);
+	if (items.length) out.a11y.push(`### Open items\n\nThey are open items, not waived.\n\n${items.join('\n\n')}`);
+
+	// Composition: Checkbox, Link and Button.
+	const imp = (n) => tLine(new RegExp(`import \\{ ${n} \\}`));
+	const use = (n) => tLine(new RegExp(`<${n}\\b`));
+	const parts = ['Checkbox', 'Link', 'Button'].filter((n) => imp(n) && use(n));
+	if (parts.length === 3) {
+		const hdrL = stories.split('\n').findIndex((l) => /<Header\b/.test(l)) + 1;
+		out.composition.push(`**From the code.** ${c(`${name}.tsx`)} is built from ${parts.map((n) => `[${n}](/core/components/${n.toLowerCase()}/) (${tlink(imp(n))}, ${tlink(use(n))})`).join(', ')}, and the registry's Composes column records all three: Checkbox for the row and header checkboxes, Link for the action cells, Button for Previous and Next. ${c('pairs_with')} lists ${(intent.pairs_with ?? []).map((x) => c(x)).join(', ')}, which is a pairing and not a part: the ${c('BackOfficePage')} story places ${c('<SideBar />')} on the left and ${c('<Header type="backoffice">')} above the table${hdrL ? ` ([${c(`${name}.stories.tsx:${hdrL}`)}](${blob(storyFile, hdrL)}))` : ''}.`);
+	}
+
+	// VERSIONING.md and CHANGELOG.md.
+	const w7 = find(TABLE_NOTES.versioning);
+	const clog = has('CHANGELOG.md') ? show('CHANGELOG.md') : '';
+	if (w7 && !/\bTable\b/.test(versioning ?? '') && !/\bTable\b/.test(clog))
+		out.promise.push(`**${name} is not in this commitment.** Neither ${c('VERSIONING.md')} nor ${c('CHANGELOG.md')} at ${c(SHORT)} names ${name}, and ${name} is in no published version. A human updates them before a version containing ${name} ships. The review notes that if Table ships it is a pure addition, a patch on 0.x per ${c('VERSIONING.md')}.\n\n${quote(w7)}`);
+
+	// Design: the added items, the warning tag colours and the missing story.
+	if (w1 && wTagL)
+		out.design.push(`**Warning tag colours: low contrast, and no Figma node for them.** Figma's Table frame draws no warning or info tag, so the warning pair ${c('--color-status-warning')} on ${c('--color-status-warning-bg')} (${clink(wTagL, wTagL + 3)}) has nothing to be checked against. The contrast problem is described on the Usage tab under Accessibility.\n\n${quote(w1)}`);
+	if (w2 && added.length)
+		out.design.push(`**Not in Figma, added by the engineer.** The descending sort arrow, the keyboard focus ring and the disabled Previous / Next are listed on the Usage tab. The designer still has to confirm them.${disL ? ` The disabled rule (${clink(disL, disL + 4)}) sets a border colour, a text colour and a cursor and no background; ${c('--color-state-disabled-bg')} is used for the border colour only.` : ''}`);
+	if (w3)
+		out.design.push(`**Tag tones with no pixel spec.** Only success is drawn in the table. ${quote(w3)}`);
+	if (w4) out.design.push(`**Dark theme.** ${quote(w4)}`);
+	const w6 = find(TABLE_NOTES.descStory);
+	if (w6 && !/descending/i.test(stories.replace(/^\s*\/\/.*$/gm, '')))
+		out.design.push(`**No story for the descending sort.** ${c(`${name}.stories.tsx`)} has ${c('SortedAscending')} and no story that sets ${c('direction: "descending"')}; in Storybook the descending state is reached only by clicking the sort header in ${c('Interactive')}.\n\n${quote(w6)}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'Table') return tableNotes(cp, fig, review);
 	if (cp.name === 'SideBar') return sideBarNotes(cp, fig, review);
 	if (cp.name === 'Modal') return modalNotes(cp, fig, review);
 	if (cp.name === 'Card') return cardNotes(cp, fig, review);

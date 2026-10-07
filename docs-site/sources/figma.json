@@ -3814,6 +3814,264 @@
           ]
         }
       }
+    },
+    "Table": {
+      "readAt": "2026-10-07",
+      "page": {
+        "id": "57:1652",
+        "name": "Table"
+      },
+      "node": {
+        "id": "251:168",
+        "name": "❖ table"
+      },
+      "component": {
+        "id": "250:92",
+        "name": "table",
+        "kind": "component"
+      },
+      "registryLink": {
+        "node": "57:1652",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1652), not the component 250:92."
+      },
+      "internal": [
+        {
+          "id": "250:91",
+          "name": "_table-row",
+          "description": "Internal part of table (not for direct use). One row of 7 cells: header (grey, column names, sort arrow on the first), default, hover (grey) or selected (light blue, checkbox ticked).",
+          "states": [
+            {
+              "value": "state=header",
+              "node": "250:5"
+            },
+            {
+              "value": "state=default",
+              "node": "250:34"
+            },
+            {
+              "value": "state=hover",
+              "node": "250:52"
+            },
+            {
+              "value": "state=selected",
+              "node": "250:70"
+            }
+          ]
+        },
+        {
+          "id": "248:36",
+          "name": "_table-cell",
+          "description": "Internal part of table (not for direct use). One cell: header (11px, optional sort arrow), primary (first column, dark Medium), text, tag, action (blue text) or checkbox. Resize the width to set the column.",
+          "states": [
+            {
+              "value": "type=header",
+              "node": "248:19"
+            },
+            {
+              "value": "type=primary",
+              "node": "248:23"
+            },
+            {
+              "value": "type=text",
+              "node": "248:25"
+            },
+            {
+              "value": "type=tag",
+              "node": "248:27"
+            },
+            {
+              "value": "type=action",
+              "node": "248:30"
+            },
+            {
+              "value": "type=checkbox",
+              "node": "248:32"
+            }
+          ]
+        }
+      ],
+      "description": "A data table for the back office. Header row (column names, sort arrow), rows of _table-row (default, hover, selected) made of _table-cell parts (checkbox, primary, text, tag, action), and a footer with a Summary and Previous / Next (ShowFooter). 1172 wide to fit beside the Sidebar. Edit rows and cells from the layers; duplicate a row to add one.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "tone",
+            "values": [
+              {
+                "value": "success",
+                "node": "248:8"
+              },
+              {
+                "value": "neutral",
+                "node": "248:10"
+              },
+              {
+                "value": "error",
+                "node": "248:12"
+              },
+              {
+                "value": "warning",
+                "node": "248:14"
+              },
+              {
+                "value": "info",
+                "node": "248:16"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "tone=success": "248:8",
+          "tone=neutral": "248:10",
+          "tone=error": "248:12",
+          "tone=warning": "248:14",
+          "tone=info": "248:16"
+        },
+        "cells": 5,
+        "note": "The matrix is the tag part (set 248:18): tone success (248:8), neutral (248:10), error (248:12), warning (248:14) and info (248:16), each 38x22. The table itself (component 250:92, 1172x344) is not a variant set: its boolean property is ShowFooter (true or false) and the specimen with a hovered and a selected row is 251:171. Two internal parts carry states the stories reach through data, not through a single story argument: _table-row (set 250:91: header 250:5, default 250:34, hover 250:52, selected 250:70) and _table-cell (set 248:36: header, primary, text, tag, action and checkbox). The canvas draws only the success tone in the table itself; the other four tones appear only in the tag set, as 38x22 swatches. Figma draws no sorted-descending, focus, disabled Previous / Next, empty or loading state. In the stories the tone is not a single story argument: it is set on each row's status cell. TagTones draws all five tones, one per row, so a row below that reads 'no story' means no story sets a tone arg, not that the tone has no story."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The table documentation frame renders every instance in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-strong": "#c8d2dd",
+        "--spacing-xs": "4",
+        "--spacing-lg": "16",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-sm": "11",
+        "--fontWeight-medium": "Medium",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-sm": "16",
+        "--color-bg-surface": "#f2f3f5",
+        "--color-border-subtle": "#eef1f5",
+        "--color-text-primary": "#161925",
+        "--fontSize-md": "12",
+        "--lineHeight-md": "18",
+        "--fontWeight-regular": "Regular",
+        "--color-status-success": "#229c4a",
+        "--color-status-success-bg": "#e8faee",
+        "--color-text-link": "#1d44ba",
+        "--color-primary-default": "#3b71f2",
+        "--color-primary-light": "#eff3ff",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--radius-sm": "6",
+        "--color-neutral-default": "#8a909c",
+        "--spacing-sm": "8",
+        "--color-text-inverse": "#f9fafb",
+        "--color-status-error": "#ea3d3d",
+        "--color-status-error-bg": "#fff1f1",
+        "--color-status-warning": "#f2a927",
+        "--color-status-warning-bg": "#fffefa"
+      },
+      "unboundValues": [
+        {
+          "layer": "_table-cell, body types (primary, text, tag, action, checkbox)",
+          "property": "height",
+          "value": "48px",
+          "css": {
+            "selector": ".hz-table__cell",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "_table-cell type=header (248:19)",
+          "property": "height",
+          "value": "44px",
+          "css": {
+            "selector": ".hz-table__cell--header",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Sort icon (248:21)",
+          "property": "width and height",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-table__sort-icon",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Tag (248:8 and the four other tones)",
+          "property": "padding, top and bottom",
+          "value": "3px",
+          "css": {
+            "selector": ".hz-table__tag",
+            "property": "padding"
+          }
+        },
+        {
+          "layer": "Previous and Next (250:214, 250:222)",
+          "property": "width",
+          "value": "80px",
+          "css": {
+            "selector": ".hz-table .hz-table__page-button",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Column widths: checkbox, primary, text, tag, action",
+          "property": "width",
+          "value": "48, 268, 180, 140, 176px",
+          "codeFile": "src/components/Table/Table.tsx",
+          "codeNote": "Set in code as DEFAULT_WIDTH and CHECKBOX_WIDTH"
+        }
+      ],
+      "usage": {
+        "node": "251:353",
+        "use_when_heading": "Use a table",
+        "use_when_node": "251:356",
+        "use_when": [
+          "To list records people scan, compare and act on in the back office, such as rate seasons, admins, invites or documents.",
+          "Put the name of each record in the first column (primary), the status in a tag, and row actions such as \"Edit\" or \"Resend · Revoke\" in the last column.",
+          "Turn on the checkbox column when people act on several rows at once, and show the selected rows in light blue."
+        ],
+        "use_when_nodes": {
+          "group": "251:356",
+          "items": [
+            "251:358",
+            "251:359",
+            "251:360"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a table",
+        "dont_use_when_node": "251:361",
+        "dont_use_when": [
+          "On the guest website or app for browsing stays: use Card type listing.",
+          "For two or three facts about one thing, such as in a dialog: use detail rows.",
+          "Put long text or paragraphs in a cell: link to a detail page instead."
+        ],
+        "dont_use_when_nodes": {
+          "group": "251:361",
+          "items": [
+            "251:363",
+            "251:364",
+            "251:365"
+          ]
+        },
+        "best_practice_heading": "Best Practice",
+        "best_practice_node": "251:366",
+        "best_practice": [
+          "Keep column headers short and sentence case, and let people sort by the most useful column, usually the first.",
+          "Use tag tones the same way everywhere: success for live or on file, error for expired or missing, neutral for past or draft.",
+          "Show how many records there are in the footer, such as \"Showing 1 to 5 of 7 seasons\", and keep Previous and Next in the same place."
+        ],
+        "best_practice_nodes": {
+          "group": "251:366",
+          "items": [
+            "251:368",
+            "251:369",
+            "251:370"
+          ]
+        }
+      }
     }
   }
 }
