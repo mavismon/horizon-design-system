@@ -288,3 +288,24 @@ The panel shadow in `Modal.css` stays on the nearest token, `--elevation-lg` (`0
 **For an agent that hits it.** Gate 2 passes for exactly these four values on exactly these properties in `Form.css`. Quote this ruling when you report it. When a size token for 720px, 440px, 400px or 320px appears, the ruling no longer covers that value: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The public export of `Textfield`, `TextfieldProps` and `TextfieldState` from `src/index.ts`, which the review raised as a warning.
+
+## 2026-10-07 · SideBar sizes with no token, and the accepted divider and hover label
+
+**Finding.** Release review gate 2 (Tokens) will fail SideBar for literal px values and one percentage. Figma (component 246:11; item set 246:10) draws the panel 220px wide (246:11), each nav item 32px high (246:4, 246:6, 246:8), and a 2px gap between the two footer lines (246:46). None of these is bound to a variable. There are no size tokens, and the spacing scale (4, 8, 12, 16, 20, 24px) has no 2px, 32px or 220px. The divider (246:45) is filled with `color/text/inverse` at a partial opacity that the design tools do not expose, and there is no alpha token. Separately, QA found the hover item as drawn is unreadable: node 246:6 fills the row with `color/text/inverse` (#f9fafb) and node 246:7 colours the label `color/text/inverse` too, so the label is invisible.
+
+**Ruling.** These literals in `src/components/SideBar/SideBar.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size and alpha tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `220px` | `width` | `.hz-sidebar` | 11 |
+| `32px` | `--hz-sidebar-item-height`, used for the item `height` and, through `calc`, its vertical padding | `.hz-sidebar` | 5 |
+| `2px` | `gap` | `.hz-sidebar__footer` | 102 |
+| `12%` | alpha in `color-mix(in srgb, var(--color-text-inverse) 12%, transparent)` | `.hz-sidebar__divider` | 95 |
+
+The 12% is the engineer's estimate, taken by sampling a rendered pixel (6% to 12%); Figma's real opacity was never read, so it is **unconfirmed** whether 12% matches it. The user accepted the built divider as a design decision (2026-10-07).
+
+The hover label colour stays `--color-bg-inverse` (#161925) on the `--color-text-inverse` (#f9fafb) fill, set at `SideBar.css:74`, against Figma's #f9fafb label. The user accepted this as a design decision (2026-10-07); Figma was not changed, so nodes 246:6 and 246:7 still draw the invisible label. The QA report (`reports/SideBar/qa-report.md`, round 2) records both decisions.
+
+**For an agent that hits it.** Gate 2 passes for exactly these four values on exactly these properties in `SideBar.css`. The hover label colour uses a token, so it is not a gate item: do not count it against a verdict, and quote this ruling when you report it. When a size token for 220px, 32px or 2px, or an alpha token for the divider appears, the ruling no longer covers that value: use the token. If the designer fixes the hover label in Figma, or documents the divider's opacity, the matching part of this ruling no longer applies and that state must be re-tested against the node.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The item `padding` derived from `--hz-sidebar-item-height` and `--lineheight-lg`, the unitless font weights 400, 500 and 700, and the responsive limits `100%` and `height: 100%`, which need no ruling. The focus ring and the nav's `overflow-y: auto`, which Figma does not draw and the engineer added; the ring's contrast on the dark panel was never checked. Anything Figma does not draw and the component does not build: a collapse state, small-screen layout, arrow-key navigation, groups, disabled items, a skip link. The Usage line "the app currently always marks Dashboard active, which needs fixing", which reads as a bug note and not a design rule.
