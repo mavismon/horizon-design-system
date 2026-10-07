@@ -248,6 +248,7 @@ The tag in `Card.css` stays on the nearest tokens: offset `--spacing-md` (12px),
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The tag's size, colours or font, which match Figma. The intent file's `pairs_with: ["Image"]` and its "make the whole listing card clickable" line, which the review raised as warnings.
 
+<<<<<<< HEAD
 ## 2026-10-07 · Modal sizes with no token, and the accepted shadow
 
 **Finding.** Release review gate 2 (Tokens) will fail Modal for literal px values and one percentage. Figma (component set 243:181; dialog 243:3, sheet 243:93) draws the dialog panel 520px wide and the sheet panel 390px wide, the sheet's grab handle 48px wide and 4px high (243:95, 243:139), the close × 20px wide and 20px high (243:8, 243:100), the sheet's top padding 10px (243:93), and the detail rows' block padding 10px (243:11). None of these is bound to a variable. There are no size tokens, and the spacing scale (4, 8, 12, 16, 20, 24px) has no 10px, so none of these values has a matching token. The backdrop (`color/bg/overlay`) is documented in Figma as "apply at 40%", and there is no alpha token. Separately, QA found the panel shadow Figma draws (`0 8 12` at `rgba(0,0,0,0.2)`, unbound) matches no elevation token, and the built component uses `--elevation-lg`.
@@ -271,3 +272,21 @@ The panel shadow in `Modal.css` stays on the nearest token, `--elevation-lg` (`0
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Modal.css`. The shadow is not a gate item, since it uses a token: do not count it against a verdict, and quote this ruling when you report it. The 10px values match the Button ruling in value only; that ruling covers `Button.css`, not this file. When a size token for 520px, 390px, 48px, 4px or 20px, a 10px spacing token, or an alpha token for the overlay appears, the ruling no longer covers that value: use the token. If the designer binds the shadow to a token in Figma, the shadow part of this ruling no longer applies and the shadow must be re-tested against the node.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The unitless font weights 400, 500 and 600, and the responsive limits `100%`, `100dvh` and `max-width: 100%`, which need no ruling. The inline px and `color-mix` in `Modal.stories.tsx`, which is not part of the stylesheet gate. The open-sheet width on a desktop viewport, which Figma does not draw. The 20px close target against the 24px WCAG 2.2 AA minimum, the initial focus on the close button, and the destructive tone's missing `alertdialog` role, which are design and accessibility gaps for a human to settle.
+=======
+## 2026-10-07 · Form widths with no token
+
+**Finding.** Release review gate 2 (Tokens) failed Form for four literal px values in `src/components/Form/Form.css`. Figma (component 57:1649, grid 233:8441, textfield 240:2) draws the section form 720px wide, the card form 440px wide, the field inside a section form 400px wide and the textfield 320px wide, and binds no variable to any of them. There are no size tokens, and the spacing scale has nothing that matches. The widths set the form's footprint and have no content or intrinsic size that could supply the number, so no equivalent technique avoids the literals. Each rule also carries `max-width: 100%`, so a form still shrinks to fit a narrow container.
+
+**Ruling.** These literals in `src/components/Form/Form.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `720px` | `width` | `.hz-form--section` | 27 |
+| `440px` | `width` | `.hz-form--card` | 32 |
+| `400px` | `width` | field inside a section form | 71 |
+| `320px` | `width` | `.hz-textfield` | 95 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these four values on exactly these properties in `Form.css`. Quote this ruling when you report it. When a size token for 720px, 440px, 400px or 320px appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The public export of `Textfield`, `TextfieldProps` and `TextfieldState` from `src/index.ts`, which the review raised as a warning.
+>>>>>>> origin/staging
