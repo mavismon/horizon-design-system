@@ -1,0 +1,88 @@
+{
+  "use_when": [
+    "On every back office page, fixed on the left at full height, with header type=backoffice to its right.",
+    "Mark the page you are on as active, and only that one: the app currently always marks Dashboard active, which needs fixing.",
+    "Keep the item order the same on every page, so people find things by position.",
+    "Use short labels of one to three words, such as \"Team and roles\".",
+    "Show which organisation and how many properties the admin is looking at in the footer.",
+    "Hide items the person's role can't open, instead of showing them disabled."
+  ],
+  "dont_use_when": [
+    {
+      "when": "On the guest website or app: use header type=web or type=app instead.",
+      "instead": "Header"
+    },
+    {
+      "when": "For actions such as \"Export\" or \"Add rate\": put them in the page, under the title.",
+      "instead": ""
+    },
+    {
+      "when": "For more than 12 items: group them, or move rare ones into Settings.",
+      "instead": ""
+    }
+  ],
+  "variant_intent": {
+    "default": "",
+    "hover": "lighter",
+    "active": "the current page"
+  },
+  "placement": [
+    "On the left of a back office page, with header type=backoffice to its right (the BackOfficePage story)."
+  ],
+  "pairs_with": [
+    "Header"
+  ],
+  "required_tokens": [
+    "--border-width-md",
+    "--border-width-sm",
+    "--color-bg-inverse",
+    "--color-border-focus",
+    "--color-primary-foreground",
+    "--color-text-inverse",
+    "--color-text-inverse-secondary",
+    "--fontfamily-body",
+    "--fontsize-2xl",
+    "--fontsize-lg",
+    "--fontsize-sm",
+    "--fontsize-xs",
+    "--lineheight-2xl",
+    "--lineheight-lg",
+    "--lineheight-sm",
+    "--lineheight-xs",
+    "--radius-xs",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-xl",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The items sit in a native <nav> landmark, named by navLabel (default \"Main\").",
+      "source": "src/components/SideBar/SideBar.tsx:65"
+    },
+    {
+      "fact": "The items are a list (<ul>, <li>), so a screen reader announces how many there are.",
+      "source": "src/components/SideBar/SideBar.tsx:66"
+    },
+    {
+      "fact": "Each item is Horizon's Link, a native <a href>, so Tab, Shift+Tab and Enter work with no extra script.",
+      "source": "src/components/SideBar/SideBar.tsx:69"
+    },
+    {
+      "fact": "The current page is marked aria-current=\"page\", not by colour alone.",
+      "source": "src/components/SideBar/SideBar.tsx:77"
+    },
+    {
+      "fact": "The logo mark is decorative (empty alt), since the title beside it names the app.",
+      "source": "src/components/SideBar/SideBar.tsx:62"
+    },
+    {
+      "fact": "The footer divider is hidden from assistive technology.",
+      "source": "src/components/SideBar/SideBar.tsx:85"
+    },
+    {
+      "fact": "A keyboard focus ring (color/border/focus, 2px) is drawn inside the item row.",
+      "source": "src/components/SideBar/SideBar.css:87"
+    }
+  ]
+}
