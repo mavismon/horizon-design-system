@@ -1,0 +1,78 @@
+{
+  "use_when": [
+    "Use type section for a form inside a page, such as Profile, payment details or back office settings, with a Save changes and Cancel group at the end.",
+    "Use type card for a short form on its own, such as Sign in, Create your account or Invite someone, with one full-width button.",
+    "Build every input from textfield; use Dropdown, Checkbox, Radiocard or Toggle in the same stack when a field is a choice.",
+    "Label every field above the input, and keep placeholders for examples, never for the label.",
+    "Show an error under the field that caused it and say how to fix it, such as \"Use a full email address\"; keep what the person typed.",
+    "Ask only for what you need, in the order people think about it, and put the main action last."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For one setting that applies at once: use a Toggle, without a Save button.",
+      "instead": "Toggle"
+    },
+    {
+      "when": "To search or filter a list: use Searchbar or Chip filters.",
+      "instead": "SearchBar"
+    },
+    {
+      "when": "For a long flow such as booking: split it into steps with Stepper type progress.",
+      "instead": "Stepper"
+    }
+  ],
+  "variant_intent": {
+    "section": "a form inside a page, such as Profile, payment details or back office settings, with a Save changes and Cancel group at the end",
+    "card": "a short form on its own, such as Sign in, Create your account or Invite someone, with one full-width button"
+  },
+  "placement": [],
+  "pairs_with": [
+    "Dropdown",
+    "Checkbox",
+    "Toggle"
+  ],
+  "required_tokens": [
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-border-default",
+    "--color-border-focus",
+    "--color-border-subtle",
+    "--color-state-disabled-bg",
+    "--color-status-error",
+    "--color-text-disabled",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-2xl",
+    "--fontsize-lg",
+    "--fontsize-md",
+    "--lineheight-2xl",
+    "--lineheight-lg",
+    "--lineheight-md",
+    "--radius-xs",
+    "--spacing-2xl",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-sm",
+    "--spacing-xl",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The root is a native <form> (noValidate); Enter in a field submits it, and the card's main action is a native type=submit button.",
+      "source": "src/components/Form/Form.tsx:85"
+    },
+    {
+      "fact": "The title is an <h2>.",
+      "source": "src/components/Form/Form.tsx:92"
+    },
+    {
+      "fact": "Every field is a native <input> with a <label> tied by htmlFor, so the label is always above the input and never a placeholder.",
+      "source": "src/components/Form/Textfield.tsx:49"
+    },
+    {
+      "fact": "The error state sets aria-invalid and links the helper or error text with aria-describedby; the disabled state is a real disabled attribute.",
+      "source": "src/components/Form/Textfield.tsx:56"
+    }
+  ]
+}
