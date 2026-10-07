@@ -47,3 +47,5 @@ export type {
   CalendarDateRange,
   CalendarOccupancyEntry,
 } from "./components/Calendar/Calendar";
+export { Modal } from "./components/Modal/Modal";
+export type { ModalProps, ModalType, ModalTone, ModalRow } from "./components/Modal/Modal";
