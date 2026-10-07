@@ -247,3 +247,20 @@ The tag in `Card.css` stays on the nearest tokens: offset `--spacing-md` (12px),
 **For an agent that hits it.** Gate 2 passes for exactly these two values on exactly these properties in `Card.css`. The tag is not a gate item, since it uses tokens throughout: do not count it against a verdict, and quote this ruling when you report it. When a size token for 284px or 234px appears, the ruling no longer covers that value: use the token. If the designer later binds the tag to tokens in Figma, the tag part of this ruling no longer applies and the tag must be re-tested against the node.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The tag's size, colours or font, which match Figma. The intent file's `pairs_with: ["Image"]` and its "make the whole listing card clickable" line, which the review raised as warnings.
+
+## 2026-10-07 · Form widths with no token
+
+**Finding.** Release review gate 2 (Tokens) failed Form for four literal px values in `src/components/Form/Form.css`. Figma (component 57:1649, grid 233:8441, textfield 240:2) draws the section form 720px wide, the card form 440px wide, the field inside a section form 400px wide and the textfield 320px wide, and binds no variable to any of them. There are no size tokens, and the spacing scale has nothing that matches. The widths set the form's footprint and have no content or intrinsic size that could supply the number, so no equivalent technique avoids the literals. Each rule also carries `max-width: 100%`, so a form still shrinks to fit a narrow container.
+
+**Ruling.** These literals in `src/components/Form/Form.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `720px` | `width` | `.hz-form--section` | 27 |
+| `440px` | `width` | `.hz-form--card` | 32 |
+| `400px` | `width` | field inside a section form | 71 |
+| `320px` | `width` | `.hz-textfield` | 95 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these four values on exactly these properties in `Form.css`. Quote this ruling when you report it. When a size token for 720px, 440px, 400px or 320px appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The public export of `Textfield`, `TextfieldProps` and `TextfieldState` from `src/index.ts`, which the review raised as a warning.
