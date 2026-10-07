@@ -2,6 +2,37 @@
 
 All notable changes to `@layerbasesystemic/horizon-design-system`. Versioning rules are in [VERSIONING.md](VERSIONING.md).
 
+## 0.3.0
+
+### Added
+
+Six components, each exported from the package root with its props types and styled by `styles.css`:
+
+- `Calendar` (`CalendarProps`, `CalendarType`, `CalendarDateRange`, `CalendarOccupancyEntry`)
+- `Card` (`CardProps`, `CardType`)
+- `Form` (`FormProps`, `FormType`)
+- `Modal` (`ModalProps`, `ModalType`, `ModalTone`, `ModalRow`)
+- `SideBar` (`SideBarProps`, `SideBarItem`, `SideBarItemState`)
+- `Table` (`TableProps`, `TableColumn`, `TableRowData`, `TableCellType`, `TableCellValue`, `TableTag`, `TableAction`, `TableTone`, `TableRowState`, `TableSort`, `TableSortDirection`)
+
+Also `Textfield` (`TextfieldProps`, `TextfieldState`), the input `Form` is built from, which is exported from the package root and is public from this version.
+
+### Changed
+
+Nothing. No existing component, prop, class or token changed.
+
+### Fixed
+
+Nothing.
+
+### Deprecated
+
+Nothing.
+
+### Removed
+
+Nothing. No export, prop, class or token from 0.2.1 was removed or renamed.
+
 ## 0.2.1
 
 ### Added

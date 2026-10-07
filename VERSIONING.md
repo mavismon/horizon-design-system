@@ -10,6 +10,8 @@
 
 So on 0.x, `^0.1.0` gets fixes and additions but never a breaking change. 1.0.0 ships when the maintainers decide the API is stable; it's a decision, not a date.
 
+The maintainers may also choose a minor bump for a large release of additions. 0.3.0 did: it adds six components and breaks nothing, so it follows the minor-bump rule only by choice, not because anything broke. A range such as `^0.2.1` on a 0.x version never crosses a minor, so consumers on 0.2.x have to move to 0.3.0 on purpose.
+
 ## What counts as public
 
 Changing any of these in a way that breaks existing use is a breaking change:
@@ -30,26 +32,24 @@ Changing any of these in a way that breaks existing use is a breaking change:
 
 Something is deprecated in one release before it's removed in a later breaking release. The changelog names the replacement.
 
-## Unreleased on `main`
+## What 0.3.0 commits you to
 
-`main` exports five components that no published version contains yet: Card, Calendar, Modal, Form and Textfield, each from the package root with its props type (Form also exports `FormType`, Modal also exports `ModalType`, `ModalTone` and `ModalRow`, and Textfield also exports `TextfieldState`). The latest published version, 0.2.1, has none of them, so installing it gets none of them.
+0.3.0 adds six components on top of 0.2.1: Calendar, Card, Form, Modal, SideBar and Table. It contains twenty-three components, each exported from the package root with its props type: Avatar, Breadcrumbs, Button, ButtonGroup, Calendar, Card, Checkbox, Chip, Dropdown, File, Form, Header, Image, Link, Logo, Modal, ProgressBar, RadioCard, SearchBar, SideBar, Stepper, Table, Toggle. `Textfield` is exported from the package root as well, with `TextfieldProps` and `TextfieldState`, and is public like the others (see `decisions.md`, 2026-10-07, Textfield). It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Everything in 0.3.0 beyond 0.2.1 is an addition: nothing from 0.2.1 was changed, removed or renamed. A change that breaks any of these on 0.x bumps the version to 0.4.0.
 
-Nothing here is a commitment until a version ships. Whichever version carries them, they are pure additions, so on 0.x they are a patch (see the table above), and from then on their props, prop values and defaults, `hz-` class names and exports are public like every other component's.
+Two things about this release are worth knowing:
 
-Two things about this group are worth knowing before it ships:
-
-- **Form and Modal** each passed release review with their literal widths and sizes covered by a ruling in `decisions.md`, because no size tokens exist for them. Those literals are accepted until the designer adds matching tokens, so a later change to Form's or Modal's sizes to use tokens would be a patch, not a breaking change, as long as the rendered sizes stay the same.
-- **Textfield** is exported from the package root, so it becomes public with its props type and `hz-textfield` classes. It lives inside Form's folder and no decision has recorded that it should be public. The maintainers should either confirm it or stop exporting it before the version that carries it ships. Removing an export after it ships is a breaking change.
+- **Form, Modal and Table** each passed release review with their literal sizes covered by a ruling in `decisions.md` (Card, SideBar and Calendar have their own), because no size tokens exist for them. Those literals are accepted until the designer adds matching tokens, so a later change to use tokens at the same rendered sizes would be a patch, not a breaking change.
+- **Dark theme** is not verified for Table, and its warning tag has low contrast. The Table docs page says so. Neither is a breaking-change risk, but a fix that changes a token's value is a patch and is listed in the changelog.
 
 ## What 0.2.1 commits you to
 
-0.2.1 adds one component, Stepper, on top of 0.2.0. It contains seventeen components, each exported from the package root with its props type: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Stepper, Toggle. It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Stepper is a pure addition, so it's a patch on 0.x (see the table above). Any change that breaks those on 0.x bumps the version to 0.3.0.
+0.2.1 adds one component, Stepper, on top of 0.2.0. It contains seventeen components, each exported from the package root with its props type: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Stepper, Toggle. It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Stepper is a pure addition, so it's a patch on 0.x (see the table above). Any change that breaks those on 0.x bumps the minor version.
 
 The 0.2.0 commitments below still hold in full: nothing from 0.2.0 was changed, removed or renamed.
 
 ## What 0.2.0 commits you to
 
-0.2.0 contains sixteen components, each exported from the package root with its props type: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Toggle. It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Any change that breaks those on 0.x bumps the version to 0.3.0.
+0.2.0 contains sixteen components, each exported from the package root with its props type: Avatar, Breadcrumbs, Button, ButtonGroup, Checkbox, Chip, Dropdown, File, Header, Image, Link, Logo, ProgressBar, RadioCard, SearchBar, Toggle. It commits you to their props, prop values and defaults, their `hz-` class names, the tokens in `tokens.css` and the three entry points (`.`, `./styles.css`, `./tokens.css`). Any change that breaks those on 0.x bumps the minor version.
 
 `Header` takes a few props that are not Figma properties: `buttonText`, `avatarSrc`, `avatarAlt`, `searchPlaceholder`, `link1Href`, `link2Href`, `link3Href`, `onButtonClick`, `onBackClick`, `onActionClick` and `onSearch`. They are public from 0.2.0 and a breaking change to them follows the same rule.
 

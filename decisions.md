@@ -334,3 +334,13 @@ The hover label colour stays `--color-bg-inverse` (#161925) on the `--color-text
 **For an agent that hits it.** Gate 2 passes for exactly these twelve values on exactly these properties in `Table.css` and `Table.tsx`. Quote this ruling when you report it. When a size token for any of these values appears, the ruling no longer covers that value: use the token. The tag's 3px padding keeps the 22px Figma height; moving it to `--spacing-xs` would give a 24px tag and is a design decision, not covered here.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The warning tag's roughly 2:1 contrast, and the descending sort arrow, focus ring and disabled Previous / Next that Figma does not draw, which the designer still has to confirm.
+
+## 2026-10-07 · Textfield is a public export
+
+**Finding.** `Textfield`, `TextfieldProps` and `TextfieldState` are exported from `src/index.ts` (lines 54-55) and are defined in `src/components/Form/Textfield.tsx`. Release reviews of Form raised this as a warning: no decision recorded that the input Form is built from should be public, and `VERSIONING.md` said the maintainers had to confirm it or stop exporting it before the version carrying it shipped, because removing an export after it ships is a breaking change. Textfield has no registry row, release review, docs page or intent file of its own.
+
+**Ruling.** `Textfield`, `TextfieldProps` and `TextfieldState` stay exported from the package root and are public from 0.3.0, with the `hz-textfield` classes it renders. They are covered by `VERSIONING.md` like every other export. The maintainers chose to keep them public (2026-10-07).
+
+**For an agent that hits it.** The Form review warning about the undeclared `Textfield` export is resolved by this ruling: do not repeat it as open. It does not change gate 2: Textfield's CSS lives in `Form.css` and is covered by the Form width ruling only for the values that ruling lists. A standalone Textfield page, intent file or registry row is not required by this ruling.
+
+**Not ruled.** Any other export. A change to Textfield's props, `state` values or classes: on 0.x that follows the rules in `VERSIONING.md`.
