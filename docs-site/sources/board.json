@@ -205,8 +205,8 @@
       "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1650&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-modal--all-variants",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/141d9ba1e022de1c81ea3b283ea15885bc769d17/reports/Modal/release-review.md",
       "astroLink": "",
       "composes": [
         "ButtonGroup"

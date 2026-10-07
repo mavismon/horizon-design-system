@@ -3413,6 +3413,221 @@
           ]
         }
       }
+    },
+    "Modal": {
+      "readAt": "2026-10-07",
+      "page": {
+        "id": "57:1650",
+        "name": "Modal"
+      },
+      "node": {
+        "id": "244:68",
+        "name": "❖ modal"
+      },
+      "component": {
+        "id": "243:181",
+        "name": "modal"
+      },
+      "registryLink": {
+        "node": "57:1650",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1650), not the component set 243:181."
+      },
+      "description": "A panel that interrupts the page for a decision or a short task. type dialog (520 wide, centred, radius/xs) or sheet (390 wide, rounded top, grab handle, slides up on mobile). tone default (Buttongroup primary) or destructive (Buttongroup destructive). Title and Message, close × (ShowClose), a Content slot with detail rows you can replace with any content (ShowContent), the actions, and a Note (ShowNote). Place it on a color/bg/overlay backdrop.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "dialog"
+              },
+              {
+                "value": "sheet"
+              }
+            ]
+          },
+          {
+            "name": "tone",
+            "values": [
+              {
+                "value": "default"
+              },
+              {
+                "value": "destructive"
+              }
+            ]
+          }
+        ],
+        "cellNodes": {
+          "type=dialog, tone=default": "243:3",
+          "type=dialog, tone=destructive": "243:49",
+          "type=sheet, tone=default": "243:93",
+          "type=sheet, tone=destructive": "243:137"
+        },
+        "cells": 4,
+        "note": "The component set (243:181) publishes 4 variants: type=dialog, tone=default (243:3, 520x320), type=dialog, tone=destructive (243:49, 520x340), type=sheet, tone=default (243:93, 390x394) and type=sheet, tone=destructive (243:137, 390x410). ShowClose, ShowContent and ShowNote are boolean properties of the set, not variants; the documentation frame (233:12212) lays out 32 instances of them (2 types x 2 tones x ShowClose x ShowContent x ShowNote). The canvas also holds the example 'dialog on overlay' (244:74, 960x560, a 520 wide dialog on the color/bg/overlay rectangle) and one instance with ShowContent off (244:105). Figma draws no hover, pressed, focus or disabled state, and draws only the 390 wide sheet, with no desktop width."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The modal documentation frame renders every instance in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-primary": "#161925",
+        "--fontSize-2xl": "18",
+        "--fontWeight-semibold": "Semi Bold",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-2xl": "26",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-lg": "20",
+        "--spacing-sm": "8",
+        "--spacing-md": "12",
+        "--fontSize-sm": "11",
+        "--lineHeight-sm": "16",
+        "--fontWeight-medium": "Medium",
+        "--radius-xs": "2",
+        "--color-bg-surface": "#f2f3f5",
+        "--spacing-xs": "4",
+        "--color-text-inverse": "#f9fafb",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--radius-sm": "6",
+        "--color-primary-default": "#3b71f2",
+        "--color-neutral-default": "#8a909c",
+        "--spacing-lg": "16",
+        "--spacing-2xl": "24",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-status-error": "#ea3d3d",
+        "--radius-full": "999",
+        "--color-border-default": "#d7dee7",
+        "--radius-lg": "16"
+      },
+      "unboundValues": [
+        {
+          "layer": "Panel, type=dialog (243:3, 243:49)",
+          "property": "width",
+          "value": "520px",
+          "css": {
+            "selector": ".hz-modal--dialog .hz-modal__panel",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Panel, type=sheet (243:93, 243:137)",
+          "property": "width",
+          "value": "390px",
+          "css": {
+            "selector": ".hz-modal--sheet .hz-modal__panel",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Panel, type=sheet (243:93, 243:137)",
+          "property": "padding-top",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-modal--sheet .hz-modal__panel",
+            "property": "padding"
+          }
+        },
+        {
+          "layer": "Panel, all four variants (243:3, 243:49, 243:93, 243:137)",
+          "property": "drop shadow",
+          "value": "0 8 12, rgba(0,0,0,0.2)",
+          "css": {
+            "selector": ".hz-modal__panel",
+            "property": "box-shadow"
+          }
+        },
+        {
+          "layer": "Handle, type=sheet (243:95, 243:139)",
+          "property": "width",
+          "value": "48px",
+          "css": {
+            "selector": ".hz-modal__handle",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Handle, type=sheet (243:95, 243:139)",
+          "property": "height",
+          "value": "4px",
+          "css": {
+            "selector": ".hz-modal__handle",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Close, with ShowClose (243:8, 243:54, 243:100 and the same layer in the other sheet variant)",
+          "property": "width",
+          "value": "20px",
+          "css": {
+            "selector": ".hz-modal__close",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Close, with ShowClose (243:8, 243:54, 243:100 and the same layer in the other sheet variant)",
+          "property": "height",
+          "value": "20px",
+          "css": {
+            "selector": ".hz-modal__close",
+            "property": "height"
+          }
+        },
+        {
+          "layer": "Row, every Content slot (243:11, 243:14, 243:17, 243:57, 243:60, 243:63 and the sheet rows)",
+          "property": "padding, top and bottom",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-modal__row",
+            "property": "padding"
+          }
+        }
+      ],
+      "usage": {
+        "node": "244:154",
+        "use_when_heading": "Use a modal",
+        "use_when_node": "244:157",
+        "use_when": [
+          "Use type dialog to confirm an action before it happens, such as \"Remove Luis Correia?\", or for a short task that must finish before going back, such as an invite.",
+          "Use tone destructive when the action deletes or can't be undone; show what changes in the content rows, such as \"Can be undone: No\".",
+          "Use type sheet on mobile for filters, pickers and short choices that slide up from the bottom."
+        ],
+        "use_when_nodes": {
+          "group": "244:157",
+          "items": [
+            "244:159",
+            "244:160",
+            "244:161"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a modal",
+        "dont_use_when_node": "244:162",
+        "dont_use_when": [
+          "For information people should read while they keep working: show it on the page, or in a toast.",
+          "For long forms or anything with more than one step: use a page with Stepper.",
+          "Open a modal from another modal."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Ask a question in the title and name the thing, such as \"Remove Luis Correia?\", and put the result of the action on the main button, such as \"Remove admin\", not \"OK\".",
+          "Always give a way out: Cancel, the close ×, the Escape key and a click on the backdrop.",
+          "Place the dialog in the centre on a color/bg/overlay backdrop; place the sheet at the bottom, full width."
+        ],
+        "best_practice_nodes": {
+          "group": "244:167",
+          "items": [
+            "244:169",
+            "244:170",
+            "244:171"
+          ]
+        }
+      }
     }
   }
 }

@@ -1345,7 +1345,113 @@ function cardNotes(cp, fig, review) {
 	return out;
 }
 
+// Modal: the warnings of the release review that the page must show, each quoted as written ("Warnings", numbered, continuous
+// across the review's groups) and checked against the code at the pinned commit; a note is only written when the code bears it out.
+// usage = the two empty "instead" and the nested-modal guidance nothing enforces; variants = the empty default; a11y = the five
+// accessibility gaps no ruling covers; composition = ButtonGroup, which Modal is built from; promise = VERSIONING.md does not list
+// Modal; design = the accepted shadow (the ruling paragraph, quoted) and the sheet width Figma never draws.
+const MODAL_NOTES = {
+	close: /^\*\*Close target is 20x20/,
+	focus: /^\*\*Initial focus lands on the close button/,
+	alert: /^\*\*No `role="alertdialog"`/,
+	title: /^\*\*The title is a `<p>`/,
+	untested: /^\*\*Unverified accessibility behaviour/,
+	shadow: /^\*\*Shadow differs from Figma/,
+	sheet: /^\*\*Desktop sheet width is unspecified/,
+	instead: /^\*\*C2: two `dont_use_when` entries have an empty `instead`/,
+	vdefault: /^\*\*`variant_intent\.default` is empty/,
+	nested: /^\*\*"Open a modal from another modal" is not enforced/,
+	pairs: /^\*\*`pairs_with` omits `ButtonGroup`/,
+	versioning: /^\*\*G7:\*\*/,
+};
+
+function modalNotes(cp, fig, review) {
+	const out = { usage: [], variants: [], a11y: [], composition: [], promise: [], design: [] };
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	if (!m) return out;
+	const md = show(m[2], m[1]);
+	const warnings = (mdSection(md, '## Warnings') ?? '')
+		.split('\n')
+		.filter((l) => /^\d+\.\s/.test(l))
+		.map((l) => l.replace(/^\d+\.\s+/, ''));
+	const find = (re) => warnings.find((w) => re.test(w));
+	const quote = (w) => `From the [release review](${review.url}), under "Warnings", as written:\n\n> ${t(plain(w))}`;
+	const name = cp.name;
+	const tsxFile = `${cp.dir}/${name}.tsx`;
+	const lines = cp.tsx.split('\n');
+	const lineOf = (re) => lines.findIndex((l) => re.test(l)) + 1;
+	const tlink = (n) => `[${c(`${name}.tsx:${n}`)}](${blob(tsxFile, n)})`;
+	const cssLink = (d) => `[${c(`${name}.css:${d.line}`)}](${blob(`${cp.dir}/${name}.css`, d.line)})`;
+	const intent = cp.intent ?? {};
+
+	// The two empty "instead" entries (and the one that is guidance only, below).
+	const dont = intent.dont_use_when ?? [];
+	const empties = dont.map((x, i) => (x.instead ? null : i + 1)).filter(Boolean);
+	const w1 = find(MODAL_NOTES.instead);
+	if (empties.length && w1)
+		out.usage.push(`**Open item: no alternative named for item${empties.length > 1 ? 's' : ''} ${empties.join(' and ')}.** ${empties.length > 1 ? 'Those items have' : 'That item has'} an empty ${c('instead')} in ${c(`${name}.intent.json`)}. The Figma page names no Horizon component for ${empties.length > 1 ? 'them' : 'it'}: "show it on the page, or in a toast" names a pattern, and "Open a modal from another modal" names none. This page shows "The Figma page names no alternative" and does not fill the gap.\n\n${quote(w1)}`);
+
+	// "Open a modal from another modal": guidance, not a check. Written only when the code has no nesting guard.
+	const w3 = find(MODAL_NOTES.nested);
+	const guard = /createContext|useContext|nested|closest\(|querySelector/.test(cp.tsx);
+	const showL = lineOf(/showModal\(\)/);
+	if (w3 && !guard && showL)
+		out.usage.push(`**Not enforced in code.** Item ${dont.findIndex((x) => /from another modal/.test(x.when)) + 1} is Figma's wording, kept in ${c(`${name}.intent.json`)}. ${c(`${name}.tsx`)} has no nesting guard: each ${c('<Modal open>')} calls ${c('showModal()')} on its own element (${tlink(showL)}), so two open Modals are not prevented. Treat it as guidance for the person using the component.\n\n${quote(w3)}`);
+
+	// variant_intent.default is empty.
+	const w11 = find(MODAL_NOTES.vdefault);
+	if (w11 && intent.variant_intent && intent.variant_intent.default === '')
+		out.variants.push(`**Open item: nothing for ${c('tone')} ${c('default')}.** ${c('variant_intent.default')} is empty in ${c(`${name}.intent.json`)} because the Figma page says nothing about when to use the default tone; the other three values take their text from the Figma usage lines. This page does not write one.\n\n${quote(w11)}`);
+
+	// Accessibility gaps no ruling covers, each checked in the code.
+	const closeW = cp.findDecl('.hz-modal__close', 'width');
+	const closeH = cp.findDecl('.hz-modal__close', 'height');
+	const titleL = lineOf(/<p id=\{titleId\}/);
+	const items = [];
+	const w = (re) => find(re);
+	if (w(MODAL_NOTES.close) && closeW && closeH && /20px/.test(closeW.text) && /20px/.test(closeH.text))
+		items.push(`**Close target.** The close × is ${c('20px')} wide and ${c('20px')} high (${cssLink(closeW)}, ${cssLink(closeH)}), below the 24px minimum of WCAG 2.2 AA (success criterion 2.5.8). The size is a Figma value the 2026-10-07 ruling accepts for the stylesheet gate; the ruling does not cover the accessibility shortfall.\n\n${quote(w(MODAL_NOTES.close))}`);
+	if (w(MODAL_NOTES.focus) && !/autoFocus|\.focus\(\)/.test(cp.tsx))
+		items.push(`**Initial focus.** ${c(`${name}.tsx`)} sets no ${c('autoFocus')} and calls no ${c('focus()')}, so initial focus is left to the browser's ${c('showModal()')} (${tlink(showL)}); QA and the release review record it landing on the close ×. For the destructive tone, focus on Cancel is the usual practice. Figma draws no focus behaviour.\n\n${quote(w(MODAL_NOTES.focus))}`);
+	if (w(MODAL_NOTES.alert) && !/alertdialog/.test(cp.tsx))
+		items.push(`**No ${c('alertdialog')} role.** The root is a plain ${c('<dialog>')} for both tones; ${c('alertdialog')} appears nowhere in ${c(`${name}.tsx`)}.\n\n${quote(w(MODAL_NOTES.alert))}`);
+	if (w(MODAL_NOTES.title) && titleL)
+		items.push(`**The title is not a heading.** It is a ${c('<p>')} (${tlink(titleL)}), named through ${c('aria-labelledby')}, so it is not in the page's heading outline.\n\n${quote(w(MODAL_NOTES.title))}`);
+	if (w(MODAL_NOTES.untested))
+		items.push(`**Not tested.** The Tab focus trap, the real Escape key, a real backdrop click and screen-reader output were never tested: QA had no real input and no screen reader, and the release review had no browser. The facts above that describe them cite the code that should produce them; they are not evidence of the behaviour.\n\n${quote(w(MODAL_NOTES.untested))}`);
+	if (items.length) out.a11y.push(`### Gaps no ruling covers\n\nThe 2026-10-07 ruling leaves these to a human ("Not ruled"). They are open items, not waived.\n\n${items.join('\n\n')}`);
+
+	// Composition: what the code says, not what the stories show.
+	const w13 = find(MODAL_NOTES.pairs);
+	const impL = lineOf(/import \{ ButtonGroup \}/);
+	const useL = lineOf(/<ButtonGroup\b/);
+	if (w13 && impL && useL && !(intent.pairs_with ?? []).includes('ButtonGroup')) {
+		const storySrc = has(`${cp.dir}/${name}.stories.tsx`) ? show(`${cp.dir}/${name}.stories.tsx`) : '';
+		const btnL = storySrc.split('\n').findIndex((l) => /<Button\b/.test(l)) + 1;
+		out.composition.push(`**From the code.** ${c(`${name}.tsx`)} is built from [ButtonGroup](/core/components/buttongroup/): it imports it (${tlink(impL)}) and renders ${c('<ButtonGroup>')} for the actions (${tlink(useL)}), and the registry's Composes column records it. ${c('pairs_with')} in ${c(`${name}.intent.json`)} lists only ${(intent.pairs_with ?? []).map((x) => c(x)).join(', ')}, which the stories show as the opener beside the modal${btnL ? ` ([${c(`${name}.stories.tsx:${btnL}`)}](${blob(`${cp.dir}/${name}.stories.tsx`, btnL)}))` : ''}, not inside it. No story renders ButtonGroup on its own next to ${name}; it appears only through ${name}. This page states the composition and does not assert a pairing that the stories do not show.\n\n${quote(w13)}`);
+	}
+
+	// VERSIONING.md does not list Modal.
+	const w14 = find(MODAL_NOTES.versioning);
+	if (w14 && !/\bModal\b/.test(versioning ?? ''))
+		out.promise.push(`**${name} is not in this commitment.** ${c('VERSIONING.md')} at ${c(SHORT)} does not name ${name} among the components it lists, and ${name} is in no published version. A human updates ${c('VERSIONING.md')} before a version containing ${name} ships.\n\n${quote(w14)}`);
+
+	// Design: the accepted shadow (the ruling's own paragraph) and the desktop sheet.
+	const ruling = (decisions ? mdSection(decisions, '## 2026-10-07 · Modal sizes with no token, and the accepted shadow') : null) ?? '';
+	const shadowPara = ruling.split('\n').find((l) => /^\s*>?\s*The panel shadow in `Modal\.css`/.test(l));
+	const w6 = find(MODAL_NOTES.shadow);
+	const shadowD = cp.findDecl('.hz-modal__panel', 'box-shadow');
+	if (shadowPara && shadowD)
+		out.design.push(`**Drop shadow.** Figma draws ${c('0 8 12')} at 20% black on the four variants (unbound); the panel uses ${c('--elevation-lg')} (${cssLink(shadowD)}), which the token build gives as ${c('0 8 16')} at 16% navy. From the 2026-10-07 ruling in [decisions.md](${blob('decisions.md')}), as written:\n\n> ${t(plain(shadowPara.replace(/^\s*>\s*/, '')))}${w6 ? `\n\n${quote(w6)}` : ''}`);
+	const sheetD = cp.findDecl('.hz-modal--screen.hz-modal--sheet .hz-modal__panel', 'width');
+	const w8 = find(MODAL_NOTES.sheet);
+	if (w8 && sheetD && /100%/.test(sheetD.text))
+		out.design.push(`**The open sheet spans the viewport.** On screen the sheet is ${c('width: 100%')} (${cssLink(sheetD)}), so on a desktop viewport it is as wide as the window. Figma draws only the 390px sheet, with no desktop width, so there is nothing to check it against. Named in the ruling's "Not ruled" line.\n\n${quote(w8)}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'Modal') return modalNotes(cp, fig, review);
 	if (cp.name === 'Card') return cardNotes(cp, fig, review);
 	if (cp.name === 'Calendar') return calendarNotes(cp, fig, review);
 	if (cp.name === 'Header') return headerNotes(cp, fig, review);
@@ -1551,9 +1657,9 @@ function componentPage(cp) {
 	if (!intent) usage.push(notice(`No ${intentPath} at ${SHORT}.`));
 	else if (!intent.use_when?.length) usage.push(notice(`No usage region in Figma for ${name} (use_when is empty in ${intentPath}).`));
 	else {
-		// Where the intent also carries Figma's Best Practice lines in use_when (Card items 4 to 6), they are listed once, under Best practice.
+		// Where the intent also carries Figma's Best Practice lines in use_when (Card and Modal items 4 to 6), they are listed once, under Best practice.
 		const bp = new Set(fig?.usage?.best_practice ?? []);
-		const shown = name === 'Card' ? intent.use_when.filter((x) => !bp.has(x)) : intent.use_when;
+		const shown = name === 'Card' || name === 'Modal' ? intent.use_when.filter((x) => !bp.has(x)) : intent.use_when;
 		usage.push(shown.map((x) => `- ${t(x)}`).join('\n'));
 		if (shown.length < intent.use_when.length)
 			usage.push(`${intent.use_when.length - shown.length} more lines in ${c('use_when')} in ${c(intentPath)} (items ${shown.length + 1} to ${intent.use_when.length}) are Figma's Best Practice lines, word for word. They are listed once, under "Best practice" below.`);
@@ -1597,7 +1703,7 @@ function componentPage(cp) {
 	usage.push('## Best practice');
 	if (fig?.usage?.best_practice?.length)
 		usage.push(
-			`From the Figma documentation page (usage node ${c(fig.usage.node)}), as written. These items aren't carried into ${c(`${name}.intent.json`)}, which has no field for them.\n\n` +
+			`From the Figma documentation page (usage node ${c(fig.usage.node)}), as written. ${name === 'Modal' ? `${c(`${name}.intent.json`)} carries these same lines as items ${(intent?.use_when ?? []).length - fig.usage.best_practice.length + 1} to ${(intent?.use_when ?? []).length} of ${c('use_when')}, word for word; they are listed here once.` : `These items aren't carried into ${c(`${name}.intent.json`)}, which has no field for them.`}\n\n` +
 				fig.usage.best_practice.map((x) => `- ${t(x)}`).join('\n'),
 		);
 	else usage.push(notice(`No best-practice items for ${name} in sources/figma.json (no usage region was read), and ${name}.intent.json has no field for them.`));
@@ -1647,6 +1753,7 @@ function componentPage(cp) {
 				.join('\n'),
 		);
 	if (hrefN?.a11y) usage.push(hrefN.a11y);
+	for (const n of rn.a11y ?? []) usage.push(n);
 
 	if (!omit.has('Composition')) {
 		usage.push('## Composition');
@@ -1656,6 +1763,7 @@ function componentPage(cp) {
 			usage.push(`${c(`${name}.intent.json`)} lists ${unseen.map((x) => c(x)).join(', ')} in ${c('pairs_with')}, but no story composes ${name} with ${unseen.length > 1 ? 'them' : 'it'}: ${c(`${name}.stories.tsx`)} never imports or renders ${unseen.length > 1 ? 'them' : 'it'}, and every story renders ${name} alone. This page does not assert the pairing.${(cp.row.composes ?? []).some((x) => unseen.includes(x)) ? ` What is true is composition inside the component: ${c(`${name}.tsx`)} is built from ${(cp.row.composes ?? []).filter((x) => unseen.includes(x)).map((x) => `[${t(x)}](/core/components/${x.toLowerCase()}/)`).join(', ')}, as the registry's Composes column records and the Code tab shows.` : ''}`);
 		else if (intent?.pairs_with?.length) usage.push(`The stories compose ${name} with: ${intent.pairs_with.map((x) => t(x)).join(', ')}.`);
 		else usage.push(notice(`The stories compose ${name} with no other Horizon component (pairs_with is empty in ${intentPath}).`));
+		for (const n of rn.composition ?? []) usage.push(n);
 	}
 
 	usage.push('## What this version promises');

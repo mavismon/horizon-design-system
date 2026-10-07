@@ -64,6 +64,7 @@ export default defineConfig({
 								{ label: 'Image', slug: 'core/components/image' },
 								{ label: 'Link', slug: 'core/components/link' },
 								{ label: 'Logo', slug: 'core/components/logo' },
+								{ label: 'Modal', slug: 'core/components/modal' },
 								{ label: 'ProgressBar', slug: 'core/components/progressbar' },
 								{ label: 'RadioCard', slug: 'core/components/radiocard' },
 								{ label: 'SearchBar', slug: 'core/components/searchbar' },
