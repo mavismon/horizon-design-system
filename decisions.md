@@ -215,3 +215,18 @@ The `2px` focus offset is not drawn in Figma: the engineer added the keyboard fo
 **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Stepper.css`. Quote this ruling in the report. When a size token with the same value appears, the ruling no longer covers it: use the token.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The selected colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The inline SVG tick and plus/minus icons, which approximate Figma's image assets. Any state Figma does not draw (hover, pressed).
+
+## 2026-10-05 · Calendar column widths with no token
+
+**Finding.** Release review gate 2 (Tokens) will fail Calendar for two literal px values. Figma (component set 235:392; picker cell 235:2, occupancy cell 235:137) draws the picker day columns 64px wide (a 536px picker is 20px padding, seven 64px columns and six 8px gaps) and the occupancy day columns 158px wide (a 1170px grid is 16px padding, seven 158px columns and six 8px gaps). The spacing scale (4, 8, 12, 16, 20, 24px) and the token set have nothing that matches 64 or 158, and there are no size tokens. The grid columns have no content or intrinsic size that could supply the number, so no equivalent technique avoids the literals. The day and occupancy-day heights do not need literals: they are derived from the column width with `aspect-ratio` (8/5 and 158/90), and the 28px navigation button is `2em` of the 14px font.
+
+**Ruling.** These literals in `src/components/Calendar/Calendar.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size tokens:
+
+| Value | Property | Selector | Lines |
+|---|---|---|---|
+| `64px` | `grid-template-columns` (picker weekday and week rows, seven columns) | `.hz-calendar--picker .hz-calendar__weekdays, .hz-calendar--picker .hz-calendar__week` | 68 |
+| `158px` | `grid-template-columns` (occupancy weekday and week rows, seven columns) | `.hz-calendar--occupancy .hz-calendar__weekdays, .hz-calendar--occupancy .hz-calendar__week` | 187 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Calendar.css`. Quote this ruling in the report. When a size token for 64px or 158px appears, the ruling no longer covers that value: use the token.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The `aspect-ratio` values 8/5 and 158/90, the `2em` navigation button, the `1em` icon, and the calc over spacing tokens for the "over" tag padding: none is a px literal, so they need no ruling, and whether they should be tokens is for the designer. The font weights 400, 500 and 600, which are unitless numbers. The primary colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The inconsistent occupancy sample data in Figma (the 30th shown as 48 of 48, 99%, in the high style; 47 of 48 shown as 97% and as 98%; 35 of 48 shown as 72%): the stories reproduce the drawn values and that is for the designer. Any state Figma does not draw.

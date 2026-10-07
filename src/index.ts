@@ -40,3 +40,10 @@ export { Stepper } from "./components/Stepper/Stepper";
 export type { StepperProps, StepperType, StepperState, StepperStep, StepperStepState } from "./components/Stepper/Stepper";
 export { Card } from "./components/Card/Card";
 export type { CardProps, CardType } from "./components/Card/Card";
+export { Calendar } from "./components/Calendar/Calendar";
+export type {
+  CalendarProps,
+  CalendarType,
+  CalendarDateRange,
+  CalendarOccupancyEntry,
+} from "./components/Calendar/Calendar";
