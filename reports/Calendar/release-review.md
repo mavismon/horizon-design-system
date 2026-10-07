@@ -1,0 +1,79 @@
+# Calendar · release review
+
+- **Reviewed SHA:** `abb35fd5134e33c417389ab18d17820d07258b1b` (branch `release-review/calendar`, 2026-10-05). Four commits on top of `origin/main` `bc50530` (PR #70, which carries the Calendar build `29e7c46` from PR #69): `1eaba8d` and `9c7ff32` (cherry-picks of `a471698` "Calendar: add intent file" and `ca4412a` "Calendar intent: cite occupancy empty cell line" from `origin/intent/calendar`; together they add only `src/components/Calendar/Calendar.intent.json`), `db67c18` (the QA report, copied unchanged to `reports/Calendar/qa-report.md`) and `abb35fd` (the human ruling appended to `decisions.md`, a separate commit before this review). `src/` differs from `origin/main` only in the intent file. This report is committed on top of the reviewed SHA.
+- **Date:** 2026-10-05
+- **Verdict:** **Cleared**
+- **Reviewer:** release agent, running `release-review`
+- **Board row:** Calendar (`reciBYhObStLyxXJJ`), read fresh: `Development` = `Completed`, `Design` = `Done`, `Staging Storybook` and `Production Storybook` set, `Commit` = `29e7c46`, 16 `Staging Testing` rows all `Passed`, `Composes` empty, `Astro Link` empty, `Release Review` and `Release Verdict` empty (first review). `Last Modified` = 2026-10-05T10:19:59Z, later than the build commit `29e7c46` (11:12:08+01:00) and the merge `bc50530` (11:18:54+01:00) but earlier than this report, so the review is not stale.
+
+## Ruling applied
+
+`decisions.md` was read in full at the reviewed SHA. One ruling covers Calendar, **"2026-10-05 · Calendar column widths with no token"** (appended verbatim in `abb35fd`; it was written by a human and approved in chat, and this agent did not author it). Its ruling:
+
+> These literals in `src/components/Calendar/Calendar.css` are accepted, because they are what the Figma nodes specify, until the designer adds matching size tokens:
+>
+> | Value | Property | Selector | Lines |
+> |---|---|---|---|
+> | `64px` | `grid-template-columns` (picker weekday and week rows, seven columns) | `.hz-calendar--picker .hz-calendar__weekdays, .hz-calendar--picker .hz-calendar__week` | 68 |
+> | `158px` | `grid-template-columns` (occupancy weekday and week rows, seven columns) | `.hz-calendar--occupancy .hz-calendar__weekdays, .hz-calendar--occupancy .hz-calendar__week` | 187 |
+
+> **For an agent that hits it.** Gate 2 passes for exactly these values on exactly these properties in `Calendar.css`. Quote this ruling in the report. When a size token for 64px or 158px appears, the ruling no longer covers that value: use the token.
+
+> **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The `aspect-ratio` values 8/5 and 158/90, the `2em` navigation button, the `1em` icon, and the calc over spacing tokens for the "over" tag padding: none is a px literal, so they need no ruling, and whether they should be tokens is for the designer. The font weights 400, 500 and 600, which are unitless numbers. The primary colour, which uses `--color-primary-default` (`#2b5ad6`) and differs from the `#3b71f2` Figma shows: that is accepted pipeline drift, not a gate finding. The inconsistent occupancy sample data in Figma (the 30th shown as 48 of 48, 99%, in the high style; 47 of 48 shown as 97% and as 98%; 35 of 48 shown as 72%): the stories reproduce the drawn values and that is for the designer. Any state Figma does not draw.
+
+**Cited lines verified at the reviewed SHA, before the review:** `Calendar.css:68` is `grid-template-columns: repeat(7, 64px);` inside the rule at lines 65-66, selector `.hz-calendar--picker .hz-calendar__weekdays, .hz-calendar--picker .hz-calendar__week`. `Calendar.css:187` is `grid-template-columns: repeat(7, 158px);` inside the rule at lines 184-185, selector `.hz-calendar--occupancy .hz-calendar__weekdays, .hz-calendar--occupancy .hz-calendar__week`. Value, property, selector and line all match the table exactly.
+
+## Gates
+
+| # | Gate | Result | Evidence |
+|---|---|---|---|
+| G1 | Done | Pass | `Development` reads `Completed`. `Production Storybook` (`https://horizon-design-system-cdfi.vercel.app/?path=/story/components-calendar--picker`) returns HTTP 200, and the deployed `index.json` lists eighteen Calendar stories: `picker`, `occupancy`, `picker-two-months`, `day-empty`, `day-past`, `day-available`, `day-today`, `day-unavailable`, `day-start`, `day-in-range`, `day-end`, `occupancy-day-empty`, `occupancy-day-normal`, `occupancy-day-high`, `occupancy-day-soldout`, `occupancy-day-over`, `picker-uncontrolled`, `picker-controlled`. No browser was available to this agent, so "opens" is evidenced by the 200 and the story index; the QA report records the live render on the preview deployment. |
+| G2 | Tokens | Pass (ruling used) | `src/components/Calendar/Calendar.css`, every declaration read. No hex and no `rgb`/`hsl`. No `var()` has a fallback. Literal px in declarations: `64px` (line 68) and `158px` (line 187) only, both covered exactly by the ruling quoted above. The other `px` and hex-like strings in the file are in comments (lines 15, 29, 212, 271), not declarations. Not px literals and not reached by the gate: `aspect-ratio: 8 / 5` (103) and `158 / 90` (211), `2em` (36, 37), `1em` (50, 51), the calc over spacing tokens in the "over" tag padding, and `font-weight` 400, 500 and 600 (55, 79, 107, 140, 156, 241, 246, 251, 278), which the ruling's "Not ruled" confirms. `--color-primary-default` is accepted drift, per the ruling. |
+| G3 | Surface | Pass | `src/index.ts:41-47` exports `Calendar` and the types `CalendarProps`, `CalendarType`, `CalendarDateRange`, `CalendarOccupancyEntry`. `CalendarDay`, `CalendarOccupancyDay` and their state types are not exported from the root: both are commented "Internal part of Calendar ... Not for direct use" (`CalendarDay.tsx:21`, `CalendarOccupancyDay.tsx:26`) and the QA report records that Figma marks them not for direct use. Nothing is exported that nobody decided on. |
+| G4 | Names | Pass | Folder `src/components/Calendar/`, symbol `Calendar`, class prefix `hz-calendar` (sub-parts `hz-calendar-day`, `hz-calendar-occupancy-day`), intent file `Calendar.intent.json`, board row `Calendar`. All the same word, allowing for case and the `hz-` namespace. The sub-components `CalendarDay` and `CalendarOccupancyDay` match Figma `_calendar-day` and `_calendar-occupancy-day`. |
+| G5 | States | Pass | Figma set `235:392` read fresh with `get_metadata`: `235:2` type=picker (536x340) and `235:137` type=occupancy (1170x645). Sub-component sets read fresh: `234:5` `_calendar-day` state=empty (64x40) and `234:30` `_calendar-occupancy-day` state=empty (158x90); the full state lists (8 and 5 states, `234:5` to `234:26`, `234:30` to `234:58`) are as recorded in the QA report. Code: `CalendarType = "picker" \| "occupancy"` (`Calendar.tsx:22`); `CalendarDayState` = `empty`, `past`, `available`, `today`, `unavailable`, `start`, `in-range`, `end` (`CalendarDay.tsx:4-12`); `CalendarOccupancyDayState` = `empty`, `normal`, `high`, `soldout`, `over` (`CalendarOccupancyDay.tsx:4`). Stories (`Calendar.stories.tsx`): `Picker`, `Occupancy`, `PickerTwoMonths`, `DayEmpty`, `DayPast`, `DayAvailable`, `DayToday`, `DayUnavailable`, `DayStart`, `DayInRange`, `DayEnd` (lines 88-119), `OccupancyDayEmpty`, `OccupancyDayNormal`, `OccupancyDayHigh`, `OccupancyDaySoldout`, `OccupancyDayOver` (125-129), `PickerUncontrolled`, `PickerControlled` (134-137). Every state has a story. Figma draws no hover, pressed or disabled state; the code adds `:focus-visible` on the nav buttons and picker days (`Calendar.css:90-91`, the engineer's choice). |
+| G6 | Intent | Pass | `src/components/Calendar/Calendar.intent.json` exists at the reviewed SHA and passes all six checks (below). |
+| G7 | Version | Pass, with a standing note | `VERSIONING.md` exists at the reviewed SHA and states the 0.x bump rules and what each version commits you to. Its "What 0.2.1 commits you to" section lists seventeen components and does not include `Calendar` (`package.json` is at 0.2.1). Reported, not edited. A human updates it before a version containing Calendar ships. |
+
+## Checks
+
+| # | Check | Result | Evidence |
+|---|---|---|---|
+| C1 | Fields present | Pass | All seven fields present with the right types: `use_when` 6 strings, `dont_use_when` 3 objects (`when`, `instead`), `variant_intent` object with 14 keys, `placement` `[]`, `pairs_with` `[]`, `required_tokens` 32 strings (sorted, no duplicates), `a11y` 12 objects (`fact`, `source`). No empty `use_when` or `dont_use_when`. `placement` and `pairs_with` are empty arrays (a recorded Figma gap, as in other components). Five `variant_intent` values are empty strings (`empty`, `available`, `today`, `normal`, `over`): a recorded Figma gap. |
+| C2 | `dont_use_when` names an alternative | Pass, no warnings | All three entries have a non-empty `instead`: `date field`, `Buttongroup`, `Table`. |
+| C3 | `a11y` specific | Pass | Twelve entries, each naming a concrete element, attribute or behaviour. Every source line checked at the reviewed SHA: `Calendar.tsx:260` `role="group"` (with `aria-labelledby` on 261, grid `role="grid"` on 286); `:274` `aria-live="polite"` on the title; `:266` the `<button type="button">` with `aria-label` "Previous month" (269) (next button likewise, 280); `:70` the chevron `<svg ... aria-hidden="true">`; `:311` `aria-selected` on the day (with `aria-disabled`, `aria-current`, `aria-label` on 312-314); `:298` the empty cell `aria-hidden="true"`; `:310` `tabIndex`; `:228` `onDayKeyDown` (arrows, Home, End, PageUp, PageDown, Enter, Space, with Shift for the year); `:148` occupancy `role="grid"` (with `aria-label` fallback on 149); `:160` the divider `aria-hidden`; `:165` the empty occupancy cell `aria-hidden`; `Calendar.css:90` the `:focus-visible` ring on `.hz-calendar__nav` and `.hz-calendar-day` (90-91). Every line exists and implements the fact. |
+| C4 | `required_tokens` resolve | Pass | `npm run build:tokens` run at the reviewed SHA. All 32 listed tokens are defined in `build/css/tokens.css`. Every `var(--...)` read by `Calendar.css` is listed and every listed token is read: no token missing from the list, none extra. |
+| C5 | Variants covered | Pass | `variant_intent` has 14 keys: `picker`, `occupancy`, `empty`, `past`, `available`, `today`, `unavailable`, `start`, `in-range`, `end`, `normal`, `high`, `soldout`, `over`. Union of the values of `CalendarType` (2), `CalendarDayState` (8) and `CalendarOccupancyDayState` (5) is 15 values with `empty` appearing in both state unions, so 14 distinct. Keys equal that set exactly: none missing, none extra. See "Check 5 reading" below. |
+| C6 | No two components claim the same job | Pass | Compared Calendar's six `use_when` lines with every other intent file (17 others in `src/components/`): no identical or paraphrased use. Closest, for a human to be aware of and not a failure: `ProgressBar` ("show how full something is against a known total, such as a property's occupancy for a night") against Calendar occupancy ("how full each day of a month is"), different jobs (one bar against a total versus a month grid of days); `SearchBar` type stay ("find a stay by place, dates and guests") against Calendar picker ("choose check in and check out"), different jobs (finding a stay versus picking the dates on a grid). Calendar's `dont_use_when` already points to `Buttongroup`, `Table` and a date field. |
+
+## Check 5 reading
+
+Check 5 asks for the keys of `variant_intent` to be exactly the values of "the component's variant union type", and the `component-intent` skill says the keys are the unions "the component exports for its variants". Calendar's own variant prop is `type` (`CalendarType`, exported from the root), but the Figma component set also publishes the day and occupancy-day states as variants of `_calendar-day` and `_calendar-occupancy-day`, and `CalendarDayState` and `CalendarOccupancyDayState` are `export type` unions in their modules. The reviews of Button, Link, SearchBar and Stepper read the check as "every exported union must be covered" (Stepper keys `StepperType`, `StepperState` and `StepperStepState`). On that reading the two state unions **must** be keyed, and they are. The intent file's key set equals the required set, so the check passes and `doc-generator` has nothing to fix. The count is 14 and not 13 because `empty` is a value of both state unions and is one key. The stricter alternative (only `CalendarType` is a variant union, so only `picker` and `occupancy`) would make the twelve state keys "extra" and the file would fail; this review did not take it, because it is not the reading the earlier reviews set and the states are published Figma variants. A human may confirm the reading.
+
+## Failures
+
+None.
+
+## Warnings (not blocking)
+
+None from check 2 (all three `instead` fields are filled).
+
+## Findings outside the gates
+
+1. **`VERSIONING.md` does not list Calendar.** See G7. Owner: a human, before a version containing Calendar ships.
+2. **Stories carry px literals.** `Calendar.stories.tsx` has inline `gap: 20` (100), `width: 64` (110), `width: 158` (123) and `gap: 16` (143). Story scaffolding, not the stylesheet; gate 2 does not reach them. Reported for completeness. Owner: the engineer, if wanted.
+3. **`viewBox="0 0 14 14"` on the chevron icon** (`Calendar.tsx:70`) is an SVG attribute, not a stylesheet declaration; not reached by gate 2. The icon is sized by `1em` in CSS.
+4. **State keys describe parts that are not Calendar props.** Twelve of the 14 `variant_intent` keys are states of the internal sub-components, which are not exported from the package root; a reader of the docs page cannot set them on `Calendar`. Not a gate finding under the reading above. Owner: `doc-generator` and a human, to decide how the docs page presents them.
+5. **Props that are not Figma properties.** `value`, `defaultValue`, `onChange`, `visibleMonth`, `defaultVisibleMonth`, `onVisibleMonthChange`, `today`, `prices`, `isDateUnavailable` and `occupancy` are part of the public API once published (a 0.x breaking-change surface under `VERSIONING.md`). Owner: a human, to accept them as intended API.
+6. **Pipeline colour drift and inconsistent Figma sample data.** Named in the ruling's "Not ruled", so not findings under it. Owner: the designer.
+7. **Focus ring and pointer cursor are not in Figma** (engineer additions, per the QA report). Figma draws no month title for the occupancy cell (aria-label only).
+8. **Dark mode not tested** (QA limitation), and Inter was not installed in the test browser, so text widths are unverified. The two-month specimen, controlled props and multi-month navigation were not exercised by QA.
+9. **`Last Modified` is later than the build commit.** 10:19:59Z against the build commit 11:12:08+01:00 (10:12:08Z) and merge `bc50530` (10:18:54Z). The later edit is the board write after the production deploy; the cited commit is later than the row's last edit at the time of this report, so not stale. If the row changes again, re-run.
+
+## Not checked by this agent (needs a browser or a human)
+
+1. Production Storybook `?path=/story/components-calendar--picker` shows September 2026 at 536 wide with days 14 and 18 solid blue, 15 to 17 pale blue, past days grey, today outlined.
+2. `?path=/story/components-calendar--occupancy` shows August 2026 at 1170 wide with navy sold-out days and red percentages on the high days.
+3. `?path=/story/components-calendar--picker-uncontrolled`: Tab lands on one day only, arrows move, a second click sets the end.
+4. `Astro Link` is empty, so the docs page was not read (step 2 of the skill). It is devops' cell and not part of the gates.
+5. Whether the check 5 reading above is the one a human wants kept.

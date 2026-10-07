@@ -1,0 +1,70 @@
+{
+  "use_when": [
+    "Use type listing for something people can open or book: a stay, an experience, or a trip, with a photo, a title, one details line and the price.",
+    "Turn on ShowTag for a status on the photo, such as \"Confirmed\", and ShowAction for a text action such as \"View\"; turn ShowRating off when there are no reviews yet.",
+    "Use type stat in the back office for one key number, such as \"Active admins 27\", in a row of 3 to 5 tiles at the top of a page.",
+    "Keep every card in a grid the same width and photo ratio, so titles and prices line up.",
+    "One line each for title and details: they cut off with … rather than wrap.",
+    "Make the whole listing card clickable, and keep the Action for a second, smaller step."
+  ],
+  "dont_use_when": [
+    {
+      "when": "For rows of data people compare or sort: use a Table.",
+      "instead": "Table"
+    },
+    {
+      "when": "To choose one option in a form: use Radiocard.",
+      "instead": "RadioCard"
+    },
+    {
+      "when": "For a stat that needs a chart or several numbers: use a content panel, not a stat tile.",
+      "instead": ""
+    }
+  ],
+  "variant_intent": {
+    "listing": "something people can open or book: a stay, an experience, or a trip, with a photo, a title, one details line and the price",
+    "stat": "a back office KPI tile: one key number, in a row of 3 to 5 tiles at the top of a page"
+  },
+  "placement": [],
+  "pairs_with": [
+    "Image"
+  ],
+  "required_tokens": [
+    "--border-width-sm",
+    "--color-bg-elevated",
+    "--color-border-subtle",
+    "--color-status-success",
+    "--color-status-success-bg",
+    "--color-text-link",
+    "--color-text-primary",
+    "--color-text-secondary",
+    "--fontfamily-body",
+    "--fontsize-3xl",
+    "--fontsize-md",
+    "--fontsize-sm",
+    "--fontsize-xl",
+    "--fontsize-xs",
+    "--lineheight-3xl",
+    "--lineheight-md",
+    "--lineheight-sm",
+    "--lineheight-xl",
+    "--lineheight-xs",
+    "--radius-full",
+    "--radius-md",
+    "--radius-xs",
+    "--spacing-lg",
+    "--spacing-md",
+    "--spacing-sm",
+    "--spacing-xs"
+  ],
+  "a11y": [
+    {
+      "fact": "The photo is Horizon's Image component, a native <img>, and imageAlt (default empty, so decorative) is passed to its alt.",
+      "source": "src/components/Card/Card.tsx:62"
+    },
+    {
+      "fact": "The card is a plain <div> with no role; title, details and price are <p> text, so they read in DOM order. Caller-supplied attributes (onClick, role, aria-*) are spread onto the container.",
+      "source": "src/components/Card/Card.tsx:60"
+    }
+  ]
+}
