@@ -68,13 +68,15 @@
       "name": "Card",
       "category": "ORGANISMS",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1648&t=Mt63ncyvMqR38Jl0-1",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-card--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/6fc6fef5b0b0caa134c0c7e7347e61380348bfc7/reports/Card/release-review.md",
       "astroLink": "",
-      "composes": []
+      "composes": [
+        "Image"
+      ]
     },
     {
       "name": "Checkbox",

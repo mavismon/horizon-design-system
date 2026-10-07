@@ -238,7 +238,8 @@ const NATIVE_STATE = {
 // and LabelAndValue also set size). A component listed here has as rows only the stories whose export name matches.
 // Calendar: Picker and Occupancy are the two cells of the type matrix; PickerTwoMonths, PickerUncontrolled and PickerControlled
 // also set (or leave) type=picker but are examples, and the Day* and OccupancyDay* stories are the internal parts' state stories.
-const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/, Calendar: /^(Picker|Occupancy)$/ };
+// Card: Listing and Stat are the two cells of the type matrix; the other stories turn the show* booleans on or off and are examples.
+const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/, Calendar: /^(Picker|Occupancy)$/, Card: /^(Listing|Stat)$/ };
 
 // Components that render parts of their own (files in their own folder, not other Horizon components, so the registry's
 // Composes column is empty): the Figma part, the code file and its state union, and the prefix of the story that shows each state.
@@ -428,7 +429,7 @@ function parseComponent(row) {
 		const argVal = unionProp ? body.match(new RegExp(`${unionProp.name}:\\s*"([^"]+)"`)) : null;
 		const boolProps = BOOLEAN_MATRIX[name] ?? [];
 		const boolSet = boolProps.every((bp) => new RegExp(`\\b${bp}:\\s*(?:true|false)`).test(body));
-		const isRow = !/render\s*:/.test(body) && (!!argVal || (boolProps.length > 0 && boolSet)) && (!ROW_STORIES[name] || ROW_STORIES[name].test(m[1]));
+		const isRow = !/render\s*:/.test(body) && (!!argVal || (boolProps.length > 0 && boolSet) || !!ROW_STORIES[name]?.test(m[1])) && (!ROW_STORIES[name] || ROW_STORIES[name].test(m[1]));
 		// The value each union-typed prop is set to in this story's args (a two-property matrix needs both).
 		const argValues = {};
 		for (const p of props) {
@@ -1286,7 +1287,59 @@ function calendarNotes(cp, fig, review) {
 	return out;
 }
 
+// Card: the three warnings of the release review, each quoted as written, and what the code says about them. usage = the empty
+// "instead" on the third "when not to use" item (warning 1); best = the Best Practice line that asks for a clickable card
+// (warning 3); design = the tag offset the ruling accepts. Each is only written when the code bears it out. The review lists
+// its warnings as a numbered list, which reviewFacts (bullets only) does not read, so this reads the numbered items itself.
+const CARD_NOTES = { instead: /^\*\*C2:\*\*/, pairs: /^\*\*`pairs_with/, clickable: /^\*\*The intent's best practice/ };
+
+function cardNotes(cp, fig, review) {
+	const out = { props: null, stack: null, usage: [], best: [], design: [] };
+	const m = review?.url?.match(/\/blob\/([0-9a-f]{40})\/(.+)$/);
+	if (!m) return out;
+	const md = show(m[2], m[1]);
+	const numbered = (heading) =>
+		(mdSection(md, heading) ?? '')
+			.split('\n')
+			.filter((l) => /^\d+\.\s/.test(l))
+			.map((l) => l.replace(/^\d+\.\s+/, ''));
+	const warnings = numbered('## Warnings (not blocking)');
+	const find = (re) => warnings.find((w) => re.test(w));
+	const quote = (w) => `From the [release review](${review.url}), under "Warnings (not blocking)", as written:\n\n> ${t(plain(w))}`;
+	const file = `${cp.dir}/${cp.name}.tsx`;
+	const tsxL = cp.tsx.split('\n');
+	const divLine = tsxL.findIndex((l) => /<div className=\{cn\("hz-card", "hz-card--listing"/.test(l)) + 1;
+	const link = (n) => `[${c(`${cp.name}.tsx:${n}`)}](${blob(file, n)})`;
+
+	// Warning 1: the empty instead on the third "when not to use" item.
+	const dont = cp.intent?.dont_use_when ?? [];
+	const emptyIdx = dont.findIndex((x) => !x.instead);
+	const w1 = find(CARD_NOTES.instead);
+	if (emptyIdx >= 0 && w1) out.usage.push(`**Open item: no alternative named for item ${emptyIdx + 1}.** The item has an empty ${c('instead')} in ${c(`${cp.name}.intent.json`)}; the Figma page names no component there ("a content panel" is not a Horizon component).\n\n${quote(w1)}`);
+
+	// Warning 3: the clickable card.
+	const bpIdx = (fig?.usage?.best_practice ?? []).findIndex((x) => /whole listing card clickable/.test(x));
+	const w3 = find(CARD_NOTES.clickable);
+	const hasHandling = /\b(role=|tabIndex|onKeyDown|onKeyUp|<button|<a\b)/.test(cp.tsx) || /:focus/.test(cp.css);
+	if (bpIdx >= 0 && w3 && divLine && !hasHandling) {
+		const node = fig.usage.best_practice_nodes?.items?.[bpIdx];
+		out.best.push(
+			`**Where the built component differs.** Item ${bpIdx + 1}${node ? ` (Figma node ${c(node)})` : ''} is copied from Figma as written. It is a design instruction, not something ${c('Card')} does: the card is a plain ${c('<div>')} (${link(divLine)}) with no ${c('role')}, no ${c('tabIndex')}, no keyboard handling and no focus style (${c('Card.css')} has no ${c(':focus')} rule), and Figma draws no focus state. Caller attributes are spread onto the ${c('<div>')}, so a consumer who adds ${c('onClick')} gets a mouse-only target. The ${c('a11y')} entries in ${c(`${cp.name}.intent.json`)} do not say so. This is a documentation gap for the designer and a human, not a feature.\n\n${quote(w3)}`,
+		);
+	}
+
+	// Warning 2: pairs_with. The Composition section states it; the review text is quoted here.
+	const w2 = find(CARD_NOTES.pairs);
+	if (w2 && (cp.intent?.pairs_with ?? []).length) out.usage.push(`**Open item: ${c('pairs_with')}.** ${quote(w2)}`);
+
+	// The tag: the ruling accepts tokens where Figma has literals.
+	const rv = (mdSection(md, '## Rulings') ?? '').split('\n').find((l) => /The tag in `Card\.css` stays on the nearest tokens/.test(l));
+	if (rv) out.design.push(`**Tag offset and size.** From the [release review](${review.url}), quoting the 2026-10-07 ruling, as written:\n\n> ${t(plain(rv.replace(/^>\s*/, '')))}`);
+	return out;
+}
+
 function reviewNotes(cp, fig, review) {
+	if (cp.name === 'Card') return cardNotes(cp, fig, review);
 	if (cp.name === 'Calendar') return calendarNotes(cp, fig, review);
 	if (cp.name === 'Header') return headerNotes(cp, fig, review);
 	if (cp.name === 'RadioCard') return radioCardNotes(cp, fig, review);
@@ -1490,7 +1543,14 @@ function componentPage(cp) {
 	usage.push('## When to use it');
 	if (!intent) usage.push(notice(`No ${intentPath} at ${SHORT}.`));
 	else if (!intent.use_when?.length) usage.push(notice(`No usage region in Figma for ${name} (use_when is empty in ${intentPath}).`));
-	else usage.push(intent.use_when.map((x) => `- ${t(x)}`).join('\n'));
+	else {
+		// Where the intent also carries Figma's Best Practice lines in use_when (Card items 4 to 6), they are listed once, under Best practice.
+		const bp = new Set(fig?.usage?.best_practice ?? []);
+		const shown = name === 'Card' ? intent.use_when.filter((x) => !bp.has(x)) : intent.use_when;
+		usage.push(shown.map((x) => `- ${t(x)}`).join('\n'));
+		if (shown.length < intent.use_when.length)
+			usage.push(`${intent.use_when.length - shown.length} more lines in ${c('use_when')} in ${c(intentPath)} (items ${shown.length + 1} to ${intent.use_when.length}) are Figma's Best Practice lines, word for word. They are listed once, under "Best practice" below.`);
+	}
 	{
 		const d = SOURCE_DIFFS[name]?.useWhen;
 		const item = d ? intent?.use_when?.[d.index] : null;
@@ -1542,6 +1602,7 @@ function componentPage(cp) {
 	}
 
 	if (bare) usage.push(bare.bestPractice.join('\n\n'));
+	for (const n of rn.best ?? []) usage.push(n);
 	if (hrefN) usage.push(hrefN.usage);
 
 	usage.push('## What each variant is for');
@@ -1582,7 +1643,11 @@ function componentPage(cp) {
 
 	if (!omit.has('Composition')) {
 		usage.push('## Composition');
-		if (intent?.pairs_with?.length) usage.push(`The stories compose ${name} with: ${intent.pairs_with.map((x) => t(x)).join(', ')}.`);
+		const storySrc = has(`${cp.dir}/${name}.stories.tsx`) ? show(`${cp.dir}/${name}.stories.tsx`) : '';
+		const unseen = (intent?.pairs_with ?? []).filter((x) => !new RegExp(`import[^;]*\\b${x}\\b|<${x}\\b`).test(storySrc));
+		if (intent?.pairs_with?.length && unseen.length)
+			usage.push(`${c(`${name}.intent.json`)} lists ${unseen.map((x) => c(x)).join(', ')} in ${c('pairs_with')}, but no story composes ${name} with ${unseen.length > 1 ? 'them' : 'it'}: ${c(`${name}.stories.tsx`)} never imports or renders ${unseen.length > 1 ? 'them' : 'it'}, and every story renders ${name} alone. This page does not assert the pairing.${(cp.row.composes ?? []).some((x) => unseen.includes(x)) ? ` What is true is composition inside the component: ${c(`${name}.tsx`)} is built from ${(cp.row.composes ?? []).filter((x) => unseen.includes(x)).map((x) => `[${t(x)}](/core/components/${x.toLowerCase()}/)`).join(', ')}, as the registry's Composes column records and the Code tab shows.` : ''}`);
+		else if (intent?.pairs_with?.length) usage.push(`The stories compose ${name} with: ${intent.pairs_with.map((x) => t(x)).join(', ')}.`);
 		else usage.push(notice(`The stories compose ${name} with no other Horizon component (pairs_with is empty in ${intentPath}).`));
 	}
 
@@ -1795,7 +1860,7 @@ function componentPage(cp) {
 				main.values
 					.map((v) => {
 						// A component with no union type has no story arg to match on: match the story named after the value.
-						const s = cp.storyDefs.find((x) => x.isRow && x.value === v.value) ?? (cp.unionProp ? null : cp.storyDefs.find((x) => x.exportName.toLowerCase() === v.value.toLowerCase()));
+						const s = cp.storyDefs.find((x) => x.isRow && x.value === v.value) ?? (ROW_STORIES[name] ? cp.storyDefs.find((x) => x.isRow && x.value == null && cp.unionProp?.default?.replace(/^"|"$/g, '') === v.value) : null) ?? (cp.unionProp ? null : cp.storyDefs.find((x) => x.exportName.toLowerCase() === v.value.toLowerCase()));
 						return `| ${c(v.value)} | ${v.node ? c(v.node) : '—'} | ${s?.sb ? `[${t(s.sb.name)}](${storyBase + s.sb.id})` : '*no story*'} |`;
 					})
 					.join('\n'),

@@ -2986,6 +2986,220 @@
           "In occupancy, explain the colours under the grid, such as \"Navy is sold out. Red percentages are above 95%.\""
         ]
       }
+    },
+    "Card": {
+      "readAt": "2026-10-07",
+      "page": {
+        "id": "57:1648",
+        "name": "Card"
+      },
+      "node": {
+        "id": "239:3",
+        "name": "❖ card"
+      },
+      "component": {
+        "id": "238:24",
+        "name": "card"
+      },
+      "registryLink": {
+        "node": "57:1648",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1648), not the component set 238:24."
+      },
+      "description": "A container for one item. type listing (default, 284 wide, radius/md): a nested Image (2:1, fill its photo layer), an optional status Tag on the photo (ShowTag), Title, Details, Price, and on the right a Rating (ShowRating) and/or a text Action (ShowAction). type stat (234 wide, radius/xs): a back office KPI tile with Label, a 24px Value and a Helper line (ShowHelper). Stretch the width to fit the grid.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "listing",
+                "node": "238:7"
+              },
+              {
+                "value": "stat",
+                "node": "238:20"
+              }
+            ]
+          }
+        ],
+        "cells": 2,
+        "note": "The component set (238:24) publishes two variants, type=listing (238:7, 284x242) and type=stat (238:20, 234x96). ShowTag, ShowAction, ShowRating (listing) and ShowHelper (stat) are boolean properties of the set, not variants; the documentation frame (233:2709) lays out 32 instances of them (2 types x ShowTag x ShowAction x ShowRating or ShowHelper). Figma draws no hover, pressed, focus or disabled state."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The card documentation frame renders every instance in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--radius-none": "0",
+        "--color-text-primary": "#161925",
+        "--fontSize-xl": "14",
+        "--fontWeight-semibold": "Semi Bold",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-xl": "20",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-sm": "11",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-sm": "16",
+        "--spacing-md": "12",
+        "--spacing-xs": "4",
+        "--spacing-lg": "16",
+        "--radius-md": "12",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--fontWeight-medium": "Medium",
+        "--fontSize-3xl": "24",
+        "--lineHeight-3xl": "32",
+        "--radius-xs": "2",
+        "--color-status-success-bg": "#e8faee",
+        "--color-status-success": "#229c4a",
+        "--color-text-link": "#1d44ba",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--fontSize-md": "12",
+        "--lineHeight-md": "18",
+        "--radius-full": "999"
+      },
+      "unboundValues": [
+        {
+          "layer": "card, type=listing (238:7)",
+          "property": "width",
+          "value": "284px",
+          "css": {
+            "selector": ".hz-card--listing",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "card, type=stat (238:20)",
+          "property": "width",
+          "value": "234px",
+          "css": {
+            "selector": ".hz-card--stat",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Image, type=listing (238:8)",
+          "property": "height (an aspect ratio of 284 by 142, which is 2:1)",
+          "value": "142px",
+          "codeNote": "Not set in Card.css: Card renders the Image component at ratio 2:1 (Card.tsx, the Image element)",
+          "codeFile": "src/components/Card/Card.tsx"
+        },
+        {
+          "layer": "Tag, type=listing with ShowTag (238:10)",
+          "property": "left",
+          "value": "11px",
+          "css": {
+            "selector": ".hz-card__tag",
+            "property": "left"
+          }
+        },
+        {
+          "layer": "Tag, type=listing with ShowTag (238:10)",
+          "property": "top",
+          "value": "11px",
+          "css": {
+            "selector": ".hz-card__tag",
+            "property": "top"
+          }
+        },
+        {
+          "layer": "Tag, type=listing with ShowTag (238:10)",
+          "property": "padding, left and right",
+          "value": "9px",
+          "css": {
+            "selector": ".hz-card__tag",
+            "property": "padding-inline"
+          }
+        },
+        {
+          "layer": "Tag, type=listing with ShowTag (238:10)",
+          "property": "padding, top and bottom",
+          "value": "3px",
+          "css": {
+            "selector": ".hz-card__tag",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "Footer, type=listing (238:15)",
+          "property": "padding-top",
+          "value": "4px",
+          "css": {
+            "selector": ".hz-card__footer",
+            "property": "padding-top"
+          }
+        },
+        {
+          "layer": "Title, type=listing (238:13)",
+          "property": "font size",
+          "value": "14px",
+          "css": {
+            "selector": ".hz-card__title",
+            "property": "font-size"
+          }
+        },
+        {
+          "layer": "Details, type=listing (238:14)",
+          "property": "font size",
+          "value": "11px",
+          "css": {
+            "selector": ".hz-card__details",
+            "property": "font-size"
+          }
+        },
+        {
+          "layer": "card border, both types (238:7, 238:20)",
+          "property": "border colour (bound in Figma to the variable color/border/subtle, which is not named like a --color-... token; the code reads --color-border-subtle)",
+          "value": "#eef1f5",
+          "css": {
+            "selector": ".hz-card::after",
+            "property": "box-shadow"
+          }
+        }
+      ],
+      "usage": {
+        "node": "239:51",
+        "use_when_heading": "Use a card",
+        "use_when_node": "239:54",
+        "use_when": [
+          "Use type listing for something people can open or book: a stay, an experience, or a trip, with a photo, a title, one details line and the price.",
+          "Turn on ShowTag for a status on the photo, such as \"Confirmed\", and ShowAction for a text action such as \"View\"; turn ShowRating off when there are no reviews yet.",
+          "Use type stat in the back office for one key number, such as \"Active admins 27\", in a row of 3 to 5 tiles at the top of a page."
+        ],
+        "use_when_nodes": {
+          "group": "239:54",
+          "items": [
+            "239:56",
+            "239:57",
+            "239:58"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a card",
+        "dont_use_when_node": "239:59",
+        "dont_use_when": [
+          "For rows of data people compare or sort: use a Table.",
+          "To choose one option in a form: use Radiocard.",
+          "For a stat that needs a chart or several numbers: use a content panel, not a stat tile."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Keep every card in a grid the same width and photo ratio, so titles and prices line up.",
+          "One line each for title and details: they cut off with … rather than wrap.",
+          "Make the whole listing card clickable, and keep the Action for a second, smaller step."
+        ],
+        "best_practice_nodes": {
+          "group": "239:64",
+          "items": [
+            "239:66",
+            "239:67",
+            "239:68"
+          ]
+        }
+      }
     }
   }
 }

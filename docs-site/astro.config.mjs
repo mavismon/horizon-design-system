@@ -54,6 +54,7 @@ export default defineConfig({
 								{ label: 'Button', slug: 'core/components/button' },
 								{ label: 'ButtonGroup', slug: 'core/components/buttongroup' },
 								{ label: 'Calendar', slug: 'core/components/calendar' },
+								{ label: 'Card', slug: 'core/components/card' },
 								{ label: 'Checkbox', slug: 'core/components/checkbox' },
 								{ label: 'Chip', slug: 'core/components/chip' },
 								{ label: 'Dropdown', slug: 'core/components/dropdown' },
