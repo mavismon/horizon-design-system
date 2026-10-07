@@ -89,8 +89,6 @@ From [Versioning](/get-started/versioning/) (`VERSIONING.md` at `b9ffb76`):
 
 <StoryFrame title="Button · All States (light)" src="https://horizon-design-system-cdfi.vercel.app/iframe.html?id=components-button--all-states&amp;viewMode=story" href="https://horizon-design-system-cdfi.vercel.app/?path=/story/components-button--all-states" />
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of this story to embed.</p>
-
 The single-variant stories (`Default`, `Hover`, `Error`, `Outline`, `OutlineError`) are rows of the variant matrix; the Design tab links each one.
 
 </TabItem>
@@ -114,8 +112,6 @@ import type { ButtonProps, ButtonState } from "@layerbasesystemic/horizon-design
 | [`startIcon`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Button/Button.tsx#L18) | `boolean` | `true` | — |
 | [`endIcon`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Button/Button.tsx#L19) | `boolean` | `true` | — |
 | [`swapIcon`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Button/Button.tsx#L20) | `ReactNode` | — | — |
-
-<p class="hz-missing"><strong>Missing source.</strong> Button.tsx has no doc comments on its props, so there are no descriptions to show.</p>
 
 `ButtonProps` also extends `Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children">`, so native attributes pass through to the element ([`Button.tsx:15`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Button/Button.tsx#L15)).
 
@@ -146,10 +142,6 @@ Every CSS custom property `Button.css` reads, with its value in the token build 
 | `--radius-sm` | `6px` | same as light |
 
 This matches `required_tokens` in `Button.intent.json` exactly.
-
-## Storybook props table
-
-<p class="hz-missing"><strong>Missing source.</strong> The deployed Storybook publishes no docs (autodocs) page for Button, so there's no props table to embed.</p>
 
 </TabItem>
 <TabItem label="Design">
@@ -183,8 +175,6 @@ The page's FigLog status reads **BETA**.
 The Button page renders every cell in one theme. There is no dark-mode frame on the page.
 
 The token build defines 179 tokens for light and redeclares 50 for dark; the Code tab shows Button's tokens in both.
-
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of the stories to show.</p>
 
 ## Values Figma never bound
 

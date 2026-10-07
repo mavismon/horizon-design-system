@@ -84,8 +84,6 @@ From [Versioning](/get-started/versioning/) (`VERSIONING.md` at `b9ffb76`):
 
 <StoryFrame title="Image · All Variants (light)" src="https://horizon-design-system-cdfi.vercel.app/iframe.html?id=components-image--all-variants&amp;viewMode=story" href="https://horizon-design-system-cdfi.vercel.app/?path=/story/components-image--all-variants" />
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of this story to embed.</p>
-
 The single-variant stories (`R43None`, `R43Sm`, `R43Md`, `R11None`, `R11Sm`, `R11Md`, `R32None`, `R32Sm`, `R32Md`, `R169None`, `R169Sm`, `R169Md`, `R21None`, `R21Sm`, `R21Md`) are cells of the variant matrix; the Design tab links each one.
 
 </TabItem>
@@ -107,8 +105,6 @@ import type { ImageProps, ImageRatio, ImageRadius } from "@layerbasesystemic/hor
 | [`ratio`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Image/Image.tsx#L22) | `ImageRatio` | `"4:3"` | — |
 | [`radius`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Image/Image.tsx#L23) | `ImageRadius` | `"none"` | — |
 
-<p class="hz-missing"><strong>Missing source.</strong> Image.tsx has no doc comments on its props, so there are no descriptions to show.</p>
-
 `ImageProps` also extends `ImgHTMLAttributes<HTMLImageElement>`, so native attributes pass through to the element ([`Image.tsx:21`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Image/Image.tsx#L21)).
 
 ## Union types
@@ -128,10 +124,6 @@ Every CSS custom property `Image.css` reads, with its value in the token build a
 | `--radius-sm` | `6px` | same as light |
 
 This matches `required_tokens` in `Image.intent.json` exactly.
-
-## Storybook props table
-
-<p class="hz-missing"><strong>Missing source.</strong> The deployed Storybook publishes no docs (autodocs) page for Image, so there's no props table to embed.</p>
 
 </TabItem>
 <TabItem label="Design">
@@ -162,8 +154,6 @@ The Image frame renders every cell in one theme. It has no separate light and da
 
 The token build defines 179 tokens for light and redeclares 50 for dark; the Code tab shows Image's tokens in both.
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of the stories to show.</p>
-
 ## Values Figma never bound
 
 Values on the Figma node that aren't bound to a variable, and what `Image.css` at `b9ffb76` does with each.
@@ -184,10 +174,6 @@ Values on the Figma node that aren't bound to a variable, and what `Image.css` a
 | `--radius-none` | `0` | `--radius-none` | `0px` | yes |
 | `--radius-sm` | `6` | `--radius-sm` | `6px` | yes |
 | `--radius-md` | `12` | `--radius-md` | `12px` | yes |
-
-## Design gaps recorded against it
-
-<p class="hz-missing"><strong>Missing source.</strong> No design gaps are recorded against Image in decisions.md or its release review.</p>
 
 </TabItem>
 <TabItem label="Changelog">

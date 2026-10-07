@@ -81,8 +81,6 @@ From [Versioning](/get-started/versioning/) (`VERSIONING.md` at `b9ffb76`):
 
 <StoryFrame title="Link · All Variants (light)" src="https://horizon-design-system-cdfi.vercel.app/iframe.html?id=components-link--all-variants&amp;viewMode=story" href="https://horizon-design-system-cdfi.vercel.app/?path=/story/components-link--all-variants" />
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of this story to embed.</p>
-
 The single-variant stories (`MdDefault`, `MdHover`, `SmDefault`, `SmHover`) are cells of the variant matrix; the Design tab links each one.
 
 </TabItem>
@@ -104,8 +102,6 @@ import type { LinkProps, LinkSize, LinkState } from "@layerbasesystemic/horizon-
 | [`size`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Link/Link.tsx#L9) | `LinkSize` | `"md"` | — |
 | [`state`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Link/Link.tsx#L10) | `LinkState` | `"default"` | — |
 | [`label`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Link/Link.tsx#L11) | `string` | `"Link"` | — |
-
-<p class="hz-missing"><strong>Missing source.</strong> Link.tsx has no doc comments on its props, so there are no descriptions to show.</p>
 
 `LinkProps` also extends `Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children">`, so native attributes pass through to the element ([`Link.tsx:7`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Link/Link.tsx#L7)).
 
@@ -129,10 +125,6 @@ Every CSS custom property `Link.css` reads, with its value in the token build at
 | `--lineheight-md` | `18px` | same as light |
 
 This matches `required_tokens` in `Link.intent.json` exactly.
-
-## Storybook props table
-
-<p class="hz-missing"><strong>Missing source.</strong> The deployed Storybook publishes no docs (autodocs) page for Link, so there's no props table to embed.</p>
 
 </TabItem>
 <TabItem label="Design">
@@ -160,8 +152,6 @@ The Link frame renders every cell once, in one theme. It has no separate light a
 
 The token build defines 179 tokens for light and redeclares 50 for dark; the Code tab shows Link's tokens in both.
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of the stories to show.</p>
-
 ## Values Figma never bound
 
 The Figma read of Link found no values on the node that aren't bound to a variable.
@@ -179,10 +169,6 @@ The Figma read of Link found no values on the node that aren't bound to a variab
 | `--fontWeight-medium` | `Medium` | *no such token* | — | **no token** |
 
 `--fontWeight-medium` is bound in Figma but the token build has no token of that name.
-
-## Design gaps recorded against it
-
-<p class="hz-missing"><strong>Missing source.</strong> No design gaps are recorded against Link in decisions.md or its release review.</p>
 
 </TabItem>
 <TabItem label="Changelog">

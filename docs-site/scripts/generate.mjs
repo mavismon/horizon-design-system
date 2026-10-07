@@ -9,8 +9,8 @@
 // Tokens, Changelog, Roadmap, News, src/styles/horizon-tokens.css and the
 // generated block of the sidebar in astro.config.mjs. Guides are never touched.
 //
-// Nothing here invents content: a section with no source gets a notice naming
-// exactly what is missing.
+// Nothing here invents content: a section with no source is left out. A
+// heading that ends up with nothing under it is dropped too (see pruneEmpty).
 
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -64,7 +64,23 @@ const t = (s) =>
 // Inline code, safe in tables.
 const c = (s) => '`' + String(s).replace(/\|/g, '\\|') + '`';
 const attr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-const notice = (s) => `<p class="hz-missing"><strong>Missing source.</strong> ${t(s)}</p>`;
+// A gap in the sources is no longer announced on the page: it returns '' and pruneEmpty() drops any heading it leaves empty.
+const notice = () => '';
+// Drop empty items, then every single-line heading (## to ####) with no non-heading content before the next heading of the same or a higher level.
+function pruneEmpty(items) {
+	const list = items.filter((x) => x && String(x).trim());
+	const lvl = (x) => (/^(#{2,4}) [^\n]*$/.exec(x)?.[1].length ?? 0);
+	return list.filter((x, i) => {
+		const L = lvl(x);
+		if (!L) return true;
+		for (let j = i + 1; j < list.length; j++) {
+			const M = lvl(list[j]);
+			if (M && M <= L) return false;
+			if (!M) return true;
+		}
+		return false;
+	});
+}
 const blob = (p, line) => `${cfg.repoUrl}/blob/${SHA}/${p}${line ? `#L${line}` : ''}`;
 const tree = (p) => `${cfg.repoUrl}/tree/${SHA}/${p}`;
 const commitUrl = (h) => `${cfg.repoUrl}/commit/${h}`;
@@ -2333,7 +2349,7 @@ function componentPage(cp) {
 			cp.log.map((l) => `| [${c(l.short)}](${commitUrl(l.hash)}) | ${l.date} | ${l.version ? t(l.version) : '*Unreleased*'} | ${t(l.subject)} |`).join('\n'),
 	);
 
-	const tab = (label, body) => `<TabItem label="${label}">\n\n${body.join('\n\n')}\n\n</TabItem>`;
+	const tab = (label, body) => `<TabItem label="${label}">\n\n${pruneEmpty(body).join('\n\n')}\n\n</TabItem>`;
 	return [
 		frontmatter({ title: name, description: `${name}: when to use it, how to call it, what it was built from, and what has changed.` }),
 		'',

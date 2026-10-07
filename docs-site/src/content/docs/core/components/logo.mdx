@@ -79,8 +79,6 @@ From [Versioning](/get-started/versioning/) (`VERSIONING.md` at `b9ffb76`):
 
 **Not guidance for a product screen.** This story is a side-by-side comparison for the Storybook. Figma's Best Practice for Logo (node `137:666`) says: "Don't show the mark and the lockup side by side on the same screen."
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of this story to embed.</p>
-
 The single-variant stories (`Lockup`, `Mark`) are rows of the variant matrix; the Design tab links each one.
 
 </TabItem>
@@ -102,8 +100,6 @@ import type { LogoProps, LogoType } from "@layerbasesystemic/horizon-design-syst
 | [`type`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Logo/Logo.tsx#L8) | `LogoType` | `"lockup"` | — |
 | [`alt`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Logo/Logo.tsx#L9) | `string` | — | — |
 
-<p class="hz-missing"><strong>Missing source.</strong> Logo.tsx has no doc comments on its props, so there are no descriptions to show.</p>
-
 `LogoProps` also extends `HTMLAttributes<HTMLSpanElement>`, so native attributes pass through to the element ([`Logo.tsx:7`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Logo/Logo.tsx#L7)).
 
 ## Union types
@@ -122,10 +118,6 @@ Every CSS custom property `Logo.css` reads, with its value in the token build at
 | `--spacing-sm` | `8px` | same as light |
 
 This matches `required_tokens` in `Logo.intent.json` exactly.
-
-## Storybook props table
-
-<p class="hz-missing"><strong>Missing source.</strong> The deployed Storybook publishes no docs (autodocs) page for Logo, so there's no props table to embed.</p>
 
 </TabItem>
 <TabItem label="Design">
@@ -150,8 +142,6 @@ Page `Logo` (`57:1636`), documentation frame `❖ logo` (`137:18`), component se
 The Logo frame renders both variants once, in one theme, and has no separate light and dark frames. The mark is the committed SVG asset (src/assets/images/logo-mark.svg) with its colours fixed inside the file, and the wordmark colour is a fixed literal in the stylesheet, so neither follows the UI theme tokens and the Logo does not change between light and dark. Figma's Best Practice says there's no version for dark backgrounds yet.
 
 The token build defines 179 tokens for light and redeclares 50 for dark; the Code tab shows Logo's tokens in both.
-
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of the stories to show.</p>
 
 ## Values Figma never bound
 

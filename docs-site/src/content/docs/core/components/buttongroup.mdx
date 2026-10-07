@@ -86,8 +86,6 @@ From [Versioning](/get-started/versioning/) (`VERSIONING.md` at `b9ffb76`):
 
 <StoryFrame title="ButtonGroup · All Variants (light)" src="https://horizon-design-system-cdfi.vercel.app/iframe.html?id=components-buttongroup--all-variants&amp;viewMode=story" href="https://horizon-design-system-cdfi.vercel.app/?path=/story/components-buttongroup--all-variants" />
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of this story to embed.</p>
-
 The single-variant stories (`PrimaryRow`, `PrimaryStack`, `DestructiveRow`, `DestructiveStack`, `SecondaryRow`, `SecondaryStack`, `SegmentedRow`) are cells of the variant matrix; the Design tab links each one.
 
 </TabItem>
@@ -171,10 +169,6 @@ Every CSS custom property `ButtonGroup.css` reads, with its value in the token b
 
 This matches `required_tokens` in `ButtonGroup.intent.json` exactly.
 
-## Storybook props table
-
-<p class="hz-missing"><strong>Missing source.</strong> The deployed Storybook publishes no docs (autodocs) page for ButtonGroup, so there's no props table to embed.</p>
-
 </TabItem>
 <TabItem label="Design">
 
@@ -204,8 +198,6 @@ Each cell is the Storybook story for that combination and its Figma variant node
 The buttongroup frame renders every cell once, in one theme. It has no separate light and dark frames.
 
 The token build defines 179 tokens for light and redeclares 50 for dark; the Code tab shows ButtonGroup's tokens in both.
-
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of the stories to show.</p>
 
 ## Values Figma never bound
 
@@ -242,10 +234,6 @@ Values on the Figma node that aren't bound to a variable, and what `ButtonGroup.
 `--fontWeight-regular` is bound in Figma but the token build has no token of that name.
 
 `--color-primary-default`, `--color-status-error` hold a different value in Figma from the token of the same name in the build. `ButtonGroup.css` doesn't read those tokens, but the stylesheet of the component ButtonGroup is built from does ([`Button.css`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Button/Button.css)), so the Button rendered inside ButtonGroup uses the build's value, not Figma's.
-
-## Design gaps recorded against it
-
-<p class="hz-missing"><strong>Missing source.</strong> No design gaps are recorded against ButtonGroup in decisions.md, and the warnings section of its release review lists none. The review's findings outside the gates are not carried onto this page, except the ones quoted on the Code tab; they stay in the [release review](https://github.com/mavismon/horizon-design-system/blob/b6aa331fa03a1a02a086c728357436103b0b05d1/reports/ButtonGroup/release-review.md).</p>
 
 </TabItem>
 <TabItem label="Changelog">

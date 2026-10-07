@@ -89,8 +89,6 @@ From [Versioning](/get-started/versioning/) (`VERSIONING.md` at `b9ffb76`):
 
 <StoryFrame title="Breadcrumbs · All Variants (light)" src="https://horizon-design-system-cdfi.vercel.app/iframe.html?id=components-breadcrumbs--all-variants&amp;viewMode=story" href="https://horizon-design-system-cdfi.vercel.app/?path=/story/components-breadcrumbs--all-variants" />
 
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of this story to embed.</p>
-
 The single-variant stories (`Item2TrueItem3True`, `Item2FalseItem3True`, `Item2TrueItem3False`, `Item2FalseItem3False`) are cells of the variant matrix; the Design tab links each one.
 
 </TabItem>
@@ -119,15 +117,9 @@ import type { BreadcrumbsProps } from "@layerbasesystemic/horizon-design-system"
 | [`item2Href`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L12) | `string` | — | — |
 | [`item3Href`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L13) | `string` | — | — |
 
-<p class="hz-missing"><strong>Missing source.</strong> Breadcrumbs.tsx has no doc comments on its props, so there are no descriptions to show.</p>
-
 `BreadcrumbsProps` also extends `HTMLAttributes<HTMLElement>`, so native attributes pass through to the element ([`Breadcrumbs.tsx:4`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L4)).
 
 [`item1Href`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L11), [`item2Href`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L12), [`item3Href`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L13) are not Figma properties. `Breadcrumbs.tsx` declares them as optional props and sets `href={a.href}` on each ancestor `<a>` ([`Breadcrumbs.tsx:40`](https://github.com/mavismon/horizon-design-system/blob/b9ffb76f7673fe33ddc04617d587557e93084f96/src/components/Breadcrumbs/Breadcrumbs.tsx#L40)), so an ancestor that is given no href renders an anchor without one. The Usage tab quotes the QA report and the release review on this.
-
-## Union types
-
-<p class="hz-missing"><strong>Missing source.</strong> Breadcrumbs.tsx exports no union types.</p>
 
 ## Tokens it needs
 
@@ -143,10 +135,6 @@ Every CSS custom property `Breadcrumbs.css` reads, with its value in the token b
 | `--spacing-sm` | `8px` | same as light |
 
 This matches `required_tokens` in `Breadcrumbs.intent.json` exactly.
-
-## Storybook props table
-
-<p class="hz-missing"><strong>Missing source.</strong> The deployed Storybook publishes no docs (autodocs) page for Breadcrumbs, so there's no props table to embed.</p>
 
 </TabItem>
 <TabItem label="Design">
@@ -175,8 +163,6 @@ Each cell is the Storybook story for that combination and its Figma variant node
 The Breadcrumbs frame renders every cell once, in one theme. It has no separate light and dark frames.
 
 The token build defines 179 tokens for light and redeclares 50 for dark; the Code tab shows Breadcrumbs's tokens in both.
-
-<p class="hz-missing"><strong>Missing source.</strong> The Storybook has no theme switch, so there's no dark rendering of the stories to show.</p>
 
 ## Values Figma never bound
 
