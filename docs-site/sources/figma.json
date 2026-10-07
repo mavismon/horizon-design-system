@@ -3200,6 +3200,219 @@
           ]
         }
       }
+    },
+    "Form": {
+      "readAt": "2026-10-07",
+      "page": {
+        "id": "57:1649",
+        "name": "Form"
+      },
+      "node": {
+        "id": "242:61",
+        "name": "❖ form"
+      },
+      "component": {
+        "id": "241:91",
+        "name": "form"
+      },
+      "registryLink": {
+        "node": "57:1649",
+        "kind": "canvas",
+        "note": "The registry's Figma cell holds the canvas page (node-id 57-1649), not the component set 241:91."
+      },
+      "internal": [
+        {
+          "id": "240:37",
+          "name": "textfield",
+          "description": "A labelled text input. state: default (Placeholder), focused (blue border), filled (Value), error (red border, Error message replaces the Helper), disabled. Label above, 40px input, optional Helper below (ShowHelper). Width 320, stretch to fill the form.",
+          "states": [
+            {
+              "value": "state=default",
+              "node": "240:2"
+            },
+            {
+              "value": "state=focused",
+              "node": "240:9"
+            },
+            {
+              "value": "state=filled",
+              "node": "240:16"
+            },
+            {
+              "value": "state=error",
+              "node": "240:23"
+            },
+            {
+              "value": "state=disabled",
+              "node": "240:30"
+            }
+          ]
+        }
+      ],
+      "description": "A form layout built from textfield instances. type section (default, 720 wide): a page form with Title, Description, up to four 400px fields (ShowField3, ShowField4), a Buttongroup (Save changes / Cancel) and a Footnote (ShowFootnote). type card (440 wide): a boxed form for sign in, sign up or invites, with full-width fields, a full-width Button and a Link (ShowLink). Edit each field's label, value and state from its layer; add more fields by duplicating one.",
+      "variantMatrix": {
+        "properties": [
+          {
+            "name": "type",
+            "values": [
+              {
+                "value": "section",
+                "node": "241:2"
+              },
+              {
+                "value": "card",
+                "node": "241:64"
+              }
+            ]
+          }
+        ],
+        "cells": 2,
+        "note": "The component set (241:91) publishes two variants, type=section (241:2, 720x510) and type=card (241:64, 440x354). ShowDescription, ShowField3, ShowField4, ShowFootnote (section) and ShowLink (card) are boolean properties of the set, not variants. The documentation frame (233:8441) lays out an 8 by 8 grid of 64 cells: 62 are instances of form, and the two cells at the top left are taken by the component set itself. Below it the canvas holds two examples (a card 'Sign in' and a card 'Invite, with an error') and the textfield set (240:37) with its five states. Figma draws no hover, pressed or focus state for the form."
+      },
+      "themes": {
+        "shown": [
+          "light"
+        ],
+        "note": "The form documentation frame renders every instance in one theme. It has no separate light and dark frames."
+      },
+      "boundVariables": {
+        "--color-text-primary": "#161925",
+        "--fontSize-2xl": "18",
+        "--fontWeight-semibold": "Semi Bold",
+        "--fontFamily-body": "Inter",
+        "--lineHeight-2xl": "26",
+        "--color-text-secondary": "#4d5361",
+        "--fontSize-lg": "13",
+        "--fontWeight-regular": "Regular",
+        "--lineHeight-lg": "20",
+        "--spacing-xs": "4",
+        "--fontSize-md": "12",
+        "--fontWeight-medium": "Medium",
+        "--lineHeight-md": "18",
+        "--spacing-md": "12",
+        "--radius-xs": "2",
+        "--border-width-sm": "1",
+        "--color-bg-elevated": "#f9fafb",
+        "--color-border-default": "#d7dee7",
+        "--spacing-lg": "16",
+        "--color-text-inverse": "#f9fafb",
+        "--fontSize-xs": "10",
+        "--lineHeight-xs": "16",
+        "--radius-sm": "6",
+        "--color-primary-default": "#3b71f2",
+        "--color-neutral-default": "#8a909c",
+        "--spacing-xl": "20",
+        "--spacing-2xl": "24",
+        "--color-text-link": "#1d44ba",
+        "--color-status-error": "#ea3d3d",
+        "--color-border-focus": "#1d44ba",
+        "--color-text-disabled": "#d1d5db",
+        "--color-state-disabled-bg": "#e5e7ed"
+      },
+      "unboundValues": [
+        {
+          "layer": "form, type=section (241:2)",
+          "property": "width",
+          "value": "720px",
+          "css": {
+            "selector": ".hz-form--section",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "form, type=card (241:64)",
+          "property": "width",
+          "value": "440px",
+          "css": {
+            "selector": ".hz-form--card",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "textfield in a section form (Fields, type=section)",
+          "property": "width",
+          "value": "400px",
+          "css": {
+            "selector": ".hz-form--section .hz-form__field",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "textfield, every state (240:2, 240:9, 240:16, 240:23, 240:30)",
+          "property": "width",
+          "value": "320px",
+          "css": {
+            "selector": ".hz-textfield",
+            "property": "width"
+          }
+        },
+        {
+          "layer": "Input, every textfield state (240:4, 240:11, 240:18, 240:25, 240:32)",
+          "property": "padding, top and bottom",
+          "value": "10px",
+          "css": {
+            "selector": ".hz-textfield__input",
+            "property": "padding-block"
+          }
+        },
+        {
+          "layer": "Value, textfield states filled, error and disabled (240:20, 240:34)",
+          "property": "font size (the text carries 13px as a literal; the other texts bind --fontSize-lg)",
+          "value": "13px",
+          "css": {
+            "selector": ".hz-textfield__input",
+            "property": "font-size"
+          }
+        },
+        {
+          "layer": "form border, both types (241:2, 241:64)",
+          "property": "border colour (bound in Figma to the variable color/border/subtle, which is not named like a --color-... token; the code reads --color-border-subtle)",
+          "value": "#eef1f5",
+          "css": {
+            "selector": ".hz-form::after",
+            "property": "box-shadow"
+          }
+        }
+      ],
+      "usage": {
+        "node": "242:129",
+        "use_when_heading": "Use a form",
+        "use_when_node": "242:132",
+        "use_when": [
+          "Use type section for a form inside a page, such as Profile, payment details or back office settings, with a Save changes and Cancel group at the end.",
+          "Use type card for a short form on its own, such as Sign in, Create your account or Invite someone, with one full-width button.",
+          "Build every input from textfield; use Dropdown, Checkbox, Radiocard or Toggle in the same stack when a field is a choice."
+        ],
+        "use_when_nodes": {
+          "group": "242:132",
+          "items": [
+            "242:134",
+            "242:135",
+            "242:136"
+          ]
+        },
+        "dont_use_when_heading": "Do not use a form",
+        "dont_use_when_node": "242:137",
+        "dont_use_when": [
+          "For one setting that applies at once: use a Toggle, without a Save button.",
+          "To search or filter a list: use Searchbar or Chip filters.",
+          "For a long flow such as booking: split it into steps with Stepper type progress."
+        ],
+        "best_practice_heading": "Best Practice",
+        "best_practice": [
+          "Label every field above the input, and keep placeholders for examples, never for the label.",
+          "Show an error under the field that caused it and say how to fix it, such as \"Use a full email address\"; keep what the person typed.",
+          "Ask only for what you need, in the order people think about it, and put the main action last."
+        ],
+        "best_practice_nodes": {
+          "group": "242:142",
+          "items": [
+            "242:144",
+            "242:145",
+            "242:146"
+          ]
+        }
+      }
     }
   }
 }

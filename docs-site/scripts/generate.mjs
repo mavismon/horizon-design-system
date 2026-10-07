@@ -239,7 +239,9 @@ const NATIVE_STATE = {
 // Calendar: Picker and Occupancy are the two cells of the type matrix; PickerTwoMonths, PickerUncontrolled and PickerControlled
 // also set (or leave) type=picker but are examples, and the Day* and OccupancyDay* stories are the internal parts' state stories.
 // Card: Listing and Stat are the two cells of the type matrix; the other stories turn the show* booleans on or off and are examples.
-const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/, Calendar: /^(Picker|Occupancy)$/, Card: /^(Listing|Stat)$/ };
+// Form: Section and Card are the two cells of the type matrix (Section leaves type unset, so it takes the code's default, "section");
+// the other Section* and Card* stories turn the show* booleans off or set fields, and are examples.
+const ROW_STORIES = { Dropdown: /^(Md|Sm)(Closed|Open|Disabled)$/, Calendar: /^(Picker|Occupancy)$/, Card: /^(Listing|Stat)$/, Form: /^(Section|Card)$/ };
 
 // Components that render parts of their own (files in their own folder, not other Horizon components, so the registry's
 // Composes column is empty): the Figma part, the code file and its state union, and the prefix of the story that shows each state.
@@ -974,7 +976,12 @@ function searchBarNotes(cp, fig, review) {
 	// "text field" is the alternative the intent names, and it isn't a built component.
 	const pointer = (cp.intent?.dont_use_when ?? []).find((x) => /^text field$/i.test((x.instead ?? '').trim()));
 	const built = git('ls-tree', '--name-only', SHA, 'src/components/').split('\n').filter(Boolean).map((x) => x.replace(/\/$/, '').split('/').pop());
-	if (pointer && !built.some((n) => /^text-?field$/i.test(n)) && from(cfgS.notBuilt))
+	// A text field can also be built as a part of another component's folder and exported from the package root (Form's Textfield): then the alternative exists, and the notice says so instead.
+	const tfExport = indexTs.split('\n').findIndex((l) => /^export \{[^}]*\bText-?field\b[^}]*\} from "(\.\/[^"]+)"/i.test(l)) + 1;
+	const tfFrom = tfExport ? indexTs.split('\n')[tfExport - 1].match(/from "\.\/([^"]+)"/)[1] : null;
+	if (pointer && tfExport && tfFrom && has(`src/${tfFrom}.tsx`) && from(cfgS.notBuilt))
+		out.usage.push(`**Built since the review.** The second "when not to use it" item names ${c(pointer.instead)} as the alternative. At ${c(SHORT)} a text field exists: ${c('Textfield')} is exported from the package root ([${c(`src/index.ts:${tfExport}`)}](${blob('src/index.ts', tfExport)})) and defined in ${c(`src/${tfFrom}.tsx`)}, inside the folder of [Form](/core/components/form/) rather than a folder of its own. The release review's finding below was written before it existed.\n\n${from(cfgS.notBuilt)}`);
+	else if (pointer && !built.some((n) => /^text-?field$/i.test(n)) && from(cfgS.notBuilt))
 		out.usage.push(`**Not built.** The second "when not to use it" item names ${c(pointer.instead)} as the alternative. There is no text-field component in ${c('src/components/')} at ${c(SHORT)} (the folders there are ${built.map(c).join(', ')}), so that alternative does not exist yet.\n\n${from(cfgS.notBuilt)}`);
 
 	// The three states have no usage text.
@@ -2145,7 +2152,16 @@ for (const cp of comps) write(`core/components/${slugOf(cp.name)}.mdx`, componen
 			const when = git('show', '-s', '--format=%aI', r.url.match(/blob\/([0-9a-f]{40})/)[1]).trim();
 			events.push({ when: new Date(when).toISOString(), text: `### ${r.date} — ${cp.name} cleared the release review\n\n[${cp.name}](/core/components/${slugOf(cp.name)}/) cleared its [release review](${r.url}) at ${c(r.sha?.slice(0, 7) ?? '')}.` });
 		}
-		if (cp.row.astroLink && cp.row.development === 'Released') events.push({ when: board.readAt, text: `### ${board.readAt} — ${cp.name} released\n\n${cp.name} got a verified page on this site, which moves the registry to ${c('Released')}.` });
+		// The date is the author date of the first commit that recorded this Astro Link in sources/board.json (git history of the
+		// docs branch), not board.readAt: a regeneration must not re-date an older event to the day of the run. No commit yet = no
+		// sourced date, so no entry.
+		if (cp.row.astroLink && cp.row.development === 'Released') {
+			let first = '';
+			try {
+				first = git('log', 'HEAD', '--reverse', '--format=%aI', `-S"astroLink": "${cp.row.astroLink}"`, '--', 'docs-site/sources/board.json').split('\n').find(Boolean) ?? '';
+			} catch {}
+			if (first) events.push({ when: new Date(first).toISOString(), text: `### ${first.slice(0, 10)} — ${cp.name} released\n\n${cp.name} got a verified page on this site, which moves the registry to ${c('Released')}.` });
+		}
 	}
 	events.sort((a, b) => (a.when < b.when ? 1 : -1));
 	write(

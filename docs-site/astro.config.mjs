@@ -59,6 +59,7 @@ export default defineConfig({
 								{ label: 'Chip', slug: 'core/components/chip' },
 								{ label: 'Dropdown', slug: 'core/components/dropdown' },
 								{ label: 'File', slug: 'core/components/file' },
+								{ label: 'Form', slug: 'core/components/form' },
 								{ label: 'Header', slug: 'core/components/header' },
 								{ label: 'Image', slug: 'core/components/image' },
 								{ label: 'Link', slug: 'core/components/link' },

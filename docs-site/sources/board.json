@@ -1,6 +1,6 @@
 {
-  "readAt": "2026-10-05",
-  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-05 by the doc-generator session (re-read for the Calendar run: Calendar is Completed with Release Verdict Cleared and no Astro Link; Stepper is Completed with Release Verdict Cleared and no Astro Link; every other cleared component is Released with its page); the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder.",
+  "readAt": "2026-10-07",
+  "source": "Airtable registry, Components table (read through the Airtable MCP connector). Record IDs are deliberately left out. composes holds the names of the rows linked in the Composes column. Read fresh on 2026-10-05 by the doc-generator session (re-read for the Calendar run: Calendar is Completed with Release Verdict Cleared and no Astro Link; Stepper is Completed with Release Verdict Cleared and no Astro Link; every other cleared component is Released with its page); the Dropdown row is spelled DropDown on the board and Dropdown here, to match the folder. Re-read 2026-10-07 for the Form run: Form is Completed with Release Verdict Cleared and no Astro Link, so it is the one component without a page yet that gets one; Modal is Completed with no verdict (no page); every other cleared component is Released with its page; SideBar and Table are To-do.",
   "components": [
     {
       "name": "Avatar",
@@ -132,13 +132,17 @@
       "name": "Form",
       "category": "ORGANISMS",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1649&t=Mt63ncyvMqR38Jl0-1",
-      "productionStorybook": "",
-      "releaseVerdict": "",
-      "releaseReview": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-form--all-variants",
+      "releaseVerdict": "Cleared",
+      "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/ad1196d09dee1fd0570bcecff3e5f9b999bb88cc/reports/Form/release-review.md",
       "astroLink": "",
-      "composes": []
+      "composes": [
+        "Button",
+        "ButtonGroup",
+        "Link"
+      ]
     },
     {
       "name": "Header",
@@ -198,13 +202,15 @@
       "name": "Modal",
       "category": "ORGANISMS",
       "design": "Done",
-      "development": "To-do",
+      "development": "Completed",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1650&t=Mt63ncyvMqR38Jl0-1",
-      "productionStorybook": "",
+      "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-modal--all-variants",
       "releaseVerdict": "",
       "releaseReview": "",
       "astroLink": "",
-      "composes": []
+      "composes": [
+        "ButtonGroup"
+      ]
     },
     {
       "name": "ProgressBar",
