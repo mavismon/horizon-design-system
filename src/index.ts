@@ -53,3 +53,5 @@ export { Form } from "./components/Form/Form";
 export type { FormProps, FormType } from "./components/Form/Form";
 export { Textfield } from "./components/Form/Textfield";
 export type { TextfieldProps, TextfieldState } from "./components/Form/Textfield";
+export { SideBar } from "./components/SideBar/SideBar";
+export type { SideBarProps, SideBarItem, SideBarItemState } from "./components/SideBar/SideBar";
