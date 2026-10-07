@@ -15,7 +15,7 @@ The file is shared with the team only.
 
 ## How design reaches the docs
 
-The Usage frame is the source of a component's intent file (`src/components/<Name>/<Name>.intent.json`), which is copied from it word for word and becomes the Usage tab of the component's page here. A missing Usage frame shows up on the site as a missing-source notice, not as invented text.
+The Usage frame is the source of a component's intent file (`src/components/<Name>/<Name>.intent.json`), which is copied from it word for word and becomes the Usage tab of the component's page here. If a Usage frame is missing, the section is left out of the page and the site doesn't fill it with invented text.
 
 Values on a Figma node that aren't bound to a variable are listed on the component's Design tab, next to what the code does with each.
 

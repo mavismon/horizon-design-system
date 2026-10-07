@@ -68,15 +68,6 @@
 	margin-inline-start: auto;
 }
 
-/* A section kept in place whose source is missing. */
-.sl-markdown-content .hz-missing {
-	padding: var(--spacing-sm) var(--spacing-md);
-	border-inline-start: var(--border-width-md) solid var(--color-warning-default);
-	background: var(--color-warning-light);
-	color: var(--color-warning-foreground);
-	border-radius: var(--radius-sm);
-}
-
 /* Storybook and Figma frames. */
 .hz-frame {
 	margin-block: var(--spacing-lg);
