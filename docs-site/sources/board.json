@@ -56,24 +56,24 @@
       "name": "Calendar",
       "category": "ORGANISMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1647&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-calendar--picker",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/a5cfe4395ce7c81279e3750802169f2e4e6941a5/reports/Calendar/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/calendar/",
       "composes": []
     },
     {
       "name": "Card",
       "category": "ORGANISMS",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1648&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-card--all-variants",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/6fc6fef5b0b0caa134c0c7e7347e61380348bfc7/reports/Card/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/card/",
       "composes": [
         "Image"
       ]
@@ -260,12 +260,12 @@
       "name": "Stepper",
       "category": "MOLECULES",
       "design": "Done",
-      "development": "Completed",
+      "development": "Released",
       "figma": "https://www.figma.com/design/dIHHqSq8c75n4olME0s9JS/Core-Component?node-id=57-1646&t=Mt63ncyvMqR38Jl0-1",
       "productionStorybook": "https://horizon-design-system-cdfi.vercel.app/?path=/story/components-stepper--progress-five-steps",
       "releaseVerdict": "Cleared",
       "releaseReview": "https://github.com/mavismon/horizon-design-system/blob/d4b378f06c25b6653ed734be0144203609c1b420/reports/Stepper/release-review.md",
-      "astroLink": "",
+      "astroLink": "https://horizon-docs-zeta.vercel.app/core/components/stepper/",
       "composes": []
     },
     {
