@@ -309,3 +309,28 @@ The hover label colour stays `--color-bg-inverse` (#161925) on the `--color-text
 **For an agent that hits it.** Gate 2 passes for exactly these four values on exactly these properties in `SideBar.css`. The hover label colour uses a token, so it is not a gate item: do not count it against a verdict, and quote this ruling when you report it. When a size token for 220px, 32px or 2px, or an alpha token for the divider appears, the ruling no longer covers that value: use the token. If the designer fixes the hover label in Figma, or documents the divider's opacity, the matching part of this ruling no longer applies and that state must be re-tested against the node.
 
 **Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The item `padding` derived from `--hz-sidebar-item-height` and `--lineheight-lg`, the unitless font weights 400, 500 and 700, and the responsive limits `100%` and `height: 100%`, which need no ruling. The focus ring and the nav's `overflow-y: auto`, which Figma does not draw and the engineer added; the ring's contrast on the dark panel was never checked. Anything Figma does not draw and the component does not build: a collapse state, small-screen layout, arrow-key navigation, groups, disabled items, a skip link. The Usage line "the app currently always marks Dashboard active, which needs fixing", which reads as a bug note and not a design rule.
+
+## 2026-10-07 · Table sizes with no token
+
+**Finding.** Release review gate 2 (Tokens) failed Table for 12 raw px literals in `src/components/Table/Table.css` and `Table.tsx`. Figma (component 57:1652, table 251:168, tag 248:18) draws the header row 44px high, body rows 48px high, a 10px sort arrow, a tag with 3px block padding, 80px wide Previous / Next buttons and columns 48, 268, 180, 180, 180, 140 and 176px wide, and binds no variable to any of them. There are no size tokens, and the spacing scale has nothing that matches (`--spacing-xs` is 4px, not 3px). The heights and widths set the table's footprint and have no content or intrinsic size that could supply the number, so no equivalent technique avoids the literals. The `2px` focus-ring `outline-offset` is not drawn in Figma; it is the same value Button, Header and Stepper already carry.
+
+**Ruling.** These literals are accepted, because they are what the Figma nodes specify (or, for the focus ring, the established offset), until the designer adds matching size tokens:
+
+| Value | Property | Where | Line |
+|---|---|---|---|
+| `48px` | body row `height` | `Table.css` | 47 |
+| `44px` | header row `height` | `Table.css` | 59 |
+| `10px` | sort icon `width` | `Table.css` | 98 |
+| `10px` | sort icon `height` | `Table.css` | 99 |
+| `3px` | tag block `padding` | `Table.css` | 115 |
+| `80px` | Previous / Next button `width` | `Table.css` | 178 |
+| `2px` | focus ring `outline-offset` | `Table.css` | 193 |
+| `48` | checkbox column width | `Table.tsx` | 90 |
+| `268` | primary column width | `Table.tsx` | 85 |
+| `180` | text column width | `Table.tsx` | 86 |
+| `140` | tag column width | `Table.tsx` | 87 |
+| `176` | action column width | `Table.tsx` | 88 |
+
+**For an agent that hits it.** Gate 2 passes for exactly these twelve values on exactly these properties in `Table.css` and `Table.tsx`. Quote this ruling when you report it. When a size token for any of these values appears, the ruling no longer covers that value: use the token. The tag's 3px padding keeps the 22px Figma height; moving it to `--spacing-xs` would give a 24px tag and is a design decision, not covered here.
+
+**Not ruled.** Any other literal value, including a `var()` fallback. These values in any other component. A change to these values: a different number needs a new ruling or a token. The warning tag's roughly 2:1 contrast, and the descending sort arrow, focus ring and disabled Previous / Next that Figma does not draw, which the designer still has to confirm.
