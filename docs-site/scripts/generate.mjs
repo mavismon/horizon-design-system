@@ -2041,15 +2041,6 @@ function componentPage(cp) {
 
 	// ----- Examples -----
 	const examples = [];
-	examples.push('## From the README');
-	const use = readmeSection('Use');
-	if (use) {
-		const code = use.match(/```(\w+)?\n([\s\S]*?)```/);
-		if (!code) examples.push(notice('The README has a Use section but no code block.'));
-		else if (!new RegExp(`<${name}[\\s/>]`).test(code[2])) examples.push(notice(`The README's usage example doesn't use ${name}, so there's no README example for it.`));
-		else examples.push('```' + (code[1] ?? '') + ' title="README.md"\n' + code[2] + '```');
-	} else examples.push(notice('The README has no usage example.'));
-
 	examples.push('## Stories');
 	const exampleStories = cp.storyDefs.filter((s) => !s.isRow);
 	if (!exampleStories.length) examples.push(notice(`Every ${name} story is a variant-matrix row; they're linked from the Design tab.`));
