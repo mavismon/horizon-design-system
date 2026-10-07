@@ -1,0 +1,170 @@
+.hz-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
+  box-sizing: border-box;
+  position: relative;
+  margin: 0;
+  padding: var(--spacing-2xl);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-xs);
+  font-family: var(--fontfamily-body), sans-serif;
+  color: var(--color-text-primary);
+}
+
+/* The edge is drawn inside the box so it adds no size. */
+.hz-form::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--border-width-sm) var(--color-border-subtle);
+  pointer-events: none;
+}
+
+.hz-form--section {
+  width: 720px;
+  max-width: 100%;
+}
+
+.hz-form--card {
+  width: 440px;
+  max-width: 100%;
+}
+
+.hz-form__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+
+.hz-form__title,
+.hz-form__description,
+.hz-form__footnote {
+  margin: 0;
+}
+
+.hz-form__title {
+  font-size: var(--fontsize-2xl);
+  line-height: var(--lineheight-2xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.hz-form__description {
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  color: var(--color-text-secondary);
+}
+
+.hz-form__fields {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-lg);
+  width: 100%;
+}
+
+.hz-form--section .hz-form__field {
+  width: 400px;
+  max-width: 100%;
+}
+
+.hz-form--card .hz-form__field {
+  width: 100%;
+}
+
+.hz-form__submit {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.hz-form__footnote {
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  color: var(--color-text-secondary);
+}
+
+/* Textfield */
+.hz-textfield {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 320px;
+  max-width: 100%;
+  font-family: var(--fontfamily-body), sans-serif;
+}
+
+.hz-textfield__label {
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.hz-textfield__input {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  /* 10px is the Figma value; no spacing token matches, so it is the midpoint of --spacing-sm and --spacing-md. */
+  padding-block: calc((var(--spacing-sm) + var(--spacing-md)) / 2);
+  padding-inline: var(--spacing-md);
+  border: var(--border-width-sm) solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-elevated);
+  font-family: inherit;
+  font-size: var(--fontsize-lg);
+  line-height: var(--lineheight-lg);
+  font-weight: 400;
+  color: var(--color-text-primary);
+  text-overflow: ellipsis;
+}
+
+.hz-textfield__input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.hz-textfield__input:focus,
+.hz-textfield--focused .hz-textfield__input {
+  outline: none;
+  border-color: var(--color-border-focus);
+}
+
+.hz-textfield__input:focus-visible {
+  outline: var(--border-width-sm) solid var(--color-border-focus);
+}
+
+.hz-textfield__note {
+  margin: 0;
+  font-size: var(--fontsize-md);
+  line-height: var(--lineheight-md);
+  color: var(--color-text-secondary);
+}
+
+.hz-textfield--error .hz-textfield__input,
+.hz-textfield--error .hz-textfield__input:focus {
+  border-color: var(--color-status-error);
+}
+
+.hz-textfield--error .hz-textfield__note {
+  color: var(--color-status-error);
+}
+
+.hz-textfield--disabled .hz-textfield__label,
+.hz-textfield--disabled .hz-textfield__note {
+  color: var(--color-text-disabled);
+}
+
+.hz-textfield__input:disabled {
+  background: var(--color-state-disabled-bg);
+  border-color: var(--color-border-default);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+}
+
+.hz-textfield__input:disabled::placeholder {
+  color: var(--color-text-disabled);
+}
