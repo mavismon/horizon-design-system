@@ -134,5 +134,5 @@
 .hz-header__back:focus-visible,
 .hz-header__action:focus-visible {
   outline: var(--border-width-md) solid var(--color-border-focus);
-  outline-offset: 2px;
+  outline-offset: var(--border-width-md);
 }
